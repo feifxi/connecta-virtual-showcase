@@ -29,7 +29,7 @@
 | **Media** | **S4** Proximity media 🔴 | S2 + S3 · ตำแหน่งจาก Colyseus ตัดสินว่าจะ subscribe ใคร | เข้าใกล้ได้ยินเสียง · เข้าโซนบูธเห็นจอ/กล้องผู้นำเสนอ · ออกแล้วหาย · ทดสอบกับ**คนจริง 8–10 คน** · เปลี่ยนเร็วแค่ไหน · browser รับได้กี่ track | Exam 2 |
 | **Media** | **S5** โหมดนำเสนอในบูธ 🔴 | S4 + LiveKit server API (เปลี่ยนสิทธิ์ publish) | ปิด/เปิดสิทธิ์ publish จาก server เร็วแค่ไหน · Pass the Mic ไม่ต้อง reconnect | core |
 | **Viewer** | **S6** Poster / 3D viewer sync | S3 + PDF→รูป + `<model-viewer>` | sync ซูม/มุมกล้องผ่าน Colyseus ลื่นไหม · ไฟล์ใหญ่แค่ไหนยังโหลดทัน | ความเสี่ยงต่ำ |
-| **Network** | **S7** NAT + TURN (แยกจาก POC app) | VM จริง + LiveKit + TURN over TLS 443 | เข้าได้จากบ้าน · wifi มหาลัย · 4G · เน็ตบริษัท · VPN | core (ก่อน Exam 3) |
+| **Network** | **S7** Deploy + NAT/TURN (แยกจาก POC app) | VM คณะผ่าน reverse proxy (web · Colyseus) + LiveKit นอก VM (Cloud หรือ VM ที่มี public IP) | WebSocket ผ่าน proxy ได้ไหม · `basePath` ใช้ได้ · เสียง/ภาพเข้าได้จากบ้าน · wifi มหาลัย · 4G · เน็ตบริษัท · VPN | core (ก่อน Exam 3) |
 
 ค่าตั้งต้น (ยืนยันจาก spike):
 - tick rate **15 Hz** (S3)
