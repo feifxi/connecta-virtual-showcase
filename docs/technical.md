@@ -69,8 +69,8 @@ realtime → postgres :5432 · redis :6379 · api (ตรวจสิทธิ�
 
 - **พัฒนาบน localhost ได้เลย ไม่ต้องรอ VM** — ยกเว้นเรื่อง NAT/TURN ที่ localhost ผ่านเสมอ ต้องทดสอบจากเน็ตจริง
 - **Exam 3 ต้องเดโมบน server จริง** → เช็ค VM ให้เร็วที่สุด
-- **VM ที่ได้**: `CP26SSI3` · 4 vCPU · 8 GB · 80 GB · Ubuntu 26.04 LTS · IP ภายใน `10.4.82.27` (SSH ต้องต่อ VPN มหาวิทยาลัย) · ผู้ใช้เข้าจากภายนอกผ่าน reverse proxy (nginx) ของคณะเท่านั้น: `https://bscit.sit.kmutt.ac.th/capstone26/CP26SSI3` · พอร์ต 80 · 443 · 5173 · 8080 · รองรับ SSE · ขอเพิ่ม spec และขอ VM อีกเครื่องได้
-- ⚠️ **LiveKit บน VM นี้ใช้จากภายนอกไม่ได้** (media ต้องต่อตรงด้วย UDP/TCP ผ่าน HTTP reverse proxy ไม่ได้) → web · API · Colyseus อยู่บน VM · **LiveKit อยู่นอก VM** (LiveKit Cloud หรือ VPS) จนกว่า IT จะให้ public IP + พอร์ต media
+- **VM ที่ได้ (ค่าเริ่มต้นที่อาจารย์ตั้งให้ · น่าจะขอแก้/ขอเพิ่มได้ ยังไม่ยืนยัน)**: `CP26SSI3` · 4 vCPU · 8 GB · 80 GB · Ubuntu 26.04 LTS · IP ภายใน `10.4.82.27` (SSH ต้องต่อ VPN มหาวิทยาลัย) · ผู้ใช้เข้าจากภายนอกผ่าน reverse proxy (nginx) ของคณะเท่านั้น: `https://bscit.sit.kmutt.ac.th/capstone26/CP26SSI3` · พอร์ต 80 · 443 · 5173 · 8080 · รองรับ SSE · ขอเพิ่ม spec และขอ VM อีกเครื่องได้
+- ⚠️ ด้วยค่าเริ่มต้นนี้ **LiveKit บน VM ใช้จากภายนอกไม่ได้** (media ต้องต่อตรงด้วย UDP/TCP ผ่าน HTTP reverse proxy ไม่ได้) · **พัฒนาตาม architecture เดิมไปก่อน** (LiveKit self-host ใช้โค้ดเดียวกับ LiveKit Cloud) · ถ้าขอ public IP + พอร์ต media ไม่ได้ → ใช้แผนสำรอง: LiveKit Cloud หรือ VPS (เปลี่ยนแค่ URL + key)
 - web อยู่ใต้ path `/capstone26/CP26SSI3` → Next.js `basePath` · cookie path · OAuth redirect URI ต้องตั้งตาม path · Colyseus ต้องผ่าน WebSocket ของ proxy (ยังไม่รู้ว่ารองรับ)
 - สเปก VM · รายการที่ต้องขอจาก IT · fallback ทั้งหมด → `poc/README.md`
 
