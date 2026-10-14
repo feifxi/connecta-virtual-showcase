@@ -1,0 +1,9 @@
+# LiveKit สำหรับ POC (local เท่านั้น) · โหมด --dev ใช้ key: devkey / secret
+services:
+  livekit:
+    image: livekit/livekit-server:v1.13.9
+    command: --dev --bind 0.0.0.0 --node-ip 127.0.0.1
+    ports:
+      - "7880:7880"     # signaling (WebSocket) + API
+      - "7881:7881"     # WebRTC over TCP (fallback)
+      - "7882:7882/udp" # WebRTC over UDP

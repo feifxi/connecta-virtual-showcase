@@ -76,7 +76,7 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 
 - **Phaser 4 ไม่ใช่ Phaser 3** — AI มักเขียน API ของ v3 ปนมา (เช่น `setTintFill()`, `Geom.Point`, custom pipeline, Mesh) · ก่อนใช้ API ที่ไม่แน่ใจ ตรวจกับ docs ของ v4 และ [migration guide](https://phaser.io/news/2026/04/migrating-from-phaser-3-to-phaser-4-what-you-need-to-know) · ตัวอย่างโค้ด v3 (เช่น SkyOffice) ใช้เป็นแนวทางได้แต่ต้องแปลง
 - **ห้ามปล่อย server/process รันค้าง** — ทดสอบเสร็จต้องหยุดทุก process ที่เปิดเอง แล้วบอกคำสั่งให้ผู้ใช้รันทดสอบเอง
-- library ที่ API เปลี่ยนบ่อย (Colyseus · LiveKit · Next.js) ให้เช็คเวอร์ชันใน `package.json` แล้วอ่าน docs ของเวอร์ชันนั้น ไม่เดาจากความจำ
+- library ที่ API เปลี่ยนบ่อย (Colyseus · LiveKit · Next.js) ให้เช็คเวอร์ชันใน `package.json` แล้วอ่าน docs ของเวอร์ชันนั้น ไม่เดาจากความจำ · Next.js มี docs ตรงเวอร์ชันใน `node_modules/next/dist/docs/` · Phaser มีใน `node_modules/phaser/skills/`
 - **ห้ามเชื่อ client** — role check ครบ 3 ทาง: REST · WebSocket message · ตอนออก token / เปลี่ยนสิทธิ์ใน LiveKit (กฎร่วมทั้งหมดอยู่ใน `docs/features.md`)
 
 ## โครง repo

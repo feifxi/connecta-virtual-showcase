@@ -1,6 +1,9 @@
 import Link from 'next/link';
 
-const spikes = [{ href: '/s1', label: 'S1 Phaser 4 + Tiled + Next.js' }];
+const spikes = [
+  { href: '/s1', label: 'S1 Phaser 4 + Tiled + Next.js' },
+  { href: '/s3', label: 'S3 LiveKit: เสียง · กล้อง · แชร์จอ' },
+];
 
 export default function Home() {
   return (

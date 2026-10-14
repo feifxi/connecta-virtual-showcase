@@ -9,6 +9,8 @@
     "gen:map": "node scripts/gen-map.mjs"
   },
   "dependencies": {
+    "livekit-client": "^2.22.4",
+    "livekit-server-sdk": "^2.19.1",
     "next": "^16.4.0",
     "phaser": "^4.2.1",
     "react": "^19.3.0",

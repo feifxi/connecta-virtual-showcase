@@ -247,3 +247,16 @@
 | สิ่งที่เปลี่ยนใน v4 | renderer ใหม่ (pipeline → render node) · FX/mask รวมเป็น filter · `setTintFill()` ถูกลบ ใช้ `setTint()` + `setTintMode()` · `Geom.Point` → `Vector2` · ตัด Mesh/Plane/Camera3D/Layer3D · `roundPixels` default false · *"sprites, text, tilemaps, and standard Phaser objects … a few hours of work"* | [Migration](https://phaser.io/news/2026/04/migrating-from-phaser-3-to-phaser-4-what-you-need-to-know) |
 | Next.js template | `phaserjs/template-nextjs` อัปเดตเป็น Phaser 4 · Next 15.3.1 | [GitHub](https://github.com/phaserjs/template-nextjs) |
 | `<model-viewer>` | Google · Apache 2.0 · ล่าสุด v4.4.0 (9 ต.ค.) · issue เปิด 107 · ยังมี release ต่อเนื่อง · camera-orbit = theta/phi/radius · มี event `camera-change` | [Releases](https://github.com/google/model-viewer/releases) · [modelviewer.dev](https://modelviewer.dev) |
+
+## 8. Media server: LiveKit vs ทางเลือกอื่น (14 ต.ค.) — ผลสรุปอยู่ใน `technical.md`
+
+| ตัวเลือก | คืออะไร | ข้อดี | ข้อเสียสำหรับเรา |
+|---|---|---|---|
+| ✅ **LiveKit** | SFU (Go บน Pion) + SDK ครบ · Apache 2.0 | เปลี่ยนสิทธิ์ publish จาก server · เลือก subscribe รายคน · simulcast · TURN ในตัว · มี Cloud ใช้ SDK เดิม | ต้องเปิด UDP บน VM (เสี่ยง S7) |
+| mediasoup | library SFU ของ Node.js | ยืดหยุ่นสุด · กิน CPU ต่อคนน้อย | signaling · ห้อง · reconnect · TURN (coturn) ต้องเขียนเอง |
+| Janus | gateway ภาษา C แบบ plugin | เชื่อมระบบที่ไม่ใช่ WebRTC (SIP, streaming) | ตั้งค่าเยอะ · scale หลายเครื่องต้องทำเอง |
+| Jitsi | แอปประชุมสำเร็จรูป (Videobridge = SFU) | ได้ห้องประชุมเร็วที่สุด | บังคับ UI ของตัวเอง · WorkAdventure ย้ายจาก Jitsi ไป LiveKit ด้วยเหตุนี้ |
+| P2P mesh (PeerJS แบบ SkyOffice) | ส่งตรงหากันทุกคู่ | ไม่มี server media | เกิน ~4 คนต่อวงไม่ไหว · บูธมีผู้ชม 10+ คน |
+| Hosted: Cloudflare Realtime · Agora · Daily · 100ms · Twilio | SFU บน cloud | ไม่ต้องดูแล server · ไม่ต้องเปิด UDP เอง | ค่าใช้จ่ายตามการใช้ · lock-in · Cloudflare ฟรี 1,000 GB/เดือน แล้ว $0.05/GB |
+
+หลักฐานในโดเมนเดียวกัน: WorkAdventure (virtual office 2D) เริ่มจาก mesh → Jitsi → ใช้ LiveKit เมื่อวงเกิน 4 คน · แหล่ง: [WorkAdventure 1.27](https://workadventu.re/release/workadventure-1-27-0-the-road-to-workadventure-2/) · [WorkAdventure communication](https://workadventu.re/article-en/improving-the-virtual-conversation-and-communication-experience-with-workadventure/) · [BlogGeek OSS media servers](https://bloggeek.me/webrtc-tools/media-servers-oss/) · [Fora Soft SFU comparison](https://www.forasoft.com/learn/video-streaming/articles-streaming/sfu-comparison-mediasoup-janus-livekit-jitsi-pion) (บริษัทรับทำ WebRTC) · [Cloudflare Realtime pricing](https://developers.cloudflare.com/realtime/sfu/pricing)
