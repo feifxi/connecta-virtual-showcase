@@ -16,7 +16,7 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 | `docs/consult_connecta.md` | ผลสอบกรรมการภายนอก (26 ก.ย. 2569) ของทีมเรา · ที่พลาด · สิ่งที่ควรทำต่อ |
 | `docs/proposal/CP26SSI3_InitialProposal.pdf` | proposal ปัจจุบัน |
 | `docs/Exam02_Details.pdf` | ⭐ รายละเอียดและเกณฑ์ Exam 2 |
-| `docs/archive/CAPSTONE-CourseOverview.pdf` | สไลด์ภาพรวมวิชา: ความคาดหวัง · คะแนนทุก Exam · กำหนดการ · งบ · ลิขสิทธิ์ |
+| `docs/archive/CAPSTONE-CourseOverview.pdf` | สไลด์ภาพรวมวิชา (ประกาศเบื้องต้น): ความคาดหวัง · คะแนนทุก Exam · กำหนดการ · งบ · ลิขสิทธิ์ · **ประกาศของแต่ละ Exam ที่ออกทีหลังมีผลเหนือกว่า** |
 | `docs/presentation/` | สไลด์ที่ส่งแล้ว (ห้ามแก้) |
 | `docs/archive/` | เอกสารที่ไม่ใช้แล้ว (ไม่ลบ · ไม่ต้องอ่านเว้นแต่ถูกขอ) · transcript การสอบ · ผล consult ของทีมอื่น |
 
@@ -52,7 +52,7 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 
 | Exam | กำหนด | สิ่งที่ประเมิน |
 |---|---|---|
-| Exam 2 Pre-Game (30) | สอบ 19–20 ต.ค. 2569 13:00 (มาก่อน 15 นาที) · **ส่งภายใน 18 ต.ค.** ทาง LEB2: `<รหัสทีม>_RevisedProjectProposal.pdf` · `<รหัสทีม>_Exam02_Slide.pdf` · ⚠️ ประกาศ Exam 2 ให้ส่งก่อน 23:59 แต่สไลด์ภาพรวมวิชาเขียน Revised Proposal ก่อน 18:00 → **ส่งก่อน 18:00** · **นำเสนอภาษาอังกฤษ** ≤ 25 นาทีรวมเดโม + ถาม-ตอบ 10 นาที · ทุกคนต้องพูดและตอบ | **ความเป็นไปได้ 12** (POC ทางเทคนิค + research/สัมภาษณ์/แบบสอบถามทางธุรกิจ · ไม่บังคับครบทั้งสองด้าน) · **ออกแบบทางเทคนิค 10** สำหรับ Release 1 (mockup · architecture · frontend component design · REST API design · ER diagram) · Revised IT Solution 6 (สรุปความเห็นกรรมการ 1 slide · ภาพรวม/ประเภทแอป/ขอบเขต · ผู้ใช้ + feature) · Roadmap 2 · ผลการดำเนินงานตามแผน · ปัญหาและอุปสรรค |
+| Exam 2 Pre-Game (30) | สอบ 19–20 ต.ค. 2569 13:00 (มาก่อน 15 นาที) · **ส่งภายใน 18 ต.ค. 23:59** ทาง LEB2: `<รหัสทีม>_RevisedProjectProposal.pdf` · `<รหัสทีม>_Exam02_Slide.pdf` (ส่งช้าหักคะแนน) · **นำเสนอภาษาอังกฤษ** ≤ 25 นาทีรวมเดโม + ถาม-ตอบ 10 นาที · ทุกคนต้องพูดและตอบ | **ความเป็นไปได้ 12** (POC ทางเทคนิค + research/สัมภาษณ์/แบบสอบถามทางธุรกิจ · ไม่บังคับครบทั้งสองด้าน) · **ออกแบบทางเทคนิค 10** สำหรับ Release 1 (mockup · architecture · frontend component design · REST API design · ER diagram) · Revised IT Solution 6 (สรุปความเห็นกรรมการ 1 slide · ภาพรวม/ประเภทแอป/ขอบเขต · ผู้ใช้ + feature) · Roadmap 2 · ผลการดำเนินงานตามแผน · ปัญหาและอุปสรรค |
 | Exam 3 Release 1 (35) | 30 พ.ย. 13:30–18:00 / 1 ธ.ค. 09:00–18:00 (tentative) | ความก้าวหน้า/ความยาก/ปริมาณงาน 13 · Potentially Shippable Increment 7 (test case ปกติ + exception · exception handling · ไม่มี error · **deploy บน server ไม่ใช่ localhost**) · หลักฐาน AI-assisted development 5 · ความเข้าใจระบบ 10 · ส่ง Retrospective Report รายคน |
 
 - **Release 1 = core feature อย่างน้อย 1 ตัว ครบ Frontend → Backend → DB** · login ไม่นับเป็น core feature
@@ -95,6 +95,6 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 
 1. Exam 2 (ส่ง 18 ต.ค.): spike/POC · mockup · architecture · component design · API design · ER diagram · roadmap
 2. ทีมเขียน one-liner · pain · problem statement เอง แทนร่างใน `docs/connecta-v3.md`
-3. ทำ survey (`docs/research.md` ส่วน 4) + นัดคุยผู้จัด D-Day / อาจารย์
+3. ทำ survey (`docs/research.md` ส่วน 4) + นัดคุยผู้จัด D-Day / อาจารย์ · ความเป็นไปได้ทางธุรกิจต้องใช้ข้อมูลจากผู้ใช้เป้าหมายจริง (ไม่ใช่ทีม)
 4. mock-up
 5. เช็ค SpatialChat ว่ามี judging หรือไม่

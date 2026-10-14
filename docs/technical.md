@@ -69,9 +69,9 @@ realtime → postgres :5432 · redis :6379 · api (ตรวจสิทธิ�
 
 - **พัฒนาบน localhost ได้เลย ไม่ต้องรอ VM** — ยกเว้นเรื่อง NAT/TURN ที่ localhost ผ่านเสมอ ต้องทดสอบจากเน็ตจริง
 - **Exam 3 ต้องเดโมบน server จริง** → เช็ค VM ให้เร็วที่สุด
-- **VM มหาลัย ต้องเช็คก่อน**: public IP · เปิด UDP 50000–60000 inbound · domain + TLS cert จริง · WebSocket upgrade ผ่าน proxy ของมหาลัยได้
-  - ทดสอบเร็วสุด: รัน LiveKit บน VM แล้วเข้าจาก**มือถือ 4G** (ห้ามใช้ wifi มหาลัย) ได้ยินเสียง = ผ่านทุกข้อ
-- **ถ้า VM ไม่ผ่าน**: แยก LiveKit ไป VPS สิงคโปร์ หรือใช้ LiveKit Cloud
+- **VM ที่ได้**: `CP26SSI3` · 4 vCPU · 8 GB · 80 GB · Ubuntu 26.04 LTS · IP ภายใน `10.4.82.27` (SSH ต้องต่อ VPN มหาวิทยาลัย) · ผู้ใช้เข้าจากภายนอกผ่าน reverse proxy (nginx) ของคณะเท่านั้น: `https://bscit.sit.kmutt.ac.th/capstone26/CP26SSI3` · พอร์ต 80 · 443 · 5173 · 8080 · รองรับ SSE · ขอเพิ่ม spec และขอ VM อีกเครื่องได้
+- ⚠️ **LiveKit บน VM นี้ใช้จากภายนอกไม่ได้** (media ต้องต่อตรงด้วย UDP/TCP ผ่าน HTTP reverse proxy ไม่ได้) → web · API · Colyseus อยู่บน VM · **LiveKit อยู่นอก VM** (LiveKit Cloud หรือ VPS) จนกว่า IT จะให้ public IP + พอร์ต media
+- web อยู่ใต้ path `/capstone26/CP26SSI3` → Next.js `basePath` · cookie path · OAuth redirect URI ต้องตั้งตาม path · Colyseus ต้องผ่าน WebSocket ของ proxy (ยังไม่รู้ว่ารองรับ)
 - สเปก VM · รายการที่ต้องขอจาก IT · fallback ทั้งหมด → `poc/README.md`
 
 ## Spike

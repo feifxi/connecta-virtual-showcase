@@ -414,6 +414,35 @@ LiveKit ระบุว่า 1 room ต้องอยู่ใน node เด�
 
 **ข้อมูลต่อผู้ใช้**: ดูจอ 720p ~0.6 GB/ชั่วโมง (สำคัญกับคนใช้ 4G) · ทั้งงาน 150 คน × 2 ชั่วโมง ≈ 180 GB (720p) หรือ ~55 GB (medium)
 
+### VM ที่ได้ (CP26SSI3)
+
+| | ได้ | เทียบกับที่ต้องการ |
+|---|---|---|
+| สเปก | 4 vCPU · 8 GB · 80 GB · Ubuntu 26.04 LTS | = ขั้นต่ำ · พอสำหรับ Exam 3 และงาน 1 งาน ≤ 150 คน **ถ้า LiveKit ไม่อยู่บน VM นี้** · ขอเพิ่มได้ |
+| เครือข่าย | hostname `cp26ssi3.sit.kmutt.ac.th` → **`10.4.82.27` (IP ภายใน)** · คนนอกเข้าได้ทาง reverse proxy ของคณะ (`bscit.sit.kmutt.ac.th` → 202.44.9.103 · nginx) เท่านั้น | ❌ ไม่มี public IP · ไม่มี UDP |
+| เข้า VM (SSH · พอร์ตตรง) | **ต้องต่อ VPN มหาวิทยาลัย** | ผู้ใช้งานจริงเข้าทาง URL ด้านล่าง ไม่ต้องใช้ VPN |
+| URL | `https://bscit.sit.kmutt.ac.th/capstone26/CP26SSI3` (ตอนนี้ตอบ 404 เพราะยังไม่มีอะไรรัน) | web อยู่ใต้ path ไม่ใช่โดเมนของตัวเอง |
+| พอร์ต | 80 · 443 · 5173 · 8080 · SSE ได้ | ยังไม่รู้ว่าเป็นพอร์ตที่ proxy ส่งต่อ หรือเปิดตรง · ยังไม่รู้ว่า WebSocket ผ่านได้ไหม |
+
+**ผลต่อระบบ**
+- **LiveKit**: media ต้องต่อตรงด้วย UDP 50000–60000 / TCP 7881 / TURN TLS ซึ่งผ่าน HTTP reverse proxy ไม่ได้ → คนนอกมหาวิทยาลัยใช้เสียง/ภาพไม่ได้ถ้า LiveKit อยู่บน VM นี้ → **ย้าย LiveKit ออก** (LiveKit Cloud: ฟรี 5,000 participant-minute/เดือน พอสำหรับเดโม Exam 3 · งานจริง 150 คน × 2 ชม. = 18,000 นาทีต้องใช้แผนเสียเงิน · ราคาจากแหล่งรอง ต้องเช็คหน้า pricing) หรือขอ public IP จาก IT
+- **Colyseus**: ใช้ได้ถ้า proxy ส่ง WebSocket (`Upgrade`) ต่อให้ · ถ้าไม่ได้ ต้องย้าย realtime ออกไปพร้อม LiveKit
+- **Next.js**: ตั้ง `basePath: '/capstone26/CP26SSI3'` · asset · API route · cookie · OAuth redirect URI ต้องอยู่ใต้ path นี้
+- **cert**: proxy ของคณะถือ TLS ให้แล้ว (ไม่ต้อง certbot บน VM สำหรับ web)
+
+**คำถามที่ต้องถาม IT** (เรียงตามความสำคัญ)
+1. proxy ส่ง `/capstone26/CP26SSI3/*` ไปที่พอร์ตไหนของ VM · ตัด path ออกหรือส่งทั้ง path · พอร์ต 5173 / 8080 ใช้ทำอะไร (เปิดตรงหรือผ่าน proxy คนละ path)
+2. **WebSocket ผ่าน proxy ได้ไหม** (`Upgrade` / `Connection`) · timeout ของ connection ที่เปิดค้างนานเท่าไร
+3. ขอ **public IP** (หรือ port forward) + **UDP 50000–60000** (หรือ UDP 7882 พอร์ตเดียว) + **TCP 7881** + TCP/UDP 443 ให้ VM ที่ 2 สำหรับ LiveKit ได้ไหม · ถ้าได้ต้องมี subdomain + cert ของตัวเอง (เช่น `livekit-cp26ssi3.sit.kmutt.ac.th`)
+4. VM ออก internet ได้ไหม (OAuth Google/Microsoft · LLM API · ส่งอีเมล · ดึง Docker image)
+5. bandwidth ขาออกของ proxy / VM จำกัดเท่าไร
+6. ติดตั้ง Docker ได้ไหม · ทุกคนในทีมใช้ VPN มหาวิทยาลัยเข้า VM ได้พร้อมกันไหม
+7. ใช้ได้ถึงเมื่อไร · snapshot/backup ได้ไหม
+
+**ที่ควรขอตอนนี้**
+- **VM ที่ 2** (2 vCPU / 4 GB พอ): (ก) ถ้า IT ให้ public IP + พอร์ต media ได้ → ใช้รัน LiveKit · (ข) ถ้าไม่ได้ → ใช้เป็น staging และเครื่องยิง load test (ตัวทดสอบต้องอยู่คนละเครื่องกับ server)
+- **ยังไม่ต้องขอเพิ่ม spec** ของ VM แรก · ให้ deploy แล้ววัดซ้ำบน VM ก่อน (ตัวเลข POC วัดบน M4) · จะขอเพิ่มก็ต่อเมื่อย้าย LiveKit มาไว้บน VM ได้
+
 ### สเปก VM ที่ต้องขอ
 
 ค่า CPU ใน POC วัดบน Apple M4 ซึ่งต่อ core เร็วกว่า vCPU ของ VM ทั่วไป → เผื่อ vCPU 2 เท่าจากที่วัดได้ และ **ต้องวัดซ้ำบน VM จริง**
@@ -424,7 +453,7 @@ LiveKit ระบุว่า 1 room ต้องอยู่ใน node เด�
 | RAM | 8 GB | **16 GB** |
 | Disk | 80 GB SSD | **200 GB SSD** |
 | Network | NIC 1 Gbps · ส่งออกต่อเนื่อง ≥ 300 Mbps | NIC 1 Gbps · ส่งออกต่อเนื่อง ≥ 600 Mbps |
-| OS | Ubuntu 24.04 LTS · Docker + Compose | เหมือนกัน |
+| OS | Ubuntu LTS · Docker + Compose | เหมือนกัน |
 | IP | **public IPv4 คงที่** | เหมือนกัน |
 
 **ที่มาของตัวเลข** (แนะนำ · 2 งานพร้อมกัน)
@@ -435,7 +464,7 @@ LiveKit ระบุว่า 1 room ต้องอยู่ใน node เด�
 
 ถ้าได้น้อยกว่านี้: ตั้ง default จอแชร์เป็น medium (ลด bandwidth ~3 เท่า) แล้วรับได้ 1 งาน 150 คนบน 4 vCPU / 8 GB
 
-### สิ่งที่ต้องขอ / ถามฝ่าย IT มหาวิทยาลัย
+### สิ่งที่ต้องขอ / ถามฝ่าย IT มหาวิทยาลัย (รายการเต็ม · ข้อเฉพาะของ VM ที่ได้อยู่ในหัวข้อ VM ที่ได้)
 
 **เครือข่าย** (สำคัญที่สุด · ไม่ได้ข้อนี้ media ใช้ไม่ได้)
 1. public IPv4 คงที่ · ถ้าอยู่หลัง NAT ต้องเป็น **1:1 NAT** และบอก IP สาธารณะ (ตั้ง `node_ip` / `use_external_ip` ของ LiveKit)
