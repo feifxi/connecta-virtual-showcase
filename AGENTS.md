@@ -15,7 +15,8 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 | `docs/research.md` | research ดิบ + แหล่งอ้างอิง: poster/booth · คู่แข่ง · business model · ชื่อแบรนด์ · survey · research เพิ่มเติม |
 | `docs/consult_connecta.md` | ผลสอบกรรมการภายนอก (26 ก.ย. 2569) ของทีมเรา · ที่พลาด · สิ่งที่ควรทำต่อ |
 | `docs/proposal/CP26SSI3_InitialProposal.pdf` | proposal ปัจจุบัน |
-| `docs/exam/CP26_Exam02_Details.pdf` | ⭐ รายละเอียดและเกณฑ์ Exam 2 |
+| `docs/Exam02_Details.pdf` | ⭐ รายละเอียดและเกณฑ์ Exam 2 |
+| `docs/archive/CAPSTONE-CourseOverview.pdf` | สไลด์ภาพรวมวิชา: ความคาดหวัง · คะแนนทุก Exam · กำหนดการ · งบ · ลิขสิทธิ์ |
 | `docs/presentation/` | สไลด์ที่ส่งแล้ว (ห้ามแก้) |
 | `docs/archive/` | เอกสารที่ไม่ใช้แล้ว (ไม่ลบ · ไม่ต้องอ่านเว้นแต่ถูกขอ) · transcript การสอบ · ผล consult ของทีมอื่น |
 
@@ -51,8 +52,13 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 
 | Exam | กำหนด | สิ่งที่ประเมิน |
 |---|---|---|
-| Exam 2 | สอบ 19–20 ต.ค. 2569 13:00 · **ส่งไฟล์ภายใน 18 ต.ค. 23:59** (LEB2: `<รหัสทีม>_RevisedProjectProposal.pdf` · `<รหัสทีม>_Exam02_Slide.pdf`) · **นำเสนอภาษาอังกฤษ** 25 นาทีรวมเดโม + ถาม-ตอบ 10 นาที | **ความเป็นไปได้ 12** (POC/spike ทางเทคนิค + research/สัมภาษณ์/แบบสอบถามทางธุรกิจ) · **ออกแบบทางเทคนิค 10** (mockup · architecture · frontend component design · REST API design · ER diagram) · Revised IT Solution 6 (สรุป consult 1 slide · ภาพรวม · ผู้ใช้ + feature) · Roadmap 2 (value ต่อ release) |
-| Exam 3 Release 1 | 30 พ.ย.–1 ธ.ค. 2569 (ต้องยืนยัน) | เดโม core feature **บน server จริง ไม่ใช่ localhost** · test case ปกติ + กรณีผิดพลาด · ความเข้าใจระบบ · หลักฐานการใช้ AI ช่วยพัฒนา |
+| Exam 2 Pre-Game (30) | สอบ 19–20 ต.ค. 2569 13:00 (มาก่อน 15 นาที) · **ส่งภายใน 18 ต.ค.** ทาง LEB2: `<รหัสทีม>_RevisedProjectProposal.pdf` · `<รหัสทีม>_Exam02_Slide.pdf` · ⚠️ ประกาศ Exam 2 ให้ส่งก่อน 23:59 แต่สไลด์ภาพรวมวิชาเขียน Revised Proposal ก่อน 18:00 → **ส่งก่อน 18:00** · **นำเสนอภาษาอังกฤษ** ≤ 25 นาทีรวมเดโม + ถาม-ตอบ 10 นาที · ทุกคนต้องพูดและตอบ | **ความเป็นไปได้ 12** (POC ทางเทคนิค + research/สัมภาษณ์/แบบสอบถามทางธุรกิจ · ไม่บังคับครบทั้งสองด้าน) · **ออกแบบทางเทคนิค 10** สำหรับ Release 1 (mockup · architecture · frontend component design · REST API design · ER diagram) · Revised IT Solution 6 (สรุปความเห็นกรรมการ 1 slide · ภาพรวม/ประเภทแอป/ขอบเขต · ผู้ใช้ + feature) · Roadmap 2 · ผลการดำเนินงานตามแผน · ปัญหาและอุปสรรค |
+| Exam 3 Release 1 (35) | 30 พ.ย. 13:30–18:00 / 1 ธ.ค. 09:00–18:00 (tentative) | ความก้าวหน้า/ความยาก/ปริมาณงาน 13 · Potentially Shippable Increment 7 (test case ปกติ + exception · exception handling · ไม่มี error · **deploy บน server ไม่ใช่ localhost**) · หลักฐาน AI-assisted development 5 · ความเข้าใจระบบ 10 · ส่ง Retrospective Report รายคน |
+
+- **Release 1 = core feature อย่างน้อย 1 ตัว ครบ Frontend → Backend → DB** · login ไม่นับเป็น core feature
+- ข้อมูลความต้องการต้องมาจากผู้ใช้เป้าหมาย **ที่ไม่ใช่ทีมพัฒนา** · คาดหวังระบบใหญ่ขึ้น (ผู้ใช้จำนวนมาก · platform · ข้อมูลส่วนบุคคล) · AI feature แบ่งระดับ Low / Intermediate / Advance
+- คะแนนนำเสนอ + ถาม-ตอบรวม 3 รอบ · แต่งกายผิดระเบียบหักคะแนนทีม 2 · พบอาจารย์ที่ปรึกษา ≥ 7 ครั้ง (คะแนน Project Management)
+- งบวิชา ≤ 3,000 บาท/ทีม **เบิกค่าโครงสร้างพื้นฐาน (server/cloud) ไม่ได้** · ผลงานเป็นลิขสิทธิ์ของมหาวิทยาลัย · D-Day ปลาย เม.ย.
 
 **แนวที่อาจารย์เน้น**: Pain → Challenge → Solution → Outcome · วัดผลที่ **Outcome** (ผู้ใช้ได้ผลจริง) ไม่ใช่ Output (มีระบบ) · Challenge ต้องเป็นพฤติกรรม/ข้อจำกัดของผู้ใช้ ไม่ใช่ "ยังไม่มีระบบ" (ตัวอย่างอาจารย์: ทำระบบรีวิวไม่ยาก แต่ทำให้คนเขียนรีวิวยาก)
 
