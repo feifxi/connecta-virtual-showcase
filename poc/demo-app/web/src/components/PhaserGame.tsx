@@ -2,9 +2,11 @@
 
 import { useEffect, useRef } from 'react';
 import * as Phaser from 'phaser';
+import type { Room } from '@colyseus/sdk';
 import { HallEvents, HallScene } from '@/game/HallScene';
 
 type Props = {
+  room?: Room; // Colyseus room; read once on mount
   onBoothEnter?: (booth: { name: string; title: string }) => void;
   onBoothLeave?: (name: string) => void;
 };
@@ -15,10 +17,11 @@ declare global {
     __phaserGames?: number;
     __phaserGame?: Phaser.Game;
     __Phaser?: typeof Phaser;
+    __colyseusRoom?: Room;
   }
 }
 
-export default function PhaserGame({ onBoothEnter, onBoothLeave }: Props) {
+export default function PhaserGame({ room, onBoothEnter, onBoothLeave }: Props) {
   const parentRef = useRef<HTMLDivElement>(null);
   const handlers = useRef({ onBoothEnter, onBoothLeave });
   handlers.current = { onBoothEnter, onBoothLeave };
@@ -33,6 +36,7 @@ export default function PhaserGame({ onBoothEnter, onBoothLeave }: Props) {
       scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
       scene: [HallScene],
     });
+    if (room) game.registry.set('room', room);
     window.__phaserGames = (window.__phaserGames ?? 0) + 1;
     window.__phaserGame = game;
     window.__Phaser = Phaser;

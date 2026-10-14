@@ -63,7 +63,7 @@
 |---|---|---|
 | บูธคนเยอะคุยไม่รู้เรื่อง ต้องย้ายไป Zoom | NeurIPS | โหมดนำเสนอในบูธ + Pass the Mic + คิว |
 | โปสเตอร์อ่านยาก ต้องเปิดแยก · NeurIPS ต้องอัปโหลดใหม่ ~10% | [NeurIPS Blog](https://blog.neurips.cc/2021/02/12/neurips-2020-online-experiments-gather-town-poster-sessions-and-mementor/) | Poster viewer sync กับผู้นำเสนอ (ซูม/ชี้ตาม) · ตรวจไฟล์ + preview ตอนอัปโหลด |
-| เข้าไม่ได้หรือหลุด ทั้งที่ยังไม่เต็ม | arXiv, NeurIPS | แบ่งห้องตามโซน · reconnect อัตโนมัติ · load test (มี loadtest จาก S2) |
+| เข้าไม่ได้หรือหลุด ทั้งที่ยังไม่เต็ม | arXiv, NeurIPS | แบ่งห้องตามโซน · reconnect อัตโนมัติ · load test (มี loadtest จาก S3) |
 | ไม่มีโครงสร้าง · บางงานคนเข้าน้อยเพราะรู้สึกเหมือนเกม | NeurIPS Blog, [SNE ChemBio](https://sne-chembio.ch/blog/gather-town-virtual-poster-session-lessons-learned/) | ตารางนำเสนอ + ป้าย "กำลังนำเสนอ" · art style แบบงานวิชาการ |
 | หาบูธที่อยากดูไม่เจอ | ไม่มีค้นหาในตัว | ค้นหา/กรอง + ไปบูธทันที · minimap |
 | ผู้จัดเตรียมงานยาก ต้องวาดแผนที่เอง | SNE ChemBio | สร้างฮอลล์อัตโนมัติจาก CSV + template |

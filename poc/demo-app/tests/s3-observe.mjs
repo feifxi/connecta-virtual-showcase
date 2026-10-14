@@ -1,0 +1,20 @@
+import { mkdirSync } from 'node:fs';
+import { chromium } from 'playwright-core';
+import { BASE, CHROME, OUT } from './env.mjs';
+mkdirSync(OUT, { recursive: true });
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const wait = Number(process.argv[2] ?? 25);
+const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const page = await (await browser.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
+await page.goto(BASE + '/s3?name=observer');
+await page.waitForFunction(() => window.__phaserGame?.scene.getScene('hall')?.net);
+await page.locator('canvas').click({ position: { x: 600, y: 400 } });
+await sleep(wait * 1000);
+// walk around while measuring so the camera scrolls over the crowd
+await page.keyboard.down('w'); await sleep(2000);
+const r = await page.evaluate(() => { const g = window.__phaserGame; const s = g.scene.getScene('hall'); return { fps: Math.round(g.loop.actualFps), remotes: s.net.remoteCount, corrections: s.net.corrections, renderer: g.renderer.type === 2 ? 'WebGL' : 'Canvas' }; });
+await page.keyboard.up('w');
+await sleep(2100);
+console.log('[observer]', r, '·', await page.locator('header span').nth(2).textContent());
+await page.screenshot({ path: OUT + 's3-crowd.png' });
+await browser.close();

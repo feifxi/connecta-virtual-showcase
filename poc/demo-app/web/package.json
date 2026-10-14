@@ -9,6 +9,8 @@
     "gen:map": "node scripts/gen-map.mjs"
   },
   "dependencies": {
+    "@colyseus/schema": "^5.0.39",
+    "@colyseus/sdk": "^0.18.5",
     "livekit-client": "^2.22.4",
     "livekit-server-sdk": "^2.19.1",
     "next": "^16.4.0",

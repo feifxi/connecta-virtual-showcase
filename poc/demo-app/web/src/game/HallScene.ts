@@ -1,4 +1,6 @@
 import * as Phaser from 'phaser';
+import type { Room } from '@colyseus/sdk';
+import { NetSync } from './NetSync';
 
 export type Booth = { name: string; title: string; rect: Phaser.Geom.Rectangle };
 
@@ -17,6 +19,7 @@ export class HallScene extends Phaser.Scene {
   private target: Phaser.Math.Vector2 | null = null;
   private booths: Booth[] = [];
   private currentBooth: Booth | null = null;
+  private net: NetSync | null = null;
 
   constructor() {
     super('hall');
@@ -66,9 +69,16 @@ export class HallScene extends Phaser.Scene {
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       this.target = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
     });
+
+    // Multiplayer only when the page passed a Colyseus room (S3+); S1 runs offline
+    const room = this.registry.get('room') as Room | undefined;
+    if (room) {
+      this.net = new NetSync(this, room, this.player);
+      this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.net?.destroy());
+    }
   }
 
-  update() {
+  update(time: number) {
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     const dir = new Phaser.Math.Vector2(
       Number(this.cursors.right.isDown || this.wasd.D.isDown) - Number(this.cursors.left.isDown || this.wasd.A.isDown),
@@ -94,6 +104,7 @@ export class HallScene extends Phaser.Scene {
     }
 
     this.updateBooth();
+    this.net?.update(time);
   }
 
   private updateBooth() {

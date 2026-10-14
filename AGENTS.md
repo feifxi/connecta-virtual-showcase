@@ -10,7 +10,8 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 |---|---|
 | `docs/connecta-v3.md` | ⭐ Product & Business: direction · pain · solution · target · value & competition · business model · SDG · ความเสี่ยง |
 | `docs/features.md` | ⭐ spec ฟีเจอร์: กฎร่วม · ลำดับ core/cut · role · spec รายฟีเจอร์ · ตาราง DB · test case |
-| `docs/technical.md` | ⭐ stack · architecture · deployment · spike · reference ด้านเทคนิค |
+| `docs/technical.md` | ⭐ stack · architecture · deployment · reference ด้านเทคนิค |
+| `poc/README.md` | ⭐ POC ทั้งหมด: แผน spike · สถานะ · วิธีทดสอบ · ผล · capacity · สเปก VM · สิ่งที่ต้องขอจาก IT · fallback |
 | `docs/research.md` | research ดิบ + แหล่งอ้างอิง: poster/booth · คู่แข่ง · business model · ชื่อแบรนด์ · survey · research เพิ่มเติม |
 | `docs/consult_connecta.md` | ผลสอบกรรมการภายนอก (26 ก.ย. 2569) ของทีมเรา · ที่พลาด · สิ่งที่ควรทำต่อ |
 | `docs/proposal/CP26SSI3_InitialProposal.pdf` | proposal ปัจจุบัน |
@@ -65,9 +66,9 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 
 ## เทคนิค
 
-- stack · architecture · spike อยู่ใน `docs/technical.md`
+- stack · architecture อยู่ใน `docs/technical.md` · spike และผลทดสอบอยู่ใน `poc/README.md`
 - ใช้ **nginx** (ทีมมีประสบการณ์) · ต้องตั้งเอง: certbot · header WebSocket (`Upgrade`/`Connection`) · TURN over TLS บน 443 ด้วย `stream` + `ssl_preread`
-- spike **S1–S7** (S1 Phaser 4+Tiled · S2 Movement sync · S3 LiveKit hello · S4 Proximity media · S5 โหมดนำเสนอในบูธ · S6 Poster/3D viewer sync · S7 NAT+TURN) · S1–S6 = POC app เดียว · S7 ทดสอบบน VM แยก · **Exam 2 เดโม S1–S4** · สถานะอยู่ใน `docs/technical.md`
+- spike **S1–S7** (S1 Phaser 4+Tiled · S2 LiveKit hello · S3 Movement sync · S4 Proximity media · S5 โหมดนำเสนอในบูธ · S6 Poster/3D viewer sync · S7 NAT+TURN) · S1–S6 = POC app เดียว · S7 ทดสอบบน VM แยก · **Exam 2 ทำถึง S4** (เดโม S1–S4) · สถานะอยู่ใน `poc/README.md`
 - ไม่ต้องเข้าไปดู repo `poc-connecta`
 
 ## กติกาเขียนโค้ด
@@ -82,7 +83,7 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 ## โครง repo
 
 - `apps/web` (Next.js + Phaser 4) · `apps/server` (game server + API) · `packages/` (type ที่ใช้ร่วม เมื่อจำเป็น) · `infra/` (docker-compose, nginx, TURN, LiveKit, deploy)
-- `poc/` ของทดลองก่อน implement · `poc/demo-app/` POC app เดียว (`web/` + `realtime/`) ต่อยอดทีละ spike S1–S6 · โฟลเดอร์อื่นใน `poc/` เช่น UI mockup · แมป 2D · ผลและสถานะอยู่ใน `poc/README.md`
+- `poc/` ของทดลองก่อน implement · `poc/demo-app/` POC app เดียว (`web/` + `realtime/`) ต่อยอดทีละ spike S1–S6 · โฟลเดอร์อื่นใน `poc/` เช่น UI mockup · แมป 2D · ทุกอย่างของ POC อยู่ใน `poc/README.md` ไฟล์เดียว
 
 ## งานถัดไป
 

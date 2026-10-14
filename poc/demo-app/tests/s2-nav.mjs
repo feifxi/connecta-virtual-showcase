@@ -1,0 +1,22 @@
+import { mkdirSync } from 'node:fs';
+import { chromium } from 'playwright-core';
+import { BASE, CHROME, OUT } from './env.mjs';
+mkdirSync(OUT, { recursive: true });
+import { RoomServiceClient } from '../web/node_modules/livekit-server-sdk/dist/index.js';
+const svc = new RoomServiceClient('http://localhost:7880', 'devkey', 'secret');
+const count = async () => (await svc.listParticipants('s2').catch(() => [])).length;
+const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'] });
+const page = await (await browser.newContext({ permissions: ['camera', 'microphone'] })).newPage();
+await page.goto(BASE + '/');
+await page.getByRole('link', { name: /S2/ }).click();
+await page.getByPlaceholder('ชื่อ').fill('Nav');
+await page.getByRole('button', { name: 'join' }).click();
+await page.waitForFunction(() => window.__room?.state === 'connected');
+const before = await count();
+console.log('server participants while on /s2:', before, '(includes leftovers from earlier scripts until LiveKit times them out)');
+await page.goBack(); // client-side navigation → page unmounts
+await page.waitForURL(BASE + '/');
+await new Promise((r) => setTimeout(r, 1500));
+const after = await count();
+console.log('after navigating away:', after, before - after === 1 ? 'PASS this tab left the room' : 'FAIL');
+await browser.close();

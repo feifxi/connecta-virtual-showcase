@@ -1,6 +1,6 @@
 # Connecta — Technical
 
-> stack · architecture · deployment · spike · reference ด้านเทคนิค · อิง `connecta-v3.md` และ `features.md`
+> stack · architecture · deployment · reference ด้านเทคนิค · อิง `connecta-v3.md` และ `features.md`
 
 ## Stack
 
@@ -22,7 +22,7 @@
 | Poster | PDF → รูปตอนอัปโหลด (server) | ซูม/ชี้ sync ผ่าน Colyseus |
 | Infra | **Docker Compose + nginx** บน VM ของมหาวิทยาลัย | ฟรี · ย้ายขึ้น cloud ได้โดยไม่ต้องแก้โค้ด · nginx เพราะทีมมีประสบการณ์ |
 
-**ขนาดงานเป้าหมาย**: 150 คนพร้อมกันต่อ 1 ฮอลล์ (ประมาณจาก D-Day 600+ คนทั้งวัน · 39 ผลงาน) · ยืนยันด้วย loadtest ใน S2
+**ขนาดงานเป้าหมาย**: 150 คนพร้อมกันต่อ 1 ฮอลล์ (ประมาณจาก D-Day 600+ คนทั้งวัน · 39 ผลงาน) · เพดาน 300 คน/ฮอลล์ · capacity และสเปก VM อยู่ใน `poc/README.md`
 
 **Phaser 4**
 - ⚠️ AI มักเขียน API ของ v3 (`setTintFill()` · `Geom.Point` · custom pipeline · Mesh) → ตรวจกับ docs v4 / migration guide ก่อน
@@ -72,27 +72,11 @@ realtime → postgres :5432 · redis :6379 · api (ตรวจสิทธิ�
 - **VM มหาลัย ต้องเช็คก่อน**: public IP · เปิด UDP 50000–60000 inbound · domain + TLS cert จริง · WebSocket upgrade ผ่าน proxy ของมหาลัยได้
   - ทดสอบเร็วสุด: รัน LiveKit บน VM แล้วเข้าจาก**มือถือ 4G** (ห้ามใช้ wifi มหาลัย) ได้ยินเสียง = ผ่านทุกข้อ
 - **ถ้า VM ไม่ผ่าน**: แยก LiveKit ไป VPS สิงคโปร์ หรือใช้ LiveKit Cloud
+- สเปก VM · รายการที่ต้องขอจาก IT · fallback ทั้งหมด → `poc/README.md`
 
 ## Spike
 
-S1–S6 เป็น POC app เดียวใน `poc/demo-app/` ต่อยอดทีละ spike ตามลำดับ · S7 ทดสอบ infra แยก · ต้องได้รับอนุมัติก่อนไป spike ถัดไป · สถานะและผลอยู่ใน `poc/README.md`
-
-ลำดับ: S1 ∥ S3 → S2 → S4 → S5 → S6 · S7 ทำได้ทันทีที่มี VM
-
-| ด้าน | Spike | ใช้อะไร | คำถาม | ความสำคัญ |
-|---|---|---|---|---|
-| **2D** | **S1** Phaser 4 + Tiled | Phaser 4 + Tiled + Next.js (ไม่มี server) | โหลดแมป · เดินชนกำแพง · Phaser 4 ทำงานร่วมกับ Next ได้โดยไม่ leak | Exam 2 |
-| | **S2** Movement sync | S1 + Colyseus | 150 client ต่อฮอลล์ลื่นไหม (loadtest) · tick rate เท่าไร | Exam 2 |
-| **Media** | **S3** LiveKit hello | LiveKit + token API route (หน้าแยก `/s3`) | 2 client ได้ยินเสียง · เห็นกล้อง · เห็นจอแชร์ของกัน | Exam 2 |
-| | **S4** Proximity media 🔴 | S2 + S3 · ตำแหน่งจาก Colyseus ตัดสินว่าจะ subscribe ใคร | เข้าใกล้ได้ยินเสียง · เข้าโซนบูธเห็นจอ/กล้องผู้นำเสนอ · ออกแล้วหาย · ทดสอบกับ**คนจริง 8–10 คน** · เปลี่ยนเร็วแค่ไหน · browser รับได้กี่ track | Exam 2 |
-| | **S5** โหมดนำเสนอในบูธ 🔴 | S4 + LiveKit server API (เปลี่ยนสิทธิ์ publish) | ปิด/เปิดสิทธิ์ publish จาก server เร็วแค่ไหน · Pass the Mic ไม่ต้อง reconnect | core |
-| **Viewer** | **S6** Poster / 3D viewer sync | S2 + PDF→รูป + `<model-viewer>` | sync ซูม/มุมกล้องผ่าน Colyseus ลื่นไหม · ไฟล์ใหญ่แค่ไหนยังโหลดทัน | ความเสี่ยงต่ำ |
-| **Network** | **S7** NAT + TURN (แยกจาก POC app) | VM จริง + LiveKit + TURN over TLS 443 | เข้าได้จากบ้าน · wifi มหาลัย · 4G · เน็ตบริษัท · VPN | core (ก่อน Exam 3) |
-
-ค่าตั้งต้น (ยืนยันจาก spike):
-- tick rate **10–15 Hz**
-- proximity **hysteresis**: subscribe ~8 ช่อง · unsubscribe ~12 ช่อง — ⚠️ ห้ามใช้ค่าเดียวกัน
-- bitrate เสียง ~40 kbps/คน · วิดีโอ/จอ ~1.5 Mbps
+แผน · สถานะ · ผลทดสอบ · capacity · สเปก VM · fallback อยู่ใน `poc/README.md`
 
 ---
 
