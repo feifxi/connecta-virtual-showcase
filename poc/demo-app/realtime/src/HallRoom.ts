@@ -55,10 +55,14 @@ export class HallRoom extends Room<{ state: HallState }> {
     console.log(`hall room created · tick ${TICK_HZ} Hz (patchRate ${Math.round(this.patchRate!)} ms)`);
   }
 
-  onJoin(client: Client, options?: { name?: unknown }) {
+  onJoin(client: Client, options?: { name?: unknown; presenterOf?: unknown }) {
     const name = typeof options?.name === 'string' ? options.name.trim().slice(0, 24) : '';
     const p = new Player();
     p.name = name || 'guest';
+    // POC: presenter role comes from the join options; only real booth names are accepted.
+    // Real app: role is read from the DB for the logged-in user, never from the client.
+    const booth = typeof options?.presenterOf === 'string' ? options.presenterOf : '';
+    p.presenterOf = hall.boothNames.has(booth) ? booth : '';
     // Small random offset so players joining together don't stack on one point
     p.x = hall.spawn.x + Math.round((Math.random() - 0.5) * 64);
     p.y = hall.spawn.y + Math.round((Math.random() - 0.5) * 32);

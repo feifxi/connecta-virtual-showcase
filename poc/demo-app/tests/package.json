@@ -6,7 +6,9 @@
     "s1": "node s1-check.mjs && node s1-heap.mjs",
     "s2": "node s2-check.mjs && node s2-join.mjs && node s2-nav.mjs",
     "s3": "node s3-check.mjs",
-    "s3:observe": "node s3-observe.mjs"
+    "s3:observe": "node s3-observe.mjs",
+    "s4": "node s4-check.mjs",
+    "s4:tracks": "node s4-tracks.mjs"
 
   },
   "devDependencies": {

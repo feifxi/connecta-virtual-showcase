@@ -5,6 +5,7 @@ export const Player = schema({
   name: t.string(),
   x: t.uint16(),
   y: t.uint16(),
+  presenterOf: t.string(), // booth name this player presents in, '' = visitor
 }, 'Player');
 export type Player = SchemaType<typeof Player>;
 

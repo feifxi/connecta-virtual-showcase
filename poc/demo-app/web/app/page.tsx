@@ -4,6 +4,7 @@ const spikes = [
   { href: '/s1', label: 'S1 Phaser 4 + Tiled + Next.js' },
   { href: '/s2', label: 'S2 LiveKit: เสียง · กล้อง · แชร์จอ' },
   { href: '/s3', label: 'S3 Movement sync (Colyseus)' },
+  { href: '/s4', label: 'S4 Proximity media' },
 ];
 
 export default function Home() {

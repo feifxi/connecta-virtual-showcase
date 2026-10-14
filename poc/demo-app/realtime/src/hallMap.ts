@@ -21,6 +21,7 @@ export function loadHallMap() {
   const walls = map.layers.find((l) => l.name === 'walls')?.data;
   if (!walls) throw new Error('layer "walls" not found in hall.json');
   const spawn = map.layers.find((l) => l.name === 'spawns')?.objects?.find((o) => o.name === 'spawn');
+  const boothNames = new Set((map.layers.find((l) => l.name === 'booths')?.objects ?? []).map((o) => o.name));
 
   const widthPx = map.width * map.tilewidth;
   const heightPx = map.height * map.tileheight;
@@ -28,6 +29,7 @@ export function loadHallMap() {
     widthPx,
     heightPx,
     spawn: { x: spawn?.x ?? 100, y: spawn?.y ?? 100 },
+    boothNames,
     // Checks the player's center point only — enough to stop teleporting through walls
     isWalkable(x: number, y: number) {
       if (x < 0 || y < 0 || x >= widthPx || y >= heightPx) return false;
