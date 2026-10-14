@@ -31,7 +31,7 @@ npm run dev       # http://localhost:3000/s1
 
 | Spike | สถานะ | Tag | ผล / ตัวเลข |
 |---|---|---|---|
-| S1 Phaser 4 + Tiled + Next.js | รออนุมัติ | — | Phaser 4.2.1 · Next 16.4 · WebGL 58 fps · เดิน 197 px/s (ทแยง 199 = normalize ถูก) · ชนกำแพง/โต๊ะบูธ · คลิกเพื่อเดิน · เข้า/ออกบูธส่ง event ถึง React · mount/unmount 100 รอบ heap คงที่ ~18 MB · ⚠️ ห้ามใช้ `Graphics.generateTexture()` (Phaser 4 ถือ scene + WebGL context ไว้ตลอดผ่าน `Graphics.TargetCamera`) ใช้ไฟล์รูปแทน |
+| S1 Phaser 4 + Tiled + Next.js | ✅ ผ่าน | `s1-done` | Phaser 4.2.1 · Next 16.4 · WebGL 58 fps · เดิน 197 px/s (ทแยง 199 = normalize ถูก) · ชนกำแพง/โต๊ะบูธ · คลิกเพื่อเดิน · เข้า/ออกบูธส่ง event ถึง React · mount/unmount 100 รอบ heap คงที่ ~18 MB · ⚠️ ห้ามใช้ `Graphics.generateTexture()` (Phaser 4 ถือ scene + WebGL context ไว้ตลอดผ่าน `Graphics.TargetCamera`) ใช้ไฟล์รูปแทน |
 | S2 Movement sync + loadtest | ยังไม่เริ่ม | — | |
 | S3 LiveKit: เสียง · กล้อง · แชร์จอ | ยังไม่เริ่ม | — | |
 | S4 Proximity media | ยังไม่เริ่ม | — | |
