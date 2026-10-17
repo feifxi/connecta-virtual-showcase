@@ -2,14 +2,14 @@ import * as Phaser from 'phaser';
 import { NavGrid, facing, tiledProps, type Dir } from './nav';
 
 // Hall preset POC: the map holds only booth *slots*; booths are placed at runtime from the project list.
-// - setup(): before the event · sort by category (or keep list order) and fill slots from the entrance side
-// - addBooth(): during the event · new booth takes a free slot, nobody else moves
+// - setup(): before the event · zoning: each category gets its own block(s), never shared (or list order without categories)
+// - addBooth(): during the event · new booth takes a free slot in its own zone (or an empty block), nobody else moves
 // Empty slots become decoration so a small event never shows empty tables. Offline (no server, no media).
 
 export type PresetId = 'room' | 'hall';
 export type Project = { no: string; title: string; category: string };
 export type PlacedBooth = Project & { slot: string; block: string };
-export type LayoutInfo = { preset: PresetId; capacity: number; booths: number; empty: number; blocks: { id: string; label: string }[]; added?: string; full?: boolean };
+export type LayoutInfo = { preset: PresetId; capacity: number; booths: number; empty: number; blocks: { id: string; label: string }[]; added?: string; full?: string; unplaced?: number };
 export type Hearing = { range: number; people: number; where: 'booth' | 'open' };
 
 export const PresetEvents = {
@@ -80,6 +80,7 @@ export class PresetScene extends Phaser.Scene {
   private minimap!: Phaser.Cameras.Scene2D.Camera;
   private current: Slot | null = null;
   private categories = true;
+  private blockCat = new Map<string, string>(); // zone: block id -> its one category
   private range = 5; // hearing range in tiles (subscribe) · see setRange
   private ring!: Phaser.GameObjects.Graphics;
   private hearingKey = '';
@@ -204,27 +205,51 @@ export class PresetScene extends Phaser.Scene {
   setup(count: number, categories: boolean) {
     this.categories = categories;
     const list = PROJECTS.slice(0, Math.min(count, this.slots.length));
-    const ordered = categories
-      ? [...list].sort((a, b) => CATEGORIES.indexOf(a.category as never) - CATEGORIES.indexOf(b.category as never) || a.no.localeCompare(b.no))
-      : list;
     for (const s of this.slots) s.booth = null;
-    ordered.forEach((p, i) => (this.slots[i].booth = { ...p, slot: this.slots[i].id, block: this.slots[i].block }));
+    this.blockCat.clear();
+    let unplaced = 0;
+    if (!categories) list.forEach((p, i) => this.place(this.slots[i], p));
+    else {
+      // blocks are stored closest-to-entrance first · a category fills its own blocks, spare slots stay empty
+      const blocks = [...this.blockRects.keys()];
+      let next = 0;
+      for (const cat of CATEGORIES) {
+        let room: Slot[] = [];
+        for (const p of list.filter((x) => x.category === cat)) {
+          if (!room.length) {
+            const id = blocks[next++];
+            if (!id) { unplaced++; continue; }
+            this.blockCat.set(id, cat);
+            room = this.slots.filter((s) => s.block === id);
+          }
+          this.place(room.shift()!, p);
+        }
+      }
+    }
     this.render();
-    this.emitLayout();
+    this.emitLayout(unplaced ? { unplaced } : {});
+  }
+
+  private place(slot: Slot, p: Project) {
+    slot.booth = { ...p, slot: slot.id, block: slot.block };
   }
 
   // during the event: next project takes a free slot (after its own category when possible), nobody moves
   addBooth() {
     const placed = new Set(this.slots.filter((s) => s.booth).map((s) => s.booth!.no));
     const next = PROJECTS.find((p) => !placed.has(p.no));
-    const free = this.slots.filter((s) => !s.booth);
-    if (!next || !free.length) return this.emitLayout({ full: true });
-    let slot = free[0];
-    if (this.categories) {
-      const last = Math.max(-1, ...this.slots.filter((s) => s.booth?.category === next.category).map((s) => s.order));
-      slot = free.find((s) => s.order > last) ?? free[0];
+    if (!next) return this.emitLayout({ full: 'all' });
+    let slot = this.slots.find((s) => !s.booth && (!this.categories || this.blockCat.get(s.block) === next.category));
+    if (!slot && this.categories) {
+      // its zone is full: take a whole empty block (a lounge) as a new zone for this category
+      const id = [...this.blockRects.keys()].find((b) => !this.blockCat.has(b));
+      if (id) {
+        this.blockCat.set(id, next.category);
+        slot = this.slots.find((s) => s.block === id);
+      }
     }
-    slot.booth = { ...next, slot: slot.id, block: slot.block };
+    if (!slot) return this.emitLayout({ full: this.categories ? next.category : 'all' });
+    this.place(slot, next);
     this.render();
     this.flash(slot);
     this.emitLayout({ added: next.title });

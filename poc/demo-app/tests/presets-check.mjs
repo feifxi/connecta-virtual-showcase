@@ -39,10 +39,10 @@ await ready();
 await sleep(1200);
 let s = await state();
 check(s.preset === 'hall' && s.capacity === 30 && s.booths === 18, `hall default: ${s.booths}/${s.capacity} booths`);
-const runs = (o) => o.map((x) => x[1]).filter((c, i, a) => c !== a[i - 1]).length;
-check(runs(s.order) === 4, `each category in one run (fill order): ${s.blocks.join(' | ')}`);
+const zones = s.blocks.filter(Boolean);
+check(zones.length === 4 && zones.every((b) => !b.includes('+')) && new Set(zones).size === 4, `one category per block (zones): ${s.blocks.join(' | ')}`);
 await shot('presets-hall-18-categories');
-check(await page.getByText('Block A1: lounge').isVisible() && await page.getByText('Block C1: lounge').isVisible(), 'empty blocks A1 + C1 become lounges');
+check(await page.getByText('Block C1: lounge').isVisible(), 'unused block C1 becomes a lounge');
 
 // hearing range: stand in the main lounge, compare 5 vs 8 tiles
 await page.evaluate((s) => { const sc = eval(s); sc.player.setPosition(42.5 * 32, 24 * 32); }, scene());
@@ -75,14 +75,21 @@ s = await state();
 const moved = Object.entries(before).filter(([no, slot]) => s.slots[no] !== slot);
 check(s.booths === 19 && moved.length === 0, `add booth: ${s.booths} booths · moved ${moved.length}`);
 
-// fill to capacity then one more -> full message
+// 30 projects by category: 4 categories need 7 blocks, hall has 5 -> warning, the rest stays off the map
 await page.locator('input[type=range]').fill('30');
 await sleep(400);
+s = await state();
+check(await page.getByText("don't fit").isVisible() && s.booths < 30 && s.blocks.every((b) => !b.includes('+')), `zoning overflow warns: ${s.booths} on the map · ${s.blocks.join(' | ')}`);
+await shot('presets-hall-30-zones');
+
+// without categories all 30 fit · one more -> full message
+await page.getByRole('button', { name: 'No categories' }).click();
+await sleep(400);
+check((await state()).booths === 30, 'no categories: 30 booths');
 await page.getByRole('button', { name: '+ Add booth during the event' }).click();
 await sleep(300);
 check(await page.getByText('All slots are taken').isVisible(), 'full hall shows message');
 check((await state()).booths === 30, 'still 30 booths');
-await shot('presets-hall-30');
 
 // walk into the first booth by click path
 await page.locator('input[type=range]').fill('12');
@@ -92,7 +99,7 @@ await page.evaluate(({ s, x, y }) => { const sc = eval(s); sc.path = sc.nav.find
 await page.waitForFunction((t) => document.body.innerText.includes(t), target.title, { timeout: 30000 }).catch(() => {});
 check(await page.getByText(target.title).first().isVisible(), `walked into booth "${target.title}"`);
 
-// Room preset
+// Room preset (no categories carried over)
 await page.getByRole('button', { name: 'Room · 12' }).click();
 await page.waitForFunction((s) => { try { return eval(s).preset === 'room' && eval(s).player?.active; } catch { return false; } }, scene(), { timeout: 20000 });
 await sleep(800);
@@ -101,11 +108,14 @@ check(s.capacity === 12 && s.booths === 12, `room: ${s.booths}/${s.capacity}`);
 await page.locator('input[type=range]').fill('7');
 await sleep(400);
 s = await state();
-check(s.booths === 7, `room with 7 projects: ${s.blocks.join(' | ')}`);
-await shot('presets-room-7');
-await page.getByRole('button', { name: 'No categories' }).click();
-await sleep(400);
+check(s.booths === 7, 'room with 7 projects, no categories');
 await shot('presets-room-7-nocat');
+// room has 2 blocks -> only 2 category zones fit
+await page.getByRole('button', { name: 'By category' }).click();
+await sleep(400);
+s = await state();
+check(s.blocks.filter(Boolean).length === 2 && await page.getByText("don't fit").isVisible(), `room by category: ${s.booths} on the map · ${s.blocks.join(' | ')}`);
+await shot('presets-room-7');
 
 await sleep(1500);
 s = await state();

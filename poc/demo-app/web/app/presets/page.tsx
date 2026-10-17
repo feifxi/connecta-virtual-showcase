@@ -52,9 +52,12 @@ export default function PresetsPage() {
   };
   const onLayout = (info: LayoutInfo) => {
     setLayout(info);
-    setCount(info.booths);
-    if (info.added) setNote(`Added "${info.added}" to a free slot · no one else moved`);
-    if (info.full) setNote('All slots are taken → open another hall or pick a bigger preset');
+    if (info.added) {
+      setCount((c) => c + 1);
+      setNote(`Added "${info.added}" to a free slot · no one else moved`);
+    }
+    if (info.full) setNote(info.full === 'all' ? 'All slots are taken → pick a bigger preset' : `No room left for ${info.full} (its zone is full, no empty block) → pick a bigger preset`);
+    if (info.unplaced) setNote(`${info.unplaced} projects don't fit: each category needs its own block → pick a bigger preset, or turn off categories`);
   };
 
   return (
@@ -104,7 +107,7 @@ export default function PresetsPage() {
 
         {layout && (
           <div style={{ fontSize: 12, color: '#6b6380', lineHeight: 1.6 }}>
-            <div><b style={{ color: '#2b2340' }}>{layout.booths}</b> booths · <b style={{ color: '#2b2340' }}>{layout.empty}</b> empty slots (empty block → lounge)</div>
+            <div><b style={{ color: '#2b2340' }}>{layout.booths}</b> booths on the map · <b style={{ color: '#2b2340' }}>{layout.empty}</b> empty slots (empty block → lounge)</div>
             {layout.blocks.map((b) => (
               <div key={b.id}>Block {b.id}: {b.label}</div>
             ))}

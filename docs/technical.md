@@ -57,7 +57,7 @@ realtime → postgres :5432 · redis :6379 · api (ตรวจสิทธิ�
 **Media ในฮอลล์ (ออกแบบ)**
 - 1 ฮอลล์ = 1 LiveKit room · ทุกคน publish ไมค์ได้ (ปกติ) · **client subscribe เฉพาะคนในรัศมี** (เริ่มที่ 5 ช่อง เท่า Gather · ตัดที่ 7 ช่อง)
 - จอแชร์ + กล้องผู้นำเสนอ: จอแชร์ + กล้อง publish ได้เฉพาะ PRESENTER ของบูธนั้น (ตรวจตอนออก token) · subscribe เฉพาะคนในโซนบูธ · simulcast
-- **เสียงโซนบูธ**: คนในโซนบูธ subscribe กันทุกคนที่ความดังเต็ม · ไม่ subscribe คนนอกบูธ · คนนอกบูธไม่ subscribe คนในบูธ (ไม่ทะลุทั้งสองทาง) · Presenter/Staff mute คนในบูธผ่าน LiveKit server API (`mutePublishedTrack`)
+- **เสียงโซนบูธ**: คนในโซนบูธ subscribe กันทุกคนที่ความดังเต็ม · ไม่ subscribe คนนอกบูธ · คนนอกบูธไม่ subscribe คนในบูธ (ไม่ทะลุทั้งสองทาง) · Presenter/Admin mute คนในบูธผ่าน LiveKit server API (`mutePublishedTrack`)
 - สิทธิ์ทุกอย่างเปลี่ยนที่ **server** (LiveKit server API / token) ไม่ใช่แค่ปิดไมค์ฝั่ง client
 - ฮอลล์ที่ไม่มีคน = ไม่มี Colyseus room (`autoDispose` ทิ้ง room เมื่อว่าง) และ LiveKit ปิด room ว่างเอง → งานที่เปิดทิ้งไว้ (Exhibition) ไม่กิน CPU · ต้นทุนที่เหลือคือ storage
 
@@ -67,7 +67,7 @@ realtime → postgres :5432 · redis :6379 · api (ตรวจสิทธิ�
 - NestJS และ Colyseus (`onAuth`) ตรวจตัวตนด้วย **JWT plugin + JWKS** (`jose`) ไม่ต้องรู้ secret · JWT มีแค่ `userId` + app role · **event role เช็คจาก DB ทุกครั้ง**
 - Microsoft: tenant `common` (บัญชีองค์กร + ส่วนตัว) · scope `openid profile email` · @kmutt.ac.th เป็นบัญชี Microsoft · ⚠️ ต้องลอง login ด้วยบัญชี kmutt ว่ากดยินยอมแอปภายนอกเองได้ไหม — ถ้าเจอ "Need admin approval" ต้องขอ IT ทำ admin consent · ระหว่างนั้นใช้ magic link ไปที่เมล kmutt
 - API เปลี่ยนระหว่าง minor version → **pin version และอ่าน docs ตรงเวอร์ชัน**
-- อีเมล (magic link · คำเชิญ · ผลคะแนนถึงผู้นำเสนอ): Resend · free plan ส่งได้ 100 ฉบับ/วัน · Interested / survey ใช้ in-app + `Add to calendar` ไม่ส่งอีเมล · ส่งคำเชิญจำนวนมากต้องทยอยส่งหรือใช้แผนเสียเงิน (Pro $20/เดือน 50,000 ฉบับ)
+- อีเมล (magic link · คำเชิญ · ผลคะแนนถึงผู้นำเสนอ): **Gmail ของทีมผ่าน SMTP** (nodemailer + app password) · ฟรี ส่งได้ ~500 ฉบับ/วัน · ⚠️ ส่งอัตโนมัติเยอะ Google อาจระงับชั่วคราว → magic link เป็นทางสำรอง (ปุ่ม Google/Microsoft อยู่บน) · ไม่พอค่อยเปลี่ยนเป็น Brevo (ฟรี 300/วัน) แค่แก้ค่า SMTP · Interested / survey ใช้ in-app + `Add to calendar` ไม่ส่งอีเมล
 
 **สิ่งที่ nginx ต้องตั้งเอง**
 - **cert**: certbot + ต่ออายุอัตโนมัติ

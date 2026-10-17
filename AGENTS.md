@@ -9,7 +9,8 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 | ไฟล์ | ใช้ทำอะไร |
 |---|---|
 | `docs/connecta-v3.md` | ⭐ Product & Business: direction · pain · solution · target · value & competition · business model · SDG · ความเสี่ยง |
-| `docs/features.md` | ⭐ spec ฟีเจอร์: กฎร่วม · ลำดับ core/cut · role · spec รายฟีเจอร์ · ตาราง DB · test case |
+| `docs/features.md` | ⭐ spec ฟีเจอร์: กฎร่วม · ลำดับ core/cut · role · spec รายฟีเจอร์ตามแม่แบบ (ทำไม · ใครทำอะไร · เปิด/ปิด · ใครเห็น · Plan · กติกา · ไม่ทำ · ข้อมูล · Test) |
+| `docs/data-model.md` | ⭐ database design: ER diagram · ตาราง · constraint · index · enum · สถานะงาน · ข้อมูลที่ไม่เก็บ · state ใน memory · ไฟล์ · lifecycle/PDPA |
 | `docs/technical.md` | ⭐ stack · architecture · deployment · reference ด้านเทคนิค |
 | `poc/README.md` | ⭐ POC ทั้งหมด: แผน spike · สถานะ · วิธีทดสอบ · ผล · capacity · สเปก VM · สิ่งที่ต้องขอจาก IT · fallback |
 | `docs/research.md` | research ดิบ + แหล่งอ้างอิง: poster/booth · คู่แข่ง · business model · ชื่อแบรนด์ · survey · research เพิ่มเติม |
@@ -24,11 +25,11 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 
 - **โฟกัสงานนำเสนอผลงานของนักศึกษา** (งานโปรเจคจบ · โปสเตอร์ในรายวิชา) — ใกล้ตัว ทดสอบได้จริง และเป็นส่วนที่ Zoom/Teams ทำได้ไม่ดี
 - core โลก 2D ใช้ได้ทุก domain → ถ้าพบ insight ที่ดีกว่า (เช่น poster session งานประชุมวิชาการ) ปรับ use case ได้โดยไม่ต้องรื้อ
-- รายละเอียดอยู่ใน `docs/connecta-v3.md` · **ก่อนเขียนโค้ดให้อ่าน `docs/features.md` และ `docs/technical.md`**
+- รายละเอียดอยู่ใน `docs/connecta-v3.md` · **ก่อนเขียนโค้ดให้อ่าน `docs/features.md` · `docs/data-model.md` · `docs/technical.md`**
 
 ## กติกาเอกสาร context หลัก
 
-- กติกาเลขเวอร์ชันใช้กับ `connecta-vN.md` (Product & Business) เท่านั้น · `features.md` และ `technical.md` แก้ในไฟล์เดิมได้เลย
+- กติกาเลขเวอร์ชันใช้กับ `connecta-vN.md` (Product & Business) เท่านั้น · `features.md` · `data-model.md` · `technical.md` แก้ในไฟล์เดิมได้เลย · เพิ่มหรือแก้ฟีเจอร์ต้องตอบ checklist บนหัว `features.md` และแก้ตารางใน `data-model.md` ให้ตรงกัน
 - เปลี่ยน direction ใหญ่ → ย้ายไฟล์ปัจจุบันไป `docs/archive/deprecated-connecta-vN.md` แล้วสร้าง `docs/connecta-v(N+1).md`
 - ไฟล์ใหม่ต้อง**แทนที่ไฟล์เก่า 100%** — ข้อมูลที่ยังใช้ต้องยกมาครบ **ห้ามอ้างถึงไฟล์เก่า**
 - ชื่อไฟล์ใน `archive/` ใช้รูปแบบ `deprecated-<ชื่อ>-vN.md`
@@ -96,5 +97,5 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 1. Exam 2 (ส่ง 18 ต.ค.): spike/POC · mockup (ภาพจาก `poc/ui-mockup-v1/` ที่ทีมเลือก · v2 เก็บไว้เทียบ) · architecture · component design · API design · ER diagram · roadmap
 2. ทีมเขียน one-liner · pain · problem statement เอง แทนร่างใน `docs/connecta-v3.md`
 3. ทำ survey (`docs/research.md` ส่วน 4) + นัดคุยผู้จัด D-Day / อาจารย์ · ความเป็นไปได้ทางธุรกิจต้องใช้ข้อมูลจากผู้ใช้เป้าหมายจริง (ไม่ใช่ทีม)
-4. ปรับ UI mockup `poc/ui-mockup-v1/` ให้ตรงกับ `docs/features.md` (เช่น onboarding · ฟอร์มเข้างาน · คำเชิญ · Staff panel ในฮอลล์)
+4. ปรับ UI mockup `poc/ui-mockup-v1/` ให้ตรงกับ `docs/features.md` (เช่น onboarding · ฟอร์มเข้างาน · คำเชิญ · Admin panel ในฮอลล์)
 5. เช็ค SpatialChat ว่ามี judging หรือไม่
