@@ -48,7 +48,7 @@ export function HallView({ initialRole }: { initialRole: Role }) {
       <div className="hall-title">
         <Brand href="/home" />
         <span className="divider" />
-        <div className="hall-title-event"><strong>{EVENT.name}</strong><small><span className="dot" style={{ color: "var(--green)" }} /> Live · {EVENT.inHall} online · ends {EVENT.ends}</small></div>
+        <div className="hall-title-event"><strong>{EVENT.name}</strong><small><span className="dot" style={{ color: "var(--green)" }} /> {EVENT.inHall} in the hall, ends {EVENT.ends}</small></div>
       </div>
 
       <div className="hall-top-right">
@@ -59,7 +59,7 @@ export function HallView({ initialRole }: { initialRole: Role }) {
         <Pill cls="green"><span className="dot" />Connected</Pill>
       </div>
 
-      {role === "Judge" && <div className="judge-banner"><Icon name="trophy" /><strong>Judge</strong><span>7 of 12 submitted</span><span>· scoring closes when the event ends at {EVENT.ends}</span></div>}
+      {role === "Judge" && <div className="judge-banner"><Icon name="trophy" /><strong>7 of 12 scored</strong><span>Closes at {EVENT.ends}</span></div>}
 
       <nav className="hall-left-tools" aria-label="Hall tools">
         {([["booths", "grid", "All booths"], ["people", "users", "People nearby"], ["agenda", "calendar", "Agenda"]] as const).map(([p, i, l]) => (

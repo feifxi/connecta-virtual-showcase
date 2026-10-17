@@ -42,7 +42,7 @@ export default function CreateEvent() {
               <label className="field">Ends (required)<input type="time" defaultValue="23:59" /><span className="field-note">The event ends by itself at this time so it never stays open by accident. You can extend it on the day.</span></label>
               <label className="field">Only visitors from (optional)<input placeholder="@kmutt.ac.th" /><span className="field-note">Every event is listed in Explore. With a domain, only those accounts can join as visitors; invited presenters and judges always can.</span></label>
               <label className="field">Categories (optional)<input defaultValue="Engineering, Computing, Health, Design" /><span className="field-note">Each category becomes a zone in the hall.</span></label>
-              <label className="upload-area"><Icon name="upload" />Add an event cover<input type="file" accept="image/png,image/jpeg,image/webp" aria-label="Choose event cover" /></label>
+              <label className="upload-area"><Icon name="upload" />Add an event cover<small>PNG, JPG or WebP. 16:9 works best.</small><input type="file" accept="image/png,image/jpeg,image/webp" aria-label="Choose event cover" /></label>
             </>
           )}
           {step === 1 && (

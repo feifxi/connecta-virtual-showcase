@@ -66,7 +66,7 @@ export default function Landing() {
                     <span className="small-text muted">{e.date}</span>
                     <h3>{e.name}</h3>
                     <p>{e.host}</p>
-                    <div className="event-card-foot"><span className="flex"><Icon name="grid" />{e.booths} booths · {e.access}</span><Link href={`/e/senior-design-2026${e.state === "Live" ? "" : "?state=published"}`} className="text-link">{e.state === "Live" ? "Join" : "Interested"} <Icon name="arrow" /></Link></div>
+                    <div className="event-card-foot"><span className="foot-meta"><span className="flex"><Icon name="grid" />{e.booths} booths</span><span className="flex"><Icon name={e.access.startsWith("@") ? "shield" : "globe"} />{e.access}</span></span><Link href={`/e/senior-design-2026${e.state === "Live" ? "" : "?state=published"}`} className="text-link">{e.state === "Live" ? "Join" : "Interested"} <Icon name="arrow" /></Link></div>
                   </div>
                 </article>
               ))}
@@ -89,7 +89,7 @@ export default function Landing() {
 
           <section className="host-banner">
             <div><h2>Running a demo day this term?</h2><p>Pick a hall, import your projects, invite judges. Free up to 50 people at once.</p></div>
-            <Btn href="/login" icon="plus">Host a showcase</Btn>
+            <Btn href="/login" icon="plus">Create event</Btn>
           </section>
           <footer className="footer"><Brand /><Link href="/explore">Events</Link><Link href="/home">My events</Link><Link href="/profile">Your profile</Link><span>Made for meeting minds.</span></footer>
         </div>

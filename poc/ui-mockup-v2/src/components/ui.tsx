@@ -84,7 +84,7 @@ export function Header({ home = false, active }: { home?: boolean; active?: stri
           {home ? (
             <>
               <Btn href="/login" cls="ghost">Log in</Btn>
-              <Btn href="/login">Host a showcase</Btn>
+              <Btn href="/login">Create event</Btn>
             </>
           ) : (
             <>
@@ -117,7 +117,7 @@ export function Workspace({ active, children, kind = "admin" }: { active: string
         <aside className="sidebar">
           <div className="sidebar-caption">{kind === "admin" ? "Your showcase" : kind === "presenter" ? "Presenter workspace" : "Judge workspace"}</div>
           {links.map(([l, h, i]) => <Link key={l} href={h} className={active === l ? "active" : ""} title={l}><Icon name={i} /><span>{l}</span></Link>)}
-          <div className="sidebar-event"><Status text="Event is live" /><p>{EVENT.name}<br />16 Oct · {EVENT.time} · ends {EVENT.ends}</p></div>
+          <div className="sidebar-event"><Status text="Event is live" /><p><strong>{EVENT.name}</strong><br />16 Oct, {EVENT.time}<br />Ends by itself at {EVENT.ends}</p></div>
         </aside>
         <main id="main" className="workspace-main">{children}</main>
       </div>

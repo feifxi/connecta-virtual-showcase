@@ -12,7 +12,7 @@ export default function MyBooth() {
         <div><div className="flex" style={{ marginBottom: 9 }}><Pill cls="green">Presenter</Pill><span className="booth-code">Booth {p.code} · {p.category} zone</span></div><h1>Tell the story behind your work.</h1><p>Edit any time — before or during the event. Changes show in the hall right away.</p></div>
         <Btn href="/e/senior-design-2026/hall?as=Presenter" cls="secondary small" icon="arrow">Open in the hall</Btn>
       </div>
-      <Kpis items={[["Booth visitors", "188", "24 in the last hour", "users"], ["Avg. visit", "6.2 min", "Time well spent", "clock"], ["Feedback", "23", "3 new today", "chat"], ["Popular Vote", "96", "Results after the event", "heart"]]} />
+      <Kpis items={[["Booth visitors", "188", "24 in the last hour", "users"], ["Avg. visit", "6.2 min", "Event average 4.8 min", "clock"], ["Feedback", "23", "3 new today", "chat"], ["Popular Vote", "96", "Rank shown after results", "heart"]]} />
       <div className="workspace-grid">
         <form className="surface panel-card stack">
           <h2 style={{ marginBottom: 0 }}>Your booth</h2>
@@ -26,7 +26,7 @@ export default function MyBooth() {
             {[["cover.png", "Cover image", false], ["poster-final.pdf", "Poster · zooms with you in the booth", true], ["capstone-report.pdf", "For the AI assistant", true]].map(([f, d, ai]) => (
               <div key={f as string} className="resource"><Icon name="file" />{f as string}<small>{d as string}</small>{ai ? <label className="flex small-text" style={{ gap: 6 }}>AI<input type="checkbox" className="switch" defaultChecked /></label> : null}</div>
             ))}
-            <label className="upload-area" style={{ display: "block", marginTop: 14 }}><Icon name="upload" />Add slides or a file<input type="file" aria-label="Choose a file" /></label>
+            <label className="upload-area" style={{ display: "block", marginTop: 14 }}><Icon name="upload" />Add slides or a file<small>PDF, PPTX or DOCX, up to 20 MB</small><input type="file" aria-label="Choose a file" /></label>
             <p className="field-note" style={{ marginTop: 8 }}>We check the real file type, not the extension. Max 20 MB each.</p>
           </div>
           <section className="surface" style={{ padding: 18, background: "var(--lavender)", border: 0 }}>
@@ -43,7 +43,7 @@ export default function MyBooth() {
             <div className="notice butter" style={{ marginTop: 12 }}><Icon name="calendar" /><span>Organizer&rsquo;s deadline: <b>12 Oct</b>. A reminder only — you can still edit during the event.</span></div>
           </section>
           <section className="surface panel-card">
-            <div className="flex between"><h3 style={{ fontSize: ".875rem" }}>How visitors see it</h3><Pill cls="green">● Live when you&rsquo;re inside</Pill></div>
+            <div className="flex between"><h3 style={{ fontSize: ".875rem" }}>How visitors see it</h3><Pill cls="live"><span className="dot" />Live when you&rsquo;re inside</Pill></div>
             <div className="project-poster"><Poster p={p} /></div>
             <h3>{p.title}</h3>
           </section>

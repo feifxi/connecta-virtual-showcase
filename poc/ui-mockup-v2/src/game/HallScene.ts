@@ -275,7 +275,7 @@ export class HallScene extends Phaser.Scene {
 
   private label(text: string, you: boolean) {
     const t = this.add.text(0, 0, text, {
-      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", fontSize: "8px", fontStyle: "600", color: "#ffffff", resolution: 4,
+      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", fontSize: "10px", fontStyle: "600", color: "#ffffff", resolution: 4,
       backgroundColor: you ? "#1d5cf5" : "rgba(15,26,58,0.87)", padding: { left: 5, right: 5, top: 1, bottom: 1 },
     }).setOrigin(0.5, 1);
     t.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
@@ -283,7 +283,7 @@ export class HallScene extends Phaser.Scene {
   }
 
   private plate(x: number, y: number, s: string, bg: number, size: number) {
-    const t = this.add.text(x, y, s, { fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", fontSize: `${size}px`, fontStyle: "700", color: "#ffffff", resolution: 4, padding: { left: 7, right: 7, top: 3, bottom: 3 } }).setOrigin(0.5).setDepth(100000);
+    const t = this.add.text(x, y, s, { fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", fontSize: `${size + 2}px`, fontStyle: "700", color: "#ffffff", resolution: 4, padding: { left: 7, right: 7, top: 3, bottom: 3 } }).setOrigin(0.5).setDepth(100000);
     t.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
     this.add.graphics().setDepth(99999).fillStyle(bg, 1).fillRoundedRect(x - t.width / 2, y - t.height / 2, t.width, t.height, t.height / 2);
   }

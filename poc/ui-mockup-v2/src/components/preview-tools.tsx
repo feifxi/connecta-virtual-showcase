@@ -16,7 +16,6 @@ export function PreviewTools() {
     <>
       <div className="preview-tools" aria-label="Design preview controls" style={inHall ? { bottom: 25, left: 20 } : undefined}>
         <button type="button" onClick={() => dialog.current?.showModal()}><Icon name="grid" />All screens <span style={{ color: "var(--faint)" }}>{SCREENS.length}</span></button>
-        {!inHall && <span className="preview-label">Interactive UI preview</span>}
       </div>
       <dialog ref={dialog} className="modal page-picker" aria-labelledby="pages-title" onClick={(e) => { if (e.target === dialog.current) dialog.current.close(); }}>
         <button type="button" className="icon-btn modal-close" aria-label="Close dialog" onClick={() => dialog.current?.close()}><Icon name="close" /></button>
