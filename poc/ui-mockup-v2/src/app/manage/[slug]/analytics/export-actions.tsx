@@ -1,24 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui";
-import { RESULTS } from "@/lib/data";
+import { Icon } from "@/components/ui";
+import { PROJECTS } from "@/lib/data";
 
-export function ReportActions() {
-  const [published, setPublished] = useState(false);
+export function ExportActions() {
   const exportCsv = () => {
-    const rows = [["rank", "booth", "title", "mean_score", "judges"], ...RESULTS.map((r) => [r.rank, r.booth, `"${r.title}"`, r.score, r.judges])];
+    const rows = [["booth", "title", "visits", "votes", "weighted_score"], ...PROJECTS.map((p) => [p.code, `"${p.title}"`, p.visits, p.votes, p.score])];
     const url = URL.createObjectURL(new Blob([rows.map((r) => r.join(",")).join("\n")], { type: "text/csv" }));
-    const a = Object.assign(document.createElement("a"), { href: url, download: "judging-results.csv" });
+    const a = Object.assign(document.createElement("a"), { href: url, download: "connecta-event-report-sample.csv" });
     a.click();
     URL.revokeObjectURL(url);
   };
   return (
-    <div className="flex gap-2">
-      <Button variant="secondary" className="h-11 px-[18px] text-sm" onClick={exportCsv}>Export CSV</Button>
-      <Button className="h-11 px-[18px] text-sm" aria-pressed={published} onClick={() => setPublished(true)} disabled={published}>
-        {published ? "Results published ✓" : "Publish results"}
-      </Button>
+    <div className="flex">
+      <button type="button" className="btn secondary small" onClick={exportCsv}><Icon name="download" />Export CSV</button>
+      <button type="button" className="btn secondary small"><Icon name="file" />Export PDF</button>
     </div>
   );
 }

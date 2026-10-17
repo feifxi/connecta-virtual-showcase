@@ -37,21 +37,22 @@ export default function Login() {
         <Logo />
         <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-7 py-12">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
-            <p className="mt-2 text-muted-foreground">Log in to join events, manage your booth or run your own showcase.</p>
+            <h1 className="text-3xl font-bold tracking-tight">Log in to Connecta</h1>
+            <p className="mt-2 text-muted-foreground">Everyone logs in — visitors, presenters, judges and admins. It keeps the hall safe and your scores tied to you.</p>
           </div>
           <div className="flex flex-col gap-3">
-            <Link href="/home" className={cn(buttonVariants({ variant: "outline" }), bigButton, "w-full gap-3")}>
-              <GoogleMark /> Continue with Google
-            </Link>
-            <Link href="/home" className={cn(buttonVariants({ variant: "outline" }), bigButton, "w-full gap-3")}>
+            <Link href="/onboarding" className={cn(buttonVariants({ variant: "outline" }), bigButton, "w-full gap-3")}>
               <MicrosoftMark /> Continue with Microsoft
+            </Link>
+            <p className="-mt-1 text-center text-xs text-muted-foreground">University accounts like @kmutt.ac.th use Microsoft</p>
+            <Link href="/onboarding" className={cn(buttonVariants({ variant: "outline" }), bigButton, "w-full gap-3")}>
+              <GoogleMark /> Continue with Google
             </Link>
           </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />or get a sign-in link<span className="h-px flex-1 bg-border" />
+            <span className="h-px flex-1 bg-border" />or use an email link<span className="h-px flex-1 bg-border" />
           </div>
-          <form action="/home" className="flex flex-col gap-3">
+          <form action="/onboarding" className="flex flex-col gap-3">
             <Label htmlFor="email" className="text-sm font-semibold">Email</Label>
             <Input id="email" name="email" type="email" placeholder="you@university.ac.th" className="h-11 rounded-xl px-4 text-[15px]" />
             <button type="submit" className={cn(buttonVariants(), bigButton, "w-full")}>
@@ -59,7 +60,7 @@ export default function Login() {
             </button>
           </form>
           <p className="text-xs leading-relaxed text-muted-foreground">
-            By continuing you agree to the <Link href="#" className="underline">terms</Link> and <Link href="#" className="underline">privacy policy</Link>. We only share your name with booths you choose to connect with.
+            By continuing you agree to the <Link href="#" className="underline">terms</Link> and <Link href="#" className="underline">privacy policy</Link>. People in an event see your name, avatar, organization and position.
           </p>
         </div>
       </div>
@@ -67,7 +68,7 @@ export default function Login() {
         <HallMap showMe />
         <div className="max-w-md">
           <p className="text-xl font-semibold leading-snug text-secondary-foreground">Walk in. Listen. Ask the team.</p>
-          <p className="mt-2 text-[15px] text-secondary-foreground/80">Voices fade in as you get closer to a booth, so joining a conversation feels as easy as it does on a real exhibition floor.</p>
+          <p className="mt-2 text-[15px] text-secondary-foreground/80">Inside a booth everyone hears each other like one room, so joining a conversation feels as easy as on a real exhibition floor.</p>
         </div>
       </div>
     </div>

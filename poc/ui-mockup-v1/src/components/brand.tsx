@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { Users } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toneClass, type BoothStatus, type Tone } from "@/lib/mock";
+import { toneClass, type BoothStatus, type Role, type Tone } from "@/lib/mock";
 
 export function Logo({ className, href = "/" }: { className?: string; href?: string }) {
   return (
@@ -21,20 +22,28 @@ export function Chip({ tone, children, className }: { tone: Tone; children: Reac
   return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", toneClass[tone], className)}>{children}</span>;
 }
 
-const statusStyle: Record<BoothStatus, { label: string; cls: string; dot: string }> = {
-  presenting: { label: "Presenting now", cls: "bg-primary text-primary-foreground", dot: "bg-white" },
-  staffed: { label: "Team is here", cls: "bg-secondary text-secondary-foreground", dot: "bg-primary" },
-  empty: { label: "No one yet", cls: "bg-muted text-muted-foreground", dot: "bg-muted-foreground/60" },
-};
-
-export function StatusBadge({ status, className }: { status: BoothStatus; className?: string }) {
-  const s = statusStyle[status];
+// Booth status from outside: "● Live" only when a presenter is inside, plus how many people are in the booth
+export function StatusBadge({ status, people, className }: { status: BoothStatus; people?: number; className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold", s.cls, className)}>
-      <span className={cn("size-1.5 rounded-full", s.dot)} aria-hidden="true" />
-      {s.label}
+    <span className={cn("inline-flex items-center gap-1.5", className)}>
+      {status === "live" && (
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+          <span className="size-1.5 rounded-full bg-white" aria-hidden="true" />Live
+        </span>
+      )}
+      {people !== undefined && (
+        <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
+          <Users className="size-3" aria-hidden="true" />{people}
+        </span>
+      )}
     </span>
   );
+}
+
+const roleTone: Record<Role, Tone> = { Admin: "lilac", Presenter: "mint", Judge: "butter", Visitor: "sky" };
+
+export function RoleChip({ role, className }: { role: Role; className?: string }) {
+  return <Chip tone={roleTone[role]} className={className}>{role}</Chip>;
 }
 
 const avatarTones: Tone[] = ["peach", "mint", "butter", "lilac", "sky"];

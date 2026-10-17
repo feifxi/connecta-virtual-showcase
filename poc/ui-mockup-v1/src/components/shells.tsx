@@ -15,7 +15,7 @@ export function PublicHeader({ minimal = false }: { minimal?: boolean }) {
           <nav aria-label="Main" className="flex flex-wrap items-center gap-1 text-[15px]">
             <Link href="/#how" className="rounded-lg px-3 py-2 text-muted-foreground hover:text-foreground">How it works</Link>
             <Link href="/#organizers" className="rounded-lg px-3 py-2 text-muted-foreground hover:text-foreground">For organizers</Link>
-            <Link href="/e/sit-capstone-2027" className="rounded-lg px-3 py-2 text-muted-foreground hover:text-foreground">Live events</Link>
+            <Link href="/e/sit-capstone-2027" className="rounded-lg px-3 py-2 text-muted-foreground hover:text-foreground">Explore events</Link>
             <Link href="/login" className={cn(buttonVariants({ variant: "outline" }), "ml-2 h-10 rounded-xl px-4 text-[15px]")}>Log in</Link>
             <Link href="/login" className={cn(buttonVariants(), "h-10 rounded-xl px-4 text-[15px]")}>Get started</Link>
           </nav>
@@ -52,7 +52,7 @@ export function AppHeader() {
 
 const manageNav = [
   { key: "overview", label: "Overview", icon: LayoutGrid, href: "" },
-  { key: "booths", label: "Booths", icon: Store, href: "?tab=booths" },
+  { key: "projects", label: "Projects & hall", icon: Store, href: "/projects" },
   { key: "people", label: "People & roles", icon: Users, href: "?tab=people" },
   { key: "judging", label: "Judging", icon: Trophy, href: "?tab=judging" },
   { key: "analytics", label: "Analytics", icon: ChartColumn, href: "/analytics" },

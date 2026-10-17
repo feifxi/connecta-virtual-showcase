@@ -1,85 +1,176 @@
 import Link from "next/link";
-import type { ComponentProps, ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { PATHS } from "@/lib/icons";
+import { CHARACTERS, EVENT, type Project, type Role } from "@/lib/data";
+import { Actor } from "./actor";
 
-// Logo: ring with a transparent right quarter + orange dot, then the wordmark
-export function Logo({ size = 28, dark = false, label = "Connecta", href, className = "" }: { size?: number; dark?: boolean; label?: string; href?: string; className?: string }) {
-  const stroke = Math.round(size * 0.215);
-  const dot = Math.round(size * 0.25);
-  const mark = (
-    <span className={`flex items-center gap-2.5 font-bold tracking-[-0.01em] ${className}`} style={{ fontSize: size * 0.75 }}>
-      <span
-        aria-hidden
-        className="relative shrink-0 rounded-full"
-        style={{ width: size, height: size, border: `${stroke}px solid ${dark ? "#7fa3ff" : "#1d5cf5"}`, borderRightColor: "transparent" }}
-      >
-        <span className="absolute rounded-full bg-accent" style={{ width: dot, height: dot, right: -dot, top: size * 0.21 }} />
-      </span>
-      {label}
+export function Icon({ name, className = "" }: { name: string; className?: string }) {
+  return (
+    <svg className={`icon ${className}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={PATHS[name] ?? PATHS.grid} />
+    </svg>
+  );
+}
+
+export function Brand({ href = "/" }: { href?: string }) {
+  return (
+    <Link className="brand" href={href} aria-label="Connecta home">
+      <span className="brand-mark" aria-hidden="true" />
+      <span translate="no">Connecta</span>
+    </Link>
+  );
+}
+
+export function Btn({ href, children, cls = "", icon }: { href: string; children: ReactNode; cls?: string; icon?: string }) {
+  return <Link className={`btn ${cls}`} href={href}>{icon && <Icon name={icon} />}{children}</Link>;
+}
+
+export function Pill({ children, cls = "", style }: { children: ReactNode; cls?: string; style?: CSSProperties }) {
+  return <span className={`pill ${cls}`} style={style}>{children}</span>;
+}
+
+// "● Live" = a presenter is inside the booth right now
+export function Status({ text = "Live now", count }: { text?: string; count?: string | number }) {
+  return <Pill cls="live"><span className="dot" />{text}{count !== undefined ? ` · ${count}` : ""}</Pill>;
+}
+
+export function LiveBadge({ live, people }: { live: boolean; people?: number }) {
+  return (
+    <span className="flex" style={{ gap: 6 }}>
+      {live && <Status text="Live" />}
+      {people !== undefined && <Pill><Icon name="users" className="xs" />{people}</Pill>}
     </span>
   );
-  return href ? <Link href={href} aria-label="Connecta home">{mark}</Link> : mark;
 }
 
-const BTN = {
-  primary: "bg-primary text-white hover:bg-primary-hover",
-  secondary: "bg-white border border-input text-ink hover:border-faint",
-  ghost: "text-ink hover:bg-subtle",
-} as const;
-
-export function btn(variant: keyof typeof BTN = "primary", extra = "") {
-  return `inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 ${BTN[variant]} ${extra}`;
+const ROLE_CLS: Record<Role, string> = { Admin: "lav", Presenter: "green", Judge: "blue", Visitor: "" };
+export function RoleChip({ role }: { role: Role }) {
+  return <Pill cls={ROLE_CLS[role]}>{role}</Pill>;
 }
 
-export function Button({ variant = "primary", className = "", ...rest }: ComponentProps<"button"> & { variant?: keyof typeof BTN }) {
-  return <button type="button" className={btn(variant, className)} {...rest} />;
+export function Initials({ name, size = 36 }: { name: string; size?: number }) {
+  const t = name.split(" ").map((n) => n[0]).slice(0, 2).join("");
+  return <span className="avatar-dot" style={{ width: size, height: size }}>{t}</span>;
 }
 
-export function LinkButton({ variant = "primary", className = "", ...rest }: ComponentProps<typeof Link> & { variant?: keyof typeof BTN }) {
-  return <Link className={btn(variant, className)} {...rest} />;
-}
-
-export function Chip({ tone = "subtle", children, className = "" }: { tone?: "subtle" | "live" | "primary" | "ink"; children: ReactNode; className?: string }) {
-  const t = { subtle: "bg-subtle text-ink-2", live: "bg-live-bg text-live", primary: "bg-primary-tint text-primary", ink: "bg-ink text-white" }[tone];
-  return <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-[5px] text-[13px] font-semibold ${t} ${className}`}>{children}</span>;
-}
-
-export function BoothBadge({ children }: { children: ReactNode }) {
-  return <span className="whitespace-nowrap rounded-[7px] bg-primary-tint px-[9px] py-[3px] text-xs font-semibold text-primary">{children}</span>;
-}
-
-export function Segmented<T extends string>({ options, value, onChange, label }: { options: readonly T[]; value: T; onChange: (v: T) => void; label: string }) {
+export function AvatarStack({ ids = [8, 9, 12] }: { ids?: number[] }) {
   return (
-    <div role="radiogroup" aria-label={label} className="grid gap-1 rounded-xl bg-subtle p-1 text-sm font-semibold" style={{ gridTemplateColumns: `repeat(${options.length}, 1fr)` }}>
-      {options.map((o) => (
-        <button
-          key={o}
-          type="button"
-          role="radio"
-          aria-checked={o === value}
-          onClick={() => onChange(o)}
-          className={`rounded-[9px] p-2.5 transition-colors ${o === value ? "bg-white text-primary shadow-seg" : "text-muted hover:text-ink"}`}
-        >
-          {o}
-        </button>
+    <div className="avatar-stack" aria-hidden="true">
+      {ids.map((i) => (
+        <span key={i} className="mini-face">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={CHARACTERS[i].portrait} width={29} height={29} alt="" />
+        </span>
       ))}
     </div>
   );
 }
 
-export function TopNav({ active = "Events", right }: { active?: string; right?: ReactNode }) {
+export function Portrait({ index, size = 41 }: { index: number; size?: number }) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={CHARACTERS[index].portrait} width={size} height={size} alt="" style={{ width: size, height: size, imageRendering: "pixelated", background: "var(--subtle)", borderRadius: 10, objectFit: "contain" }} />;
+}
+
+export function Header({ home = false, active }: { home?: boolean; active?: string }) {
+  const links: [string, string][] = [["Events", "/explore"], ["My events", "/home"], ["For organizers", `/manage/${EVENT.slug}`]];
   return (
-    <header className="flex h-[68px] items-center gap-7 border-b border-line bg-white px-10">
-      <Logo size={24} href="/" />
-      <nav className="ml-4 flex gap-6 text-sm font-medium text-ink-2">
-        {["Events", "Showcase", "Archive"].map((n) => (
-          <span key={n} className={n === active ? "text-primary" : ""}>{n}</span>
-        ))}
+    <header className={home ? "home-nav" : "nav-wrap"}>
+      <nav className="nav container" aria-label="Main navigation">
+        <Brand />
+        <div className="nav-links">
+          {links.map(([l, h]) => <Link key={l} href={h} className={active === l ? "active" : ""}>{l}</Link>)}
+        </div>
+        <div className="nav-actions">
+          {home ? (
+            <>
+              <Btn href="/login" cls="ghost">Log in</Btn>
+              <Btn href="/login">Host a showcase</Btn>
+            </>
+          ) : (
+            <>
+              <button type="button" className="icon-btn" aria-label="Notifications"><Icon name="bell" /></button>
+              <span className="divider" />
+              <Link className="avatar-pill" href="/profile" aria-label="Open your profile"><span className="avatar-dot">N</span><Icon name="down" /></Link>
+            </>
+          )}
+        </div>
       </nav>
-      <div className="ml-auto flex items-center gap-3">{right}</div>
     </header>
   );
 }
 
-export function Avatar({ initials = "AK" }: { initials?: string }) {
-  return <span className="grid size-[34px] place-items-center rounded-full bg-[#c9d8ff] text-xs font-bold">{initials}</span>;
+const ADMIN_LINKS: [string, string, string][] = [
+  ["Overview", "", "grid"], ["Projects & hall", "/projects", "monitor"], ["People & roles", "?tab=people", "users"],
+  ["Judging", "?tab=judging", "trophy"], ["Event report", "/analytics", "chart"], ["Moderation", "?tab=moderation", "shield"], ["Settings", "?tab=settings", "settings"],
+];
+
+export function Workspace({ active, children, kind = "admin" }: { active: string; children: ReactNode; kind?: "admin" | "presenter" | "judge" }) {
+  const links: [string, string, string][] = kind === "admin"
+    ? ADMIN_LINKS.map(([l, h, i]) => [l, `/manage/${EVENT.slug}${h}`, i])
+    : kind === "presenter"
+      ? [["My booth", `/e/${EVENT.slug}/my-booth`, "monitor"], ["Visit the hall", `/e/${EVENT.slug}/hall?as=Presenter`, "map"], ["Event page", `/e/${EVENT.slug}`, "calendar"]]
+      : [["Judging list", `/e/${EVENT.slug}/judge`, "trophy"], ["Visit the hall", `/e/${EVENT.slug}/hall?as=Judge`, "map"], ["Event page", `/e/${EVENT.slug}`, "calendar"]];
+  return (
+    <>
+      <Header active={kind === "admin" ? "For organizers" : "My events"} />
+      <div className="workspace page">
+        <aside className="sidebar">
+          <div className="sidebar-caption">{kind === "admin" ? "Your showcase" : kind === "presenter" ? "Presenter workspace" : "Judge workspace"}</div>
+          {links.map(([l, h, i]) => <Link key={l} href={h} className={active === l ? "active" : ""} title={l}><Icon name={i} /><span>{l}</span></Link>)}
+          <div className="sidebar-event"><Status text="Event is live" /><p>{EVENT.name}<br />16 Oct · {EVENT.time} · ends {EVENT.ends}</p></div>
+        </aside>
+        <main id="main" className="workspace-main">{children}</main>
+      </div>
+    </>
+  );
+}
+
+export function Kpis({ items }: { items: [string, string, string, string][] }) {
+  return (
+    <div className="kpi-grid">
+      {items.map(([l, v, n, i]) => (
+        <div key={l} className="surface kpi"><div className="kpi-label">{l}<Icon name={i} /></div><div className="kpi-value">{v}</div><div className="kpi-note">{n}</div></div>
+      ))}
+    </div>
+  );
+}
+
+const POSTER_COLORS = { blue: ["#e8efff", "#1d5cf5", "#97b3fc"], purple: ["#ede5fb", "#7651b1", "#c4afe9"], green: ["#e4f2df", "#36865e", "#a7ce98"], orange: ["#fff0df", "#c56f27", "#f1c390"] } as const;
+
+// Resolution-independent project poster (from TestUI)
+export function Poster({ p }: { p: Project }) {
+  const [bg, ink, soft] = POSTER_COLORS[p.color];
+  return (
+    <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label={`${p.short} project poster`}>
+      <rect width="320" height="200" fill={bg} />
+      <circle cx="291" cy="48" r="76" fill={soft} opacity=".45" />
+      <circle cx="290" cy="48" r="55" fill="none" stroke={ink} strokeOpacity=".12" />
+      <text x="24" y="35" fill={ink} fontSize="10" fontFamily="sans-serif" fontWeight="700">BOOTH {p.code} / SENIOR DESIGN SHOWCASE</text>
+      <text x="24" y="78" fill="#0f1a3a" fontSize="29" fontFamily="sans-serif" fontWeight="800">{p.short}</text>
+      <text x="24" y="104" fill={ink} fontSize="10" fontFamily="sans-serif">{p.tag}</text>
+      <path d="M24 133h113m-113 11h94m-94 11h107" stroke={ink} strokeWidth="3" opacity=".3" />
+      <rect x="24" y="175" width="36" height="3" rx="1.5" fill={ink} />
+      <text x="68" y="179" fill={ink} fontSize="8" fontFamily="sans-serif">Explore the project. Meet the people.</text>
+      <circle cx="238" cy="79" r="31" fill="none" stroke={ink} strokeWidth="8" />
+    </svg>
+  );
+}
+
+export function EventArt({ art, title, sub, actor }: { art: "map" | "purple" | "orange"; title?: ReactNode; sub?: string; actor?: number }) {
+  if (art === "map") {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src="/assets/images/hall-reference.png" width={1536} height={855} alt="A top-down exhibition hall with booths and a stage" loading="lazy" />;
+  }
+  return (
+    <div className={`event-art ${art}`}>
+      <div className="art-orbit" />
+      <strong>{title}</strong>
+      <span>{sub}</span>
+      {actor !== undefined && <Actor index={actor} walk style={{ position: "absolute", left: "auto", right: 24, top: 66, ["--sprite-size" as string]: "80px" }} />}
+    </div>
+  );
+}
+
+export function Empty({ title, text }: { title: string; text: string }) {
+  return <div className="empty-state"><Icon name="search" /><h3>{title}</h3><p className="body-text">{text}</p></div>;
 }

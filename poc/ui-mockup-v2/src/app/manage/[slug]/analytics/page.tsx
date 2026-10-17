@@ -1,73 +1,50 @@
 import Link from "next/link";
-import { Logo } from "@/components/ui";
-import { ATTENDANCE, EVENT, KPIS, RESULTS, VISITS } from "@/lib/data";
-import { ReportActions } from "./report-actions";
+import { Icon, Kpis, Pill, Workspace } from "@/components/ui";
+import { PROJECTS } from "@/lib/data";
+import { ExportActions } from "./export-actions";
 
-const card = "rounded-[18px] border border-line bg-white";
-const HOURS = ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30"];
+const ATTENDANCE = [32, 48, 66, 74, 70, 58, 80, 100, 92, 76, 54, 30];
+const HEAT = [[1, 2, 4, 4, 2, 1, 0, 0], [2, 5, 9, 8, 4, 3, 2, 1], [1, 3, 6, 7, 5, 6, 4, 2], [0, 2, 3, 4, 6, 8, 5, 2]];
+const TYPES: [string, number][] = [["University students", 46], ["High school students", 21], ["Companies", 14], ["Alumni", 9], ["Parents", 6], ["Teachers", 4]];
 
-export default async function Report({ params }: PageProps<"/manage/[slug]/report">) {
-  const { slug } = await params;
-  const top = VISITS[0][1];
+export default function Analytics() {
+  const ranked = [...PROJECTS].sort((a, b) => b.score - a.score);
+  const top = Math.max(...PROJECTS.map((p) => p.visits));
   return (
-    <main className="mx-auto flex min-h-screen max-w-[1200px] flex-col gap-[18px] px-9 py-7">
-      <div className="flex items-center justify-between">
-        <div>
-          <Link href="/" className="mb-3 inline-block"><Logo size={22} /></Link>
-          <div className="text-sm text-muted">{EVENT.name} · ended 16:00 · <Link href={`/e/${slug}`} className="font-semibold text-primary hover:text-primary-hover">Event page</Link></div>
-          <h1 className="mt-0.5 text-[34px] font-extrabold tracking-[-0.03em]">Event report</h1>
-        </div>
-        <ReportActions />
-      </div>
-
-      <div className="grid grid-cols-4 gap-3.5">
-        {KPIS.map((k) => (
-          <div key={k.label} className={`${card} px-5 py-4`}>
-            <div className="text-[13px] font-medium text-muted">{k.label}</div>
-            <div className="text-4xl font-extrabold tracking-[-0.03em] tabular-nums">{k.value}</div>
-            <div className="text-[13px] font-semibold text-success">{k.note}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid flex-1 grid-cols-[1fr_1.05fr] gap-3.5">
-        <div className="flex flex-col gap-3.5">
-          <section className={`${card} flex min-h-[230px] flex-1 flex-col gap-2.5 px-5 py-[18px]`}>
-            <h2 className="text-base font-bold">People in the hall</h2>
-            <div className="flex flex-1 items-end gap-2 border-b border-line" role="img" aria-label="People in the hall by half hour, peaking at 211 at 13:30">
-              {ATTENDANCE.map((v, i) => (
-                <div key={i} title={`${HOURS[i]} · ${Math.round((v / 100) * 211)} people`} className="flex-1 rounded-t-md bg-primary hover:bg-primary-hover" style={{ height: `${v}%` }} />
-              ))}
-            </div>
-            <div className="flex justify-between text-xs text-muted"><span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span></div>
+    <Workspace active="Event report">
+      <div className="breadcrumb"><Link href="/manage/senior-design-2026">Your showcase</Link><Icon name="chevron" /><span>Event report</span></div>
+      <div className="section-heading"><div><h1>Every connection, counted.</h1><p>Senior Design Showcase 2026 · ended 16:00 · Exhibition open until 15 Nov</p></div><ExportActions /></div>
+      <Kpis items={[["Interested", "512", "before the event", "bell"], ["Joined", "438", "371 from Interested · 67 didn't", "checkCircle"], ["Peak in hall", "211", "At 13:30 ICT", "chart"], ["Avg. time in hall", "47 min", "6.2 booths visited each", "clock"]]} />
+      <div className="analytics-grid">
+        <div className="stack">
+          <section className="surface chart-card">
+            <div className="chart-head"><h3>People in the hall</h3><Pill cls="blue">Event day</Pill></div>
+            <div className="chart" role="img" aria-label="Attendance peaks at 211 at 13:30">{ATTENDANCE.map((v, i) => <div key={i} className="chart-bar" style={{ ["--bar" as string]: `${v}%`, ["--delay" as string]: `${i * 25}ms` }}><span className="chart-tip">{Math.round(v * 2.11)} people</span></div>)}</div>
+            <div className="chart-labels"><span>10:00</span><span>12:00</span><span>14:00</span><span>16:00</span></div>
           </section>
-          <section className={`${card} flex flex-col gap-[9px] px-5 py-4`}>
-            <h2 className="text-base font-bold">Most visited booths</h2>
-            {VISITS.map(([code, n]) => (
-              <div key={code} className="grid grid-cols-[40px_1fr_40px] items-center gap-2.5 text-[13px] font-semibold">
-                <span className="text-primary">{code}</span>
-                <div className="h-2.5 rounded-full bg-subtle"><div className="h-2.5 rounded-full bg-accent" style={{ width: `${Math.round((n / top) * 100)}%` }} /></div>
-                <span className="text-right tabular-nums">{n}</span>
-              </div>
-            ))}
+          <section className="surface chart-card">
+            <div className="chart-head"><h3>Where people spent time</h3><small>Heatmap of the hall</small></div>
+            <div className="heat" role="img" aria-label="Busiest around the Computing zone">{HEAT.flat().map((v, i) => <i key={i} style={{ background: `rgb(29 92 245 / ${0.06 + v * 0.1})` }} />)}</div>
+            <p className="field-note" style={{ marginTop: 10 }}>Busiest: Computing zone (booths 02 and 06). Quiet: the back-right corner.</p>
+          </section>
+          <section className="surface chart-card">
+            <div className="chart-head"><h3>Booths</h3><small>Visits · passed by without entering</small></div>
+            <div className="booth-bars">{[...PROJECTS].sort((a, b) => b.visits - a.visits).map((p) => <div key={p.code} className="booth-bar-row"><span>{p.code}</span><div className="bar-track"><div className="bar-fill" style={{ ["--bar" as string]: `${(p.visits / top) * 100}%` }} /></div><strong>{p.visits}</strong></div>)}</div>
+            <p className="field-note" style={{ marginTop: 12 }}>Booth 04 had 64 people walk past without going in — check its cover and title.</p>
           </section>
         </div>
-        <section className={`${card} flex flex-col px-5 py-[18px]`}>
-          <div className="mb-1.5 flex items-baseline justify-between"><h2 className="text-base font-bold">Judging results</h2><span className="text-xs text-muted">Mean score /10</span></div>
-          <ol>
-            {RESULTS.map((j) => (
-              <li key={j.rank} className="grid grid-cols-[36px_1fr_56px] items-center gap-3 border-t border-subtle py-2.5">
-                <span className="grid size-[30px] place-items-center rounded-[9px] bg-primary-tint text-[13px] font-bold text-primary">{j.rank}</span>
-                <div>
-                  <div className="text-sm font-semibold leading-tight">{j.title}</div>
-                  <div className="text-xs text-muted">{j.booth} · {j.judges} judges</div>
-                </div>
-                <span className="text-right text-[19px] font-extrabold tabular-nums">{j.score.toFixed(1)}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
+        <div className="stack">
+          <section className="surface chart-card">
+            <div className="chart-head"><h3>Judging results</h3><small>Weighted · / 10</small></div>
+            {ranked.map((p, i) => <div key={p.code} className="ranking-row"><span className="rank-num">{i + 1}</span><div className="rank-info"><strong>{p.title}</strong><small>Booth {p.code} · {p.votes} votes</small></div><span className="rank-score">{p.score.toFixed(1)}</span></div>)}
+            <div className="info-note" style={{ marginTop: 18 }}><Icon name="shield" />Results stay private until an admin announces them from Judging.</div>
+          </section>
+          <section className="surface chart-card">
+            <div className="chart-head"><h3>Who came</h3><small>From 23 provinces</small></div>
+            <div className="booth-bars">{TYPES.map(([k, v]) => <div key={k} className="booth-bar-row" style={{ gridTemplateColumns: "150px 1fr 36px" }}><span style={{ color: "var(--ink-2)", fontWeight: 500 }}>{k}</span><div className="bar-track"><div className="bar-fill" style={{ ["--bar" as string]: `${v * 2}%`, background: "var(--blue)" }} /></div><strong>{v}%</strong></div>)}</div>
+          </section>
+        </div>
       </div>
-    </main>
+    </Workspace>
   );
 }

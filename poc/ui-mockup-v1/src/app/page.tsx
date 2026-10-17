@@ -9,7 +9,7 @@ import { toneClass } from "@/lib/mock";
 
 const steps = [
   { icon: Footprints, title: "Walk the hall", text: "Move your avatar between booths like a real exhibition floor. See which booths are busy before you go in.", tone: "sky" as const },
-  { icon: Mic, title: "Talk when you're close", text: "Voices fade in as you approach and fade out as you leave. No meeting links, no waiting room.", tone: "mint" as const },
+  { icon: Mic, title: "Step into a booth to talk", text: "Everyone inside a booth hears each other clearly, like one room. Outside, voices fade with distance.", tone: "mint" as const },
   { icon: MonitorUp, title: "Watch the demo", text: "Step inside a booth to see the team's shared screen, slides and poster up close.", tone: "peach" as const },
 ];
 
@@ -74,7 +74,7 @@ export default function Landing() {
       <section id="organizers" className="mx-auto flex max-w-6xl flex-wrap items-start gap-12 px-6 py-20">
         <div className="flex-[1_1_320px]">
           <h2 className="text-3xl font-bold tracking-tight">Everything the organizing team needs</h2>
-          <p className="mt-3 text-lg text-muted-foreground">From registration to the final score sheet, without stitching five tools together.</p>
+          <p className="mt-3 text-lg text-muted-foreground">From invitations to the final score sheet, without stitching five tools together. Free for small events.</p>
           <Link href="/login" className={cn(buttonVariants(), bigButton, "mt-6")}>Create your first event</Link>
         </div>
         <div className="grid min-w-0 flex-[2_1_480px] gap-4 sm:grid-cols-3">

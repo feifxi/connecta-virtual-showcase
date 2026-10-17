@@ -97,5 +97,5 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 1. Exam 2 (ส่ง 18 ต.ค.): spike/POC · mockup (ภาพจาก `poc/ui-mockup-v1/` ที่ทีมเลือก · v2 เก็บไว้เทียบ) · architecture · component design · API design · ER diagram · roadmap
 2. ทีมเขียน one-liner · pain · problem statement เอง แทนร่างใน `docs/connecta-v3.md`
 3. ทำ survey (`docs/research.md` ส่วน 4) + นัดคุยผู้จัด D-Day / อาจารย์ · ความเป็นไปได้ทางธุรกิจต้องใช้ข้อมูลจากผู้ใช้เป้าหมายจริง (ไม่ใช่ทีม)
-4. ปรับ UI mockup `poc/ui-mockup-v1/` ให้ตรงกับ `docs/features.md` (เช่น onboarding · ฟอร์มเข้างาน · คำเชิญ · Admin panel ในฮอลล์)
+4. UI mockup v1 + v2 ตรงกับ `docs/features.md` แล้ว (14 หน้า · รายการหน้าอยู่ใน `poc/README.md`) · หน้าที่ยังไม่ทำ: Profile · Billing · Platform Console · สรุปของผู้นำเสนอ · ฟอร์มส่งผลงาน
 5. เช็ค SpatialChat ว่ามี judging หรือไม่

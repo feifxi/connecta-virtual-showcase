@@ -7,14 +7,6 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   // Dev only: let other devices on the LAN open the mockup
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.*.*.*"],
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
-  },
 };
 
 export default nextConfig;

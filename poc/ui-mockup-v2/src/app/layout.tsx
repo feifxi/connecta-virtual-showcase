@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { PreviewTools } from "@/components/preview-tools";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-jakarta" });
-
 export const metadata: Metadata = {
-  title: "Connecta · UI mockup v2",
-  description: "Virtual project showcase: walk between booths and talk to presenters live.",
+  title: "Connecta · A little closer, wherever you are",
+  description: "UI mockup v2 (design from poc/TestUI): walk between booths and talk to presenters live.",
+  icons: { icon: "/assets/images/favicon.svg" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${jakarta.variable} font-sans antialiased`}>
-      <body className="min-h-screen">{children}</body>
+    <html lang="en">
+      <body>
+        <a className="skip-link" href="#main">Skip to content</a>
+        {children}
+        <PreviewTools />
+      </body>
     </html>
   );
 }

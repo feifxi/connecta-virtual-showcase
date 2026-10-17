@@ -1,23 +1,24 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Plus, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, Mail, Plus, Users } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { Chip } from "@/components/brand";
+import { RoleChip } from "@/components/brand";
 import { AppHeader, bigButton } from "@/components/shells";
-import { myEvents, toneClass, type MyEvent } from "@/lib/mock";
+import { invites, myEvents, toneClass, type MyEvent } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 
 const stateStyle: Record<MyEvent["state"], string> = {
   Live: "bg-primary text-primary-foreground",
-  Upcoming: "bg-secondary text-secondary-foreground",
+  Published: "bg-secondary text-secondary-foreground",
   Draft: "bg-butter text-butter-ink",
-  Ended: "bg-muted text-muted-foreground",
+  Exhibition: "bg-mint text-mint-ink",
+  Archived: "bg-muted text-muted-foreground",
 };
 
 function actionFor(e: MyEvent) {
-  if (e.role === "Organizer") return { label: e.state === "Draft" ? "Continue setup" : "Manage", href: `/manage/${e.slug}` };
+  if (e.role === "Admin") return { label: e.state === "Draft" ? "Continue setup" : "Manage", href: `/manage/${e.slug}` };
   if (e.role === "Presenter") return { label: "Edit my booth", href: `/e/${e.slug}/my-booth` };
-  if (e.role === "Judge") return { label: "Open judging", href: `/e/${e.slug}/hall` };
-  return { label: e.state === "Ended" ? "View gallery" : "Open event", href: `/e/${e.slug}` };
+  if (e.role === "Judge") return { label: "My judging list", href: `/e/${e.slug}/judge` };
+  return { label: e.state === "Exhibition" ? "Visit the exhibition" : "Open event", href: `/e/${e.slug}` };
 }
 
 export default function Home() {
@@ -36,6 +37,21 @@ export default function Home() {
           </Link>
         </div>
 
+        {invites.length > 0 && (
+          <section className="flex flex-col gap-3" aria-label="Pending invitations">
+            {invites.map((i) => (
+              <div key={i.token} className="flex flex-wrap items-center gap-4 rounded-3xl bg-card px-6 py-5 ring-2 ring-butter">
+                <span className="inline-flex size-11 items-center justify-center rounded-2xl bg-butter text-butter-ink"><Mail className="size-5" aria-hidden="true" /></span>
+                <div className="min-w-0 flex-[999_1_280px]">
+                  <div className="font-bold">{i.by} invited you to judge <span className="text-primary">{i.event}</span></div>
+                  <div className="text-sm text-muted-foreground">{i.date} · expires in 12 days</div>
+                </div>
+                <Link href={`/invite/${i.token}`} className={cn(buttonVariants(), "h-10 rounded-xl px-4 font-semibold")}>View invitation</Link>
+              </div>
+            ))}
+          </section>
+        )}
+
         {live && (
           <section className="flex flex-wrap items-center gap-6 rounded-3xl bg-primary px-8 py-7 text-primary-foreground">
             <div className="min-w-0 flex-[999_1_360px]">
@@ -43,7 +59,7 @@ export default function Home() {
                 <span className="size-2 animate-pulse rounded-full bg-white" aria-hidden="true" /> Happening now
               </span>
               <h2 className="mt-3 text-2xl font-bold">{live.name}</h2>
-              <p className="mt-1 text-primary-foreground/85">137 people are in the hall · 21 booths are open</p>
+              <p className="mt-1 text-primary-foreground/85">137 people are in the hall · 21 booths are Live · ends 4:00 PM</p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link href={`/e/${live.slug}/hall`} className={cn(buttonVariants({ variant: "secondary" }), bigButton)}>Enter the hall</Link>
@@ -55,7 +71,7 @@ export default function Home() {
         )}
 
         <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filter by role">
-          {["All", "Organizing", "Presenting", "Judging", "Attending"].map((t, i) => (
+          {["All", "Admin", "Presenting", "Judging", "Interested & attended"].map((t, i) => (
             <button key={t} type="button" role="tab" aria-selected={i === 0} className={cn("h-10 rounded-full px-4 text-sm font-semibold", i === 0 ? "bg-foreground text-background" : "bg-card text-muted-foreground ring-1 ring-border hover:text-foreground")}>
               {t}
             </button>
@@ -77,13 +93,13 @@ export default function Home() {
                   <span className={cn("absolute left-4 top-4 rounded-full px-2.5 py-0.5 text-xs font-bold", stateStyle[e.state])}>{e.state}</span>
                 </div>
                 <div className="flex flex-1 flex-col gap-3 p-5">
-                  <Chip tone={e.tone} className="self-start">{e.role}</Chip>
+                  <RoleChip role={e.role} className="self-start" />
                   <h3 className="text-lg font-bold leading-snug">{e.name}</h3>
                   <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                     <span className="inline-flex items-center gap-1.5"><CalendarDays className="size-4" aria-hidden="true" />{e.date}</span>
-                    {e.people > 0 && <span className="inline-flex items-center gap-1.5"><Users className="size-4" aria-hidden="true" />{e.people} registered</span>}
+                    {e.people > 0 && <span className="inline-flex items-center gap-1.5"><Users className="size-4" aria-hidden="true" />{e.people} interested</span>}
                   </div>
-                  <Link href={a.href} className={cn(buttonVariants({ variant: e.role === "Organizer" ? "default" : "outline" }), "mt-auto h-10 rounded-xl text-sm font-semibold")}>
+                  <Link href={a.href} className={cn(buttonVariants({ variant: e.role === "Admin" ? "default" : "outline" }), "mt-auto h-10 rounded-xl text-sm font-semibold")}>
                     {a.label}
                   </Link>
                 </div>

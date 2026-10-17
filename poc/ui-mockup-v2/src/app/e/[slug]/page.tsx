@@ -1,35 +1,57 @@
-import { Avatar, Chip, LinkButton, TopNav } from "@/components/ui";
-import { EVENT } from "@/lib/data";
+import Link from "next/link";
+import { AvatarStack, Header, Icon, Pill, Status } from "@/components/ui";
+import { AGENDA, EVENT, PROJECTS, type EventState } from "@/lib/data";
+import { EventCta } from "./event-cta";
 import { ProjectGrid } from "./project-grid";
 
+// Public event page (no login needed) · ?state=published|live|exhibition previews each phase
 export default async function EventPage({ params, searchParams }: PageProps<"/e/[slug]">) {
   const { slug } = await params;
-  const judge = (await searchParams).role === "judge";
+  const q = await searchParams;
+  const state: EventState = q.state === "published" || q.state === "exhibition" ? q.state : "live";
+  const judges = [...PROJECTS].sort((a, b) => b.score - a.score).slice(0, 3);
+  const audience = [...PROJECTS].sort((a, b) => b.votes - a.votes).slice(0, 3);
   return (
-    <div className="min-h-screen">
-      <TopNav right={<Avatar />} />
-      <main className="mx-auto flex max-w-[1200px] flex-col gap-[22px] px-10 pb-12 pt-7">
-        <section className="grid grid-cols-[1fr_340px] gap-6 rounded-3xl border border-line bg-white px-8 py-7">
-          <div className="flex flex-col gap-3">
-            <div className="flex gap-2">
-              <Chip tone="live">● Live now · {EVENT.inHall} in hall</Chip>
-              <Chip>{EVENT.faculty}</Chip>
+    <>
+      <Header active="Events" />
+      <main id="main" className="page container page-content">
+        <div className="state-bar">Mockup · preview phase:{(["published", "live", "exhibition"] as EventState[]).map((p) => <Link key={p} href={`?state=${p}`} className={p === state ? "active" : ""}>{p}</Link>)}</div>
+        <div className="breadcrumb"><Link href="/explore">Events</Link><Icon name="chevron" /><span>{EVENT.name}</span></div>
+        <section className="event-hero">
+          <div className="event-hero-copy">
+            <div className="flex">
+              {state === "live" ? <Status text="Live now" count={`${EVENT.inHall} in hall`} /> : state === "published" ? <Pill cls="blue">Opens {EVENT.dateShort} · 10:00</Pill> : <Pill cls="green">Exhibition · open until 15 Nov</Pill>}
+              <Pill cls="lav">🔒 {EVENT.access}</Pill>
             </div>
-            <h1 className="text-[44px] font-extrabold leading-[1.05] tracking-[-0.035em]">{EVENT.name}</h1>
-            <p className="max-w-[560px] text-base leading-[1.55] text-muted">{EVENT.blurb}</p>
+            <h1>Senior Design<br />Showcase 2026</h1>
+            <p>{EVENT.blurb}</p>
+            <div className="flex" style={{ marginTop: 23 }}><AvatarStack /><span className="small-text muted">{EVENT.interested} interested · {EVENT.booths} projects</span></div>
           </div>
-          <div className="flex flex-col justify-center gap-3 border-l border-subtle pl-6">
-            {[["Date", EVENT.date], ["Time", EVENT.time], ["Booths", `${EVENT.booths} · ${EVENT.live} live`]].map(([k, v]) => (
-              <div key={k} className="flex justify-between text-sm"><span className="text-muted">{k}</span><span className="font-semibold">{v}</span></div>
-            ))}
-            <LinkButton href={`/e/${slug}/${judge ? "judge" : "hall"}`} className="mt-1.5 h-[50px] text-[15px]">
-              {judge ? "Enter the hall as judge →" : "Enter the hall →"}
-            </LinkButton>
-            <span className="text-center text-[13px] font-semibold text-success">✓ You&rsquo;re registered{judge ? " as a judge" : ""}</span>
+          <div className="event-meta">
+            {[["calendar", EVENT.date], ["clock", `${EVENT.time} ICT · ends by itself at ${EVENT.ends}`], ["grid", `${EVENT.booths} booths in 4 zones`], ["globe", `Online · log in with ${EVENT.access.replace(" only", "")}`]].map(([i, t]) => <div key={t} className="event-meta-row"><Icon name={i} />{t}</div>)}
+            <EventCta slug={slug} state={state} />
           </div>
         </section>
-        <ProjectGrid slug={slug} />
+
+        {state === "exhibition" && (
+          <div className="analytics-grid" style={{ marginBottom: 32 }}>
+            {[["Judges' award", judges, "trophy"], ["Audience award · Popular Vote", audience, "heart"]].map(([t, list, i]) => (
+              <section key={t as string} className="surface chart-card">
+                <div className="chart-head"><h3 className="flex"><Icon name={i as string} />{t as string}</h3></div>
+                {(list as typeof PROJECTS).map((p, n) => <div key={p.code} className="ranking-row"><span className="rank-num">{n + 1}</span><div className="rank-info"><strong>{p.title}</strong><small>Booth {p.code}</small></div><span /></div>)}
+              </section>
+            ))}
+          </div>
+        )}
+
+        <div className="section-heading"><div><h2>Big ideas, meet curious minds.</h2><p>{state === "live" ? "Booths show ● Live when a presenter is inside, plus how many people are there." : "Browse before you go in."}</p></div><span className="small-text muted">{PROJECTS.length} featured projects</span></div>
+        <ProjectGrid slug={slug} live={state === "live"} />
+
+        <section className="event-summary-strip">
+          <div><h3>Agenda</h3><p>{AGENDA.map((a) => `${a.time} ${a.label}`).join(" · ")}</p></div>
+          <Pill cls="light">Booths are open all day</Pill>
+        </section>
       </main>
-    </div>
+    </>
   );
 }
