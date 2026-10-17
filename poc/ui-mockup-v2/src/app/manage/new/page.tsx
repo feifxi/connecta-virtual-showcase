@@ -21,7 +21,7 @@ export default function CreateEvent() {
   return (
     <Workspace active="Overview">
       <div className="breadcrumb"><Link href="/home">My events</Link><Icon name="chevron" /><span>Create an event</span></div>
-      <div className="section-heading"><div><h1>Make room for your ideas.</h1><p>A few details, a hall, and you&rsquo;re ready. It starts as a draft — nothing is sent until you publish.</p></div><Pill cls="blue">Free · up to 50 people at once · 5 judges</Pill></div>
+      <div className="section-heading"><div><h1>Create an event</h1><p>A few details, a hall, and you&rsquo;re ready. It starts as a draft — nothing is sent until you publish.</p></div><Pill cls="blue">Free · up to 50 people at once · 5 judges</Pill></div>
       <div className="setup-stepper">
         {STEPS.map((s, i) => (
           <span key={s} className="flex" style={{ gap: 18, flex: i < STEPS.length - 1 ? 1 : undefined }}>
@@ -34,7 +34,7 @@ export default function CreateEvent() {
         <section className="surface panel-card stack">
           {step === 0 && (
             <>
-              <h2 style={{ marginBottom: 0 }}>Start with the essentials.</h2>
+              <h2 style={{ marginBottom: 0 }}>Event details</h2>
               <label className="field">Event name<input defaultValue="INT371 Poster Session" maxLength={100} /></label>
               <label className="field">Description<textarea defaultValue="Teams present their term posters. Walk into any booth and talk to the team." /></label>
               <div className="chips">{[["Schedule a time", false], ["Start now", true]].map(([l, v]) => <button key={l as string} type="button" className={`chip ${now === v ? "active" : ""}`} onClick={() => setNow(v as boolean)}>{l}</button>)}</div>
@@ -47,7 +47,7 @@ export default function CreateEvent() {
           )}
           {step === 1 && (
             <>
-              <h2 style={{ marginBottom: 0 }}>Pick a hall.</h2>
+              <h2 style={{ marginBottom: 0 }}>Your hall</h2>
               <p className="body-text">Booths are placed from your project list. Empty slots become plants and seating, so a small event never looks empty.</p>
               <div className="setup-map-grid" style={{ gridTemplateColumns: "1fr 1fr" }}>
                 {PRESETS.map((t) => (
@@ -63,7 +63,7 @@ export default function CreateEvent() {
           )}
           {step === 2 && (
             <>
-              <h2 style={{ marginBottom: 0 }}>What the event needs.</h2>
+              <h2 style={{ marginBottom: 0 }}>Features & people</h2>
               {MODULES.map(([t, p, on, pro]) => <label key={t} className="module-row"><div><h3>{t} {pro && <Pill cls="lav">Pro</Pill>}</h3><p>{p}</p></div><input type="checkbox" className="switch" defaultChecked={on} disabled={pro} aria-label={t} /></label>)}
               <label className="field">Admins<textarea defaultValue="fah.c@kmutt.ac.th" style={{ minHeight: 60 }} /><span className="field-note">Admins run the event with you and can do everything. We suggest 2–3.</span></label>
               <label className="field">Judges<textarea defaultValue={"pim.r@kmutt.ac.th\nguest.judge@company.com"} style={{ minHeight: 70 }} /><span className="field-note">Invited when you publish. Free: up to 5.</span></label>
@@ -71,7 +71,7 @@ export default function CreateEvent() {
           )}
           {step === 3 && (
             <>
-              <h2 style={{ marginBottom: 0 }}>Ready to create.</h2>
+              <h2 style={{ marginBottom: 0 }}>Review</h2>
               {[["Event", "INT371 Poster Session"], ["When", now ? "Starts now · ends 23:59" : "Thu 3 Dec · 13:00–23:59"], ["Hall", `${preset} · 50 people at once`], ["Seats reserved", "3 of 50 (admins + judges)"], ["Features", "Judging, Popular Vote, Feedback"]].map(([k, v]) => <div key={k} className="device-row"><span className="muted">{k}</span><strong>{v}</strong></div>)}
               <div className="info-note"><Icon name="mail" /><span>Projects and presenters come next on Projects & hall. Invitations go out when you publish.</span></div>
             </>

@@ -53,15 +53,14 @@ export function Initials({ name, size = 36 }: { name: string; size?: number }) {
   return <span className="avatar-dot" style={{ width: size, height: size }}>{t}</span>;
 }
 
-export function AvatarStack({ ids = [8, 9, 12] }: { ids?: number[] }) {
+const FACE_TONES = ["#ffe6d8", "#e5f5ed", "#fff4cf", "#e6dcfb", "#e8efff"];
+
+// Character heads on pastel circles, overlapping · extra = "+N" bubble at the end
+export function AvatarStack({ ids = [8, 9, 12], extra }: { ids?: number[]; extra?: number }) {
   return (
     <div className="avatar-stack" aria-hidden="true">
-      {ids.map((i) => (
-        <span key={i} className="mini-face">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={CHARACTERS[i].portrait} width={29} height={29} alt="" />
-        </span>
-      ))}
+      {ids.map((i) => <span key={i} className="mini-face" style={{ backgroundColor: FACE_TONES[i % FACE_TONES.length], backgroundImage: `url(${CHARACTERS[i].portrait})` }} />)}
+      {extra ? <span className="mini-face more">+{extra}</span> : null}
     </div>
   );
 }

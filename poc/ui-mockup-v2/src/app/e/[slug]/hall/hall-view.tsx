@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { HallControl } from "@/components/hall-game";
-import { Brand, Icon, Pill, Portrait, Poster, Status } from "@/components/ui";
+import { Icon, Pill, Portrait, Poster, Status } from "@/components/ui";
 import type { BoothInfo, Hearing } from "@/game/HallScene";
 import { AGENDA, CHARACTERS, EVENT, HALL_PROJECTS, PROJECTS, RUBRIC, type Role } from "@/lib/data";
 
@@ -23,6 +23,14 @@ export function HallView({ initialRole }: { initialRole: Role }) {
   const [sharing, setSharing] = useState(false);
   const [zoom, setZoom] = useState(1.3);
   const [leaving, setLeaving] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!menu) return;
+    const close = (e: Event) => { if (e instanceof KeyboardEvent ? e.key === "Escape" : !menuRef.current?.contains(e.target as Node)) setMenu(false); };
+    document.addEventListener("pointerdown", close); document.addEventListener("keydown", close);
+    return () => { document.removeEventListener("pointerdown", close); document.removeEventListener("keydown", close); };
+  }, [menu]);
   const control = useRef<HallControl | null>(null);
   const mapDialog = useRef<HTMLDialogElement>(null);
 
@@ -45,10 +53,20 @@ export function HallView({ initialRole }: { initialRole: Role }) {
           onEnter={(b) => { setBooth(b); setPanel("booth"); }} onLeave={() => { setBooth(null); setPanel((p) => (p === "booth" ? null : p)); setSharing(false); }} onHearing={setHearing} />
       )}
 
-      <div className="hall-title">
-        <Brand href="/home" />
-        <span className="divider" />
-        <div className="hall-title-event"><strong>{EVENT.name}</strong><small><span className="dot" style={{ color: "var(--green)" }} /> {EVENT.inHall} in the hall, ends {EVENT.ends}</small></div>
+      {/* event card doubles as the hall menu: logo, way out and links live here, away from the controls */}
+      <div className="hall-title" ref={menuRef}>
+        <button type="button" className="hall-title-btn" aria-haspopup="menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>
+          <span className="brand-mark" aria-hidden="true" />
+          <span className="hall-title-event"><strong>{EVENT.name}</strong><small><span className="dot" style={{ color: "var(--green)" }} /> {EVENT.inHall} in the hall, ends {EVENT.ends}</small></span>
+          <Icon name="chevron" className="hall-title-chevron" />
+        </button>
+        {menu && (
+          <div className="hall-menu" role="menu">
+            <a role="menuitem" href={`/e/${EVENT.slug}`} target="_blank" rel="noopener" onClick={() => setMenu(false)}><Icon name="info" />Event page<small>New tab</small></a>
+            <span className="hall-menu-sep" />
+            <button type="button" role="menuitem" className="danger" onClick={() => { setMenu(false); setLeaving(true); }}><Icon name="leave" />Leave the hall</button>
+          </div>
+        )}
       </div>
 
       <div className="hall-top-right">
@@ -118,7 +136,6 @@ export function HallView({ initialRole }: { initialRole: Role }) {
         <span className="toolbar-separator" />
         <Tool label="Map" icon="map" onClick={() => mapDialog.current?.showModal()} />
         {role === "Admin" && <Tool label="Admin" icon="shield" active={panel === "admin"} cls="lav" onClick={() => open("admin")} />}
-        <Tool label="Leave" icon="leave" cls="leave" onClick={() => setLeaving(true)} />
       </div>
 
       <div className="hall-zoom">

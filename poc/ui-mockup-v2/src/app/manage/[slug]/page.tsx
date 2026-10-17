@@ -113,11 +113,11 @@ function Settings() {
 }
 
 const TABS: Record<string, [string, string, () => React.ReactElement]> = {
-  overview: ["Overview", "A space full of possibilities.", Overview],
-  people: ["People & roles", "Your people.", People],
-  judging: ["Judging", "Fair scores, one rubric.", Judging],
-  moderation: ["Moderation", "Keep the hall friendly.", Moderation],
-  settings: ["Settings", "Event settings.", Settings],
+  overview: ["Overview", "Overview", Overview],
+  people: ["People & roles", "People & roles", People],
+  judging: ["Judging", "Judging", Judging],
+  moderation: ["Moderation", "Moderation", Moderation],
+  settings: ["Settings", "Settings", Settings],
 };
 
 export default async function Manage({ searchParams }: PageProps<"/manage/[slug]">) {
@@ -127,7 +127,7 @@ export default async function Manage({ searchParams }: PageProps<"/manage/[slug]
   return (
     <Workspace active={active}>
       <div className="section-heading">
-        <div><div className="flex" style={{ marginBottom: 8 }}><Status text={`Live · ends ${EVENT.ends}`} /><Pill cls="lav">Admin</Pill></div><h1>{title}</h1><p>{EVENT.name} · your event at a glance.</p></div>
+        <div><div className="flex" style={{ marginBottom: 8 }}><Status text={`Live · ends ${EVENT.ends}`} /><Pill cls="lav">Admin</Pill></div><h1>{title}</h1><p>{EVENT.name}</p></div>
         <div className="flex">
           <button type="button" className="btn secondary small"><Icon name="megaphone" />Announce</button>
           <button type="button" className="btn secondary small"><Icon name="clock" />Extend</button>

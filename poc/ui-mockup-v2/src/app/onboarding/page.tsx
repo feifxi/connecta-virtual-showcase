@@ -18,7 +18,7 @@ export default function Onboarding() {
     <>
       <Header />
       <main id="main" className="page container narrow page-content">
-        <div className="page-title"><h1>Make yourself at home.</h1><p>One-time setup, about 30 seconds. Every event you join uses it.</p></div>
+        <div className="page-title"><h1>Set up your profile</h1><p>One-time setup, about 30 seconds. Every event you join uses it.</p></div>
         <div className="lobby-layout">
           <section>
             <div className="avatar-stage">
@@ -42,7 +42,7 @@ export default function Onboarding() {
             </div>
           </section>
           <form className="surface lobby-settings stack" onSubmit={(e) => { e.preventDefault(); router.push("/e/senior-design-2026"); }}>
-            <h2 style={{ marginBottom: 0 }}>A few details.</h2>
+            <h2 style={{ marginBottom: 0 }}>About you</h2>
             <label className="field">Display name<input value={name} onChange={(e) => setName(e.target.value)} maxLength={30} required autoComplete="nickname" /><span className="field-note">From your Microsoft account. Shown above your character.</span></label>
             <div className="form-row">
               <label className="field">I am a…<select>{VISITOR_TYPES.map((t) => <option key={t}>{t}</option>)}</select></label>

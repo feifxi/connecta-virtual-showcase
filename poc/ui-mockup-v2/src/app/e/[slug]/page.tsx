@@ -25,7 +25,7 @@ export default async function EventPage({ params, searchParams }: PageProps<"/e/
             </div>
             <h1>Senior Design<br />Showcase 2026</h1>
             <p>{EVENT.blurb}</p>
-            <div className="flex" style={{ marginTop: 23 }}><AvatarStack /><span className="small-text muted">{EVENT.interested} interested · {EVENT.booths} projects</span></div>
+            <div className="flex" style={{ marginTop: 23 }}><AvatarStack ids={[8, 9, 12, 4]} extra={EVENT.interested - 4} /><span className="small-text muted">interested</span></div>
           </div>
           <div className="event-meta">
             {[["calendar", EVENT.date], ["clock", `${EVENT.time} ICT · ends by itself at ${EVENT.ends}`], ["grid", `${EVENT.booths} booths in 4 zones`], ["globe", `Online · log in with ${EVENT.access.replace(" only", "")}`]].map(([i, t]) => <div key={t} className="event-meta-row"><Icon name={i} />{t}</div>)}
@@ -44,12 +44,12 @@ export default async function EventPage({ params, searchParams }: PageProps<"/e/
           </div>
         )}
 
-        <div className="section-heading"><div><h2>Big ideas, meet curious minds.</h2><p>{state === "live" ? "Booths show ● Live when a presenter is inside, plus how many people are there." : "Browse before you go in."}</p></div><span className="small-text muted">{PROJECTS.length} featured projects</span></div>
+        <div className="section-heading"><div><h2>Projects</h2><p>{state === "live" ? "Booths show ● Live when a presenter is inside, plus how many people are there." : "Browse before you go in."}</p></div><span className="small-text muted">{PROJECTS.length} featured projects</span></div>
         <ProjectGrid slug={slug} live={state === "live"} />
 
-        <section className="event-summary-strip">
-          <div><h3>Agenda</h3><p>{AGENDA.map((a) => `${a.time} ${a.label}`).join(" · ")}</p></div>
-          <Pill cls="light">Booths are open all day</Pill>
+        <section className="agenda">
+          <div><h2>Agenda</h2><p>Booths are open all day. Walk in whenever you like.</p></div>
+          <ol className="agenda-list">{AGENDA.map((a) => <li key={a.time}><time>{a.time}</time><span>{a.label}</span></li>)}</ol>
         </section>
       </main>
     </>

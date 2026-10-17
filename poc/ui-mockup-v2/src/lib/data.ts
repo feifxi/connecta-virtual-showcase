@@ -34,17 +34,17 @@ export type Category = (typeof CATEGORIES)[number];
 
 export type Project = {
   code: string; title: string; short: string; category: Category; tag: string; abstract: string;
-  color: "blue" | "purple" | "green" | "orange"; presenter: string; avatar: number;
+  color: "blue" | "purple" | "green" | "orange"; presenter: string; avatar: number; team: number[];
   live: boolean; people: number; visits: number; votes: number; score: number;
 };
 
 export const PROJECTS: Project[] = [
-  { code: "01", title: "Mapping urban heat with open satellite data", short: "Aurora", category: "Engineering", tag: "Climate & cities", color: "blue", presenter: "Mika", avatar: 0, live: true, people: 14, visits: 151, votes: 64, score: 8.4, abstract: "Turning open satellite imagery into practical maps of urban heat, so greener streets go where they help most." },
-  { code: "02", title: "Sign-language recognition on edge devices", short: "Pixel Path", category: "Computing", tag: "AI & accessibility", color: "purple", presenter: "Prae", avatar: 9, live: true, people: 22, visits: 188, votes: 96, score: 8.9, abstract: "Making everyday conversations more accessible. Our on-device model recognises hand gestures in real time, with no internet connection required." },
-  { code: "03", title: "A smarter soil-moisture network for campus gardens", short: "GreenLoop", category: "Engineering", tag: "Environment & IoT", color: "green", presenter: "Phum", avatar: 8, live: true, people: 9, visits: 127, votes: 41, score: 7.7, abstract: "Small sensors, healthier gardens. A low-cost network that tells gardeners which beds need water today." },
-  { code: "04", title: "A modular bike-share dock from recycled aluminium", short: "Re:Cycle", category: "Design", tag: "Circular design", color: "orange", presenter: "Ren", avatar: 3, live: false, people: 2, visits: 119, votes: 22, score: 7.4, abstract: "A repairable bike dock made from reclaimed aluminium, designed to make short campus trips easier." },
-  { code: "05", title: "Adaptive prosthetic grip with tactile feedback", short: "Touchpoint", category: "Health", tag: "Assistive technology", color: "purple", presenter: "Dr. Pim", avatar: 11, live: false, people: 0, visits: 98, votes: 35, score: 8.6, abstract: "A lightweight prosthetic hand that buzzes the wearer when an object starts to slip." },
-  { code: "06", title: "Speech-to-text tutoring for first-generation students", short: "Open Notes", category: "Computing", tag: "Education & HCI", color: "blue", presenter: "Fah", avatar: 12, live: true, people: 11, visits: 164, votes: 58, score: 7.9, abstract: "Accessible lecture notes and real-time captions, co-designed with students to make learning easier to follow." },
+  { code: "01", team: [0, 4, 7], title: "Mapping urban heat with open satellite data", short: "Aurora", category: "Engineering", tag: "Climate & cities", color: "blue", presenter: "Mika", avatar: 0, live: true, people: 14, visits: 151, votes: 64, score: 8.4, abstract: "Turning open satellite imagery into practical maps of urban heat, so greener streets go where they help most." },
+  { code: "02", team: [9, 2], title: "Sign-language recognition on edge devices", short: "Pixel Path", category: "Computing", tag: "AI & accessibility", color: "purple", presenter: "Prae", avatar: 9, live: true, people: 22, visits: 188, votes: 96, score: 8.9, abstract: "Making everyday conversations more accessible. Our on-device model recognises hand gestures in real time, with no internet connection required." },
+  { code: "03", team: [8, 5, 1], title: "A smarter soil-moisture network for campus gardens", short: "GreenLoop", category: "Engineering", tag: "Environment & IoT", color: "green", presenter: "Phum", avatar: 8, live: true, people: 9, visits: 127, votes: 41, score: 7.7, abstract: "Small sensors, healthier gardens. A low-cost network that tells gardeners which beds need water today." },
+  { code: "04", team: [3, 6], title: "A modular bike-share dock from recycled aluminium", short: "Re:Cycle", category: "Design", tag: "Circular design", color: "orange", presenter: "Ren", avatar: 3, live: false, people: 2, visits: 119, votes: 22, score: 7.4, abstract: "A repairable bike dock made from reclaimed aluminium, designed to make short campus trips easier." },
+  { code: "05", team: [11, 10, 4], title: "Adaptive prosthetic grip with tactile feedback", short: "Touchpoint", category: "Health", tag: "Assistive technology", color: "purple", presenter: "Dr. Pim", avatar: 11, live: false, people: 0, visits: 98, votes: 35, score: 8.6, abstract: "A lightweight prosthetic hand that buzzes the wearer when an object starts to slip." },
+  { code: "06", team: [12, 1], title: "Speech-to-text tutoring for first-generation students", short: "Open Notes", category: "Computing", tag: "Education & HCI", color: "blue", presenter: "Fah", avatar: 12, live: true, people: 11, visits: 164, votes: 58, score: 7.9, abstract: "Accessible lecture notes and real-time captions, co-designed with students to make learning easier to follow." },
 ];
 
 export const RUBRIC = [{ k: "Technical depth", w: 35 }, { k: "Problem & impact", w: 30 }, { k: "Presentation", w: 20 }, { k: "Feasibility", w: 15 }];
@@ -53,6 +53,7 @@ export const MY_EVENTS: { slug: string; name: string; date: string; role: Role; 
   { slug: EVENT.slug, name: EVENT.name, date: "Today · 10:00–16:00", role: "Admin", state: "Live", people: 512, art: "map" },
   { slug: "greener-tomorrow", name: "Ideas for a greener tomorrow", date: "23 Oct · 10:00–15:00", role: "Presenter", state: "Published", people: 128, art: "purple" },
   { slug: "capstone-demo", name: "Capstone Demo Day", date: "30 Oct · 09:00–16:00", role: "Judge", state: "Published", people: 210, art: "orange" },
+  { slug: "it-open-house", name: "Open House: IT Projects", date: "2 Oct · 09:00–15:00", role: "Visitor", state: "Exhibition", people: 380, art: "purple" },
 ];
 
 export const EXPLORE = [
@@ -62,10 +63,10 @@ export const EXPLORE = [
 ];
 
 export const AGENDA = [
-  { time: "10:00", label: "Hall opens · a short tour of how to get around" },
+  { time: "10:00", label: "Hall opens, with a short tour of how to get around" },
   { time: "10:15", label: "Booths open — walk in any time" },
   { time: "15:30", label: "Last call for judges" },
-  { time: "16:00", label: "Event ends · results announced after" },
+  { time: "16:00", label: "Event ends, results are announced after" },
 ];
 
 export const VISITOR_TYPES = ["University student", "High school student", "Company", "Alumni", "Parent", "Teacher"];

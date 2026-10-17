@@ -9,7 +9,7 @@ export default function Projects() {
   return (
     <Workspace active="Projects & hall">
       <div className="section-heading">
-        <div><h1>Projects & hall.</h1><p>{EVENT.booths} projects · each one is a booth. Presenters get their invitation when you publish.</p></div>
+        <div><h1>Projects & hall</h1><p>{EVENT.booths} projects · each one is a booth. Presenters get their invitation when you publish.</p></div>
         <div className="flex">
           <button type="button" className="btn secondary small"><Icon name="upload" />Import CSV / XLSX</button>
           <button type="button" className="btn secondary small"><Icon name="bot" />AI import <Pill cls="lav">Pro</Pill></button>

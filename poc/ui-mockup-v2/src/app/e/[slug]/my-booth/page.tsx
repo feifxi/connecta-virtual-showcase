@@ -9,13 +9,13 @@ export default function MyBooth() {
   return (
     <Workspace active="My booth" kind="presenter">
       <div className="section-heading">
-        <div><div className="flex" style={{ marginBottom: 9 }}><Pill cls="green">Presenter</Pill><span className="booth-code">Booth {p.code} · {p.category} zone</span></div><h1>Tell the story behind your work.</h1><p>Edit any time — before or during the event. Changes show in the hall right away.</p></div>
+        <div><div className="flex" style={{ marginBottom: 9 }}><Pill cls="green">Presenter</Pill><span className="booth-code">Booth {p.code} · {p.category} zone</span></div><h1>Edit your booth</h1><p>Edit any time — before or during the event. Changes show in the hall right away.</p></div>
         <Btn href="/e/senior-design-2026/hall?as=Presenter" cls="secondary small" icon="arrow">Open in the hall</Btn>
       </div>
       <Kpis items={[["Booth visitors", "188", "24 in the last hour", "users"], ["Avg. visit", "6.2 min", "Event average 4.8 min", "clock"], ["Feedback", "23", "3 new today", "chat"], ["Popular Vote", "96", "Rank shown after results", "heart"]]} />
       <div className="workspace-grid">
         <form className="surface panel-card stack">
-          <h2 style={{ marginBottom: 0 }}>Your booth</h2>
+          <h2 style={{ marginBottom: 0 }}>Booth details</h2>
           <label className="field">Project title<input defaultValue={p.title} maxLength={120} /></label>
           <label className="field">Summary<textarea defaultValue={p.abstract} maxLength={1200} /><span className="field-note">Visitors read this before walking in. 2–3 sentences works best.</span></label>
           <div className="field">Category · sets your zone in the hall<div className="chips">{CATEGORIES.map((c) => <button key={c} type="button" className={`chip ${c === p.category ? "active" : ""}`}>{c}</button>)}</div></div>

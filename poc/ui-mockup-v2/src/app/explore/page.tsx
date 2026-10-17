@@ -16,7 +16,7 @@ export default function Explore() {
     <>
       <Header active="Events" />
       <main id="main" className="page container page-content">
-        <div className="page-title"><h1>Find your next conversation.</h1><p>Every event on Connecta. A lock badge means only one university&rsquo;s accounts can join as visitors.</p></div>
+        <div className="page-title"><h1>Explore events</h1><p>Every event on Connecta. A lock badge means only one university&rsquo;s accounts can join as visitors.</p></div>
         <div className="project-toolbar">
           <div className="chips">{FILTERS.map((f) => <button key={f} type="button" className={`chip ${filter === f ? "active" : ""}`} aria-pressed={filter === f} onClick={() => setFilter(f)}>{f}</button>)}</div>
           <div className="search"><Icon name="search" /><input className="search-input" type="search" aria-label="Search events" placeholder="Search events…" value={q} onChange={(e) => setQ(e.target.value)} /></div>

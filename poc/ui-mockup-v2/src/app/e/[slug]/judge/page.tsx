@@ -18,7 +18,7 @@ export default function JudgeList() {
   return (
     <Workspace active="Judging list" kind="judge">
       <div className="section-heading">
-        <div><div className="flex" style={{ marginBottom: 9 }}><Pill cls="blue">Judge</Pill><span className="small-text muted">{done} of {PROJECTS.length} submitted</span></div><h1>Your judging list.</h1><p>Scoring closes when the event ends at {EVENT.ends}. Complete drafts count; incomplete ones don&rsquo;t.</p></div>
+        <div><div className="flex" style={{ marginBottom: 9 }}><Pill cls="blue">Judge</Pill><span className="small-text muted">{done} of {PROJECTS.length} submitted</span></div><h1>Your judging list</h1><p>Scoring closes when the event ends at {EVENT.ends}. Complete drafts count; incomplete ones don&rsquo;t.</p></div>
         <Btn href={`/e/${EVENT.slug}/hall?as=Judge`} icon="arrow">Enter the hall</Btn>
       </div>
       <div className="workspace-grid">

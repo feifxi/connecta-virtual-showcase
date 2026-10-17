@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { Empty, Icon, LiveBadge, Pill, Poster } from "@/components/ui";
+import { AvatarStack, Empty, Icon, LiveBadge, Pill, Poster } from "@/components/ui";
 import { CATEGORIES, PROJECTS, type Project } from "@/lib/data";
 
 const FILTERS = ["All projects", "Live now", ...CATEGORIES] as const;
@@ -25,7 +25,8 @@ export function ProjectGrid({ slug, live }: { slug: string; live: boolean }) {
           <button key={p.code} type="button" className="project-card" onClick={() => show(p)}>
             <div className="card-top"><span className="booth-code">Booth {p.code}</span>{live ? <LiveBadge live={p.live} people={p.people} /> : <Pill>{p.category}</Pill>}</div>
             <h3>{p.title}</h3>
-            <p>{p.category} <span style={{ color: "var(--border)" }}>/</span> {p.tag}</p>
+            <p className="project-abstract">{p.abstract}</p>
+            <div className="project-foot"><AvatarStack ids={p.team} /><span>Team {p.short}</span><span className="project-tag">{p.tag}</span></div>
           </button>
         )) : <Empty title="No projects found" text="Try another word or zone." />}
       </div>

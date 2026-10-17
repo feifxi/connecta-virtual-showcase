@@ -8,7 +8,7 @@ export default function Profile() {
     <>
       <Header />
       <main id="main" className="page container narrow page-content">
-        <div className="page-title"><h1>A familiar face in every room.</h1><p>One profile for every event you join. Change it any time.</p></div>
+        <div className="page-title"><h1>Your profile</h1><p>One profile for every event you join. Change it any time.</p></div>
         <div className="profile-layout">
           <aside className="surface profile-summary">
             <Actor index={7} style={{ position: "relative", margin: "0 auto 18px", ["--sprite-size" as string]: "115px" }} />

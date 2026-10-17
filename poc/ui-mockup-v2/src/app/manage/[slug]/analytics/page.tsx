@@ -13,7 +13,7 @@ export default function Analytics() {
   return (
     <Workspace active="Event report">
       <div className="breadcrumb"><Link href="/manage/senior-design-2026">Your showcase</Link><Icon name="chevron" /><span>Event report</span></div>
-      <div className="section-heading"><div><h1>Every connection, counted.</h1><p>Senior Design Showcase 2026 · ended 16:00 · Exhibition open until 15 Nov</p></div><ExportActions /></div>
+      <div className="section-heading"><div><h1>Event report</h1><p>Senior Design Showcase 2026 · ended 16:00 · Exhibition open until 15 Nov</p></div><ExportActions /></div>
       <Kpis items={[["Interested", "512", "before the event", "bell"], ["Joined", "438", "371 from Interested · 67 didn't", "checkCircle"], ["Peak in hall", "211", "At 13:30 ICT", "chart"], ["Avg. time in hall", "47 min", "6.2 booths visited each", "clock"]]} />
       <div className="analytics-grid">
         <div className="stack">
