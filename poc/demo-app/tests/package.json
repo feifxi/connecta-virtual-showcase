@@ -8,8 +8,9 @@
     "s3": "node s3-check.mjs",
     "s3:observe": "node s3-observe.mjs",
     "s4": "node s4-check.mjs",
-    "s4:tracks": "node s4-tracks.mjs"
-
+    "s4:tracks": "node s4-tracks.mjs",
+    "hall": "node hall-check.mjs",
+    "presets": "node presets-check.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.64.0"

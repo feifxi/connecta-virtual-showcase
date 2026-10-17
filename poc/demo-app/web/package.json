@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "gen:map": "node scripts/gen-map.mjs"
+    "gen:map": "node scripts/gen-map.mjs",
+    "gen:hall": "node scripts/gen-hall.mjs",
+    "gen:presets": "node scripts/gen-presets.mjs"
   },
   "dependencies": {
     "@colyseus/schema": "^5.0.39",

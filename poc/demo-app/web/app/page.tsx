@@ -5,6 +5,8 @@ const spikes = [
   { href: '/s2', label: 'S2 LiveKit: เสียง · กล้อง · แชร์จอ' },
   { href: '/s3', label: 'S3 Movement sync (Colyseus)' },
   { href: '/s4', label: 'S4 Proximity media' },
+  { href: '/hall', label: 'Hall art: ตัวละคร chibi + แมปจำลองงาน (ไม่ใช่ spike · offline)' },
+  { href: '/presets', label: 'Hall presets: Room / Hall · บูธวางตามจำนวนผลงาน มี/ไม่มีหมวด (ไม่ใช่ spike · offline)' },
 ];
 
 export default function Home() {

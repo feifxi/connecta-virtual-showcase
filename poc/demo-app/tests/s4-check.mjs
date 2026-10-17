@@ -3,7 +3,7 @@ import { chromium } from 'playwright-core';
 import { BASE, CHROME, INSECURE_AS_SECURE, OUT } from './env.mjs';
 mkdirSync(OUT, { recursive: true });
 // S4: presenter P shares screen in booth-2 · visitors A and B start at the spawn point.
-// Checks proximity voice (hysteresis 8/12 tiles), booth-only screen share, and how fast subscriptions switch.
+// Checks proximity voice (hysteresis 5/7 tiles), booth-only screen share, and how fast subscriptions switch.
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const browser = await chromium.launch({
   executablePath: CHROME, headless: true,
@@ -68,7 +68,7 @@ check('audio from B actually flows to A', b1 - b0 > 1000, `${b1 - b0} bytes/s`);
 const visitorCanShare = await A.evaluate(async () => { try { await window.__lkRoom.localParticipant.setScreenShareEnabled(true); return true; } catch { return false; } });
 check('visitor cannot publish screen share (token grant)', !visitorCanShare);
 
-// 3) A walks into booth-2: P screen + P mic subscribed, B mic dropped beyond 12 tiles (not at 8)
+// 3) A walks into booth-2: P screen + P mic subscribed, B mic dropped beyond 7 tiles (not at 5)
 await A.evaluate(() => {
   window.__firstScreenFrame = null;
   const loop = () => { const v = document.querySelector('video[data-kind=screen]'); if (v && v.videoWidth > 0 && !window.__firstScreenFrame) window.__firstScreenFrame = performance.now(); requestAnimationFrame(loop); };
@@ -83,7 +83,7 @@ const scr = (await switches(A, pId, 'screen_share')).find((e) => e.on);
 const firstFrame = await A.evaluate(() => window.__firstScreenFrame);
 console.log(`     screen: decide→subscribed ${Math.round(scr.doneAt - scr.decidedAt)} ms · decide→first frame ${Math.round(firstFrame - scr.decidedAt)} ms`);
 const offB = (await switches(A, bId, 'microphone')).find((e) => !e.on);
-check('B mic dropped only beyond 12 tiles (hysteresis)', offB && offB.tiles > 12 && offB.tiles < 13.5, `at ${offB?.tiles} tiles · unsubscribed in ${Math.round(offB?.doneAt - offB?.decidedAt)} ms`);
+check('B mic dropped only beyond 7 tiles (hysteresis)', offB && offB.tiles > 7 && offB.tiles < 8.5, `at ${offB?.tiles} tiles · unsubscribed in ${Math.round(offB?.doneAt - offB?.decidedAt)} ms`);
 check('A did not flicker on B (1 on + 1 off)', (await switches(A, bId, 'microphone')).length <= 2);
 const volP = await A.evaluate((i) => window.__proximity && [...document.querySelectorAll(`audio[data-identity="${i}"]`)].map((a) => a.volume)[0], pId);
 check('presenter heard at full volume inside the booth', volP === 1, `volume ${volP}`);
@@ -104,16 +104,16 @@ check('P still heard by distance from the corridor', sA.P?.includes('microphone'
 const volP2 = await A.evaluate((i) => [...document.querySelectorAll(`audio[data-identity="${i}"]`)].map((a) => a.volume)[0], pId);
 console.log(`     P volume from corridor: ${volP2}`);
 
-// 6) B walks up to A: hears A again when closer than 8 tiles
+// 6) B walks up to A: hears A again when closer than 5 tiles
 const aId = await ids(A);
 const before = (await switches(B, aId, 'microphone')).length;
-await walkTo(B, 624, 420);
+await walkTo(B, 624, 340);
 await B.waitForFunction(([i, n]) => {
   const ev = window.__proximity.switches.filter((e) => e.identity === i && e.source === 'microphone');
   return ev.length > n && ev[ev.length - 1].on && ev[ev.length - 1].doneAt;
 }, [aId, before], { timeout: 5000 }).catch(() => {});
 const onA = (await switches(B, aId, 'microphone')).slice(before).filter((e) => e.on).pop();
-check('B hears A again inside 8 tiles', onA && onA.tiles < 8, `at ${onA?.tiles} tiles · subscribed in ${Math.round(onA?.doneAt - onA?.decidedAt)} ms`);
+check('B hears A again inside 5 tiles', onA && onA.tiles < 5, `at ${onA?.tiles} tiles · subscribed in ${Math.round(onA?.doneAt - onA?.decidedAt)} ms`);
 
 console.log('errors:', errors.length ? errors : 'none');
 console.log(`${results.filter(Boolean).length}/${results.length} passed`);

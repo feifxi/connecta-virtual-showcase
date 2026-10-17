@@ -8,15 +8,15 @@
 |---|---|---|
 | Language | **TypeScript** ทั้งระบบ | ชั้น realtime อยู่บน Node อยู่แล้ว ถ้า API ใช้ภาษาอื่นต้องดูแลเครื่องมือและประกาศโครงสร้างข้อมูลซ้ำสองชุด |
 | Rendering | **Phaser 4** | tilemap · collision · camera · sprite animation ครบในตัว · เริ่มจาก template ทางการ `phaserjs/template-nextjs` |
-| Map | **Tiled** → export JSON | ไม่ต้องเขียน map editor เอง · template ฮอลล์มี "ช่องบูธ" ให้ระบบเติมผลงานอัตโนมัติ |
-| Web | **Next.js (App Router)** | หน้า public (หน้างาน · แกลเลอรีหลังงาน) ได้ SEO/OG ใน codebase เดียว |
+| Map | **Tiled** → export JSON | template ฮอลล์ preset มี "ช่องบูธ" ให้ระบบเติมผลงานอัตโนมัติ · เก็บเป็น `map_json` + `booth_slots` เพื่อให้ map editor ในเว็บ (ภายหลัง) สร้างรูปแบบเดียวกันได้ |
+| Web | **Next.js (App Router)** | หน้า public (หน้างาน + รายการผลงาน) ได้ SEO/OG ใน codebase เดียว |
 | Realtime | **Colyseus** | room lifecycle · delta state sync · client SDK สำเร็จรูป · 1 room ต่อ 1 ฮอลล์ · `StateView` แยกข้อมูลตามโซน |
 | API | **NestJS** | โครงสร้างบังคับ เหมาะทีมหลายคน · guard เป็นที่ของ permission · แยก service จาก Colyseus |
-| Media | **LiveKit** (self-host) | SFU + TURN/TLS ในตัวเดียว · เปลี่ยนสิทธิ์ publish ฝั่ง server ได้ (โหมดนำเสนอ · Pass the Mic) |
+| Media | **LiveKit** (self-host) | SFU + TURN/TLS ในตัวเดียว · เปลี่ยนสิทธิ์ publish / mute ฝั่ง server ได้ (เสียงโซนบูธ · mute โดย Presenter) |
 | DB | **PostgreSQL + Prisma + pgvector** | ข้อมูลเชิง relation + vector สำหรับ RAG ในที่เดียว |
 | Cache | **Redis** | MVP ยังไม่ใช้จริง แต่วาง interface ไว้ |
 | Storage | **MinIO** (S3-compatible) | โปสเตอร์ · สไลด์ · โมเดล 3D · serve ด้วย signed URL |
-| Auth | **OAuth (Google/Microsoft) + magic link · JWT** | บังคับ login ทุกคน ไม่มี guest · ⚠️ เช็คว่าบัญชี @kmutt.ac.th เป็น Microsoft หรือ Google |
+| Auth | **Better Auth** (self-host) · Microsoft + Google + magic link | บังคับ login ทุกคน ไม่มี guest · user/session อยู่ใน Postgres ของเราเอง · มี magic link · rate limit · account linking · JWT/JWKS ในตัว · Auth.js อยู่ในการดูแลของทีม Better Auth และทีมแนะนำให้โปรเจคใหม่ใช้ Better Auth |
 | AI | **LLM API + pgvector** | AI ผู้ช่วยตอบเรื่องผลงาน (RAG) · AI สรุป feedback |
 | 3D | **`<model-viewer>`** | ดูโมเดล `.glb` ในบูธ ไม่ต้องเขียน three.js เอง (Could) |
 | Poster | PDF → รูปตอนอัปโหลด (server) | ซูม/ชี้ sync ผ่าน Colyseus |
@@ -55,10 +55,19 @@ realtime → postgres :5432 · redis :6379 · api (ตรวจสิทธิ�
 ⭐ **media เป็น UDP ผ่าน reverse proxy ไม่ได้ → browser ต้องต่อ LiveKit ตรง** ข้อนี้กำหนดการเลือก infra ทั้งหมด
 
 **Media ในฮอลล์ (ออกแบบ)**
-- 1 ฮอลล์ = 1 LiveKit room · ทุกคน publish ไมค์ได้ (ปกติ) · **client subscribe เฉพาะคนในรัศมี** (proximity + hysteresis)
-- จอแชร์ + กล้องผู้นำเสนอ: publish ได้เฉพาะ PRESENTER (ตรวจตอนออก token) · subscribe เฉพาะคนในโซนบูธ · simulcast
-- **โหมดนำเสนอในบูธ**: server ปิดสิทธิ์ publish ของผู้ชมในโซนบูธ · ทุกคนในโซน subscribe ผู้นำเสนอ · Pass the Mic = server เปิดสิทธิ์ publish ให้ผู้รับชั่วคราว
+- 1 ฮอลล์ = 1 LiveKit room · ทุกคน publish ไมค์ได้ (ปกติ) · **client subscribe เฉพาะคนในรัศมี** (เริ่มที่ 5 ช่อง เท่า Gather · ตัดที่ 7 ช่อง)
+- จอแชร์ + กล้องผู้นำเสนอ: จอแชร์ + กล้อง publish ได้เฉพาะ PRESENTER ของบูธนั้น (ตรวจตอนออก token) · subscribe เฉพาะคนในโซนบูธ · simulcast
+- **เสียงโซนบูธ**: คนในโซนบูธ subscribe กันทุกคนที่ความดังเต็ม · ไม่ subscribe คนนอกบูธ · คนนอกบูธไม่ subscribe คนในบูธ (ไม่ทะลุทั้งสองทาง) · Presenter/Staff mute คนในบูธผ่าน LiveKit server API (`mutePublishedTrack`)
 - สิทธิ์ทุกอย่างเปลี่ยนที่ **server** (LiveKit server API / token) ไม่ใช่แค่ปิดไมค์ฝั่ง client
+- ฮอลล์ที่ไม่มีคน = ไม่มี Colyseus room (`autoDispose` ทิ้ง room เมื่อว่าง) และ LiveKit ปิด room ว่างเอง → งานที่เปิดทิ้งไว้ (Exhibition) ไม่กิน CPU · ต้นทุนที่เหลือคือ storage
+
+**Auth (Better Auth)**
+- รันใน Next.js ที่ `/api/auth/*` · ต้องตั้ง `basePath` และ OAuth redirect URI ตาม path `/capstone26/CP26SSI3`
+- session เก็บใน DB → ban แล้วตัด session ได้ทันที
+- NestJS และ Colyseus (`onAuth`) ตรวจตัวตนด้วย **JWT plugin + JWKS** (`jose`) ไม่ต้องรู้ secret · JWT มีแค่ `userId` + app role · **event role เช็คจาก DB ทุกครั้ง**
+- Microsoft: tenant `common` (บัญชีองค์กร + ส่วนตัว) · scope `openid profile email` · @kmutt.ac.th เป็นบัญชี Microsoft · ⚠️ ต้องลอง login ด้วยบัญชี kmutt ว่ากดยินยอมแอปภายนอกเองได้ไหม — ถ้าเจอ "Need admin approval" ต้องขอ IT ทำ admin consent · ระหว่างนั้นใช้ magic link ไปที่เมล kmutt
+- API เปลี่ยนระหว่าง minor version → **pin version และอ่าน docs ตรงเวอร์ชัน**
+- อีเมล (magic link · คำเชิญ · ผลคะแนนถึงผู้นำเสนอ): Resend · free plan ส่งได้ 100 ฉบับ/วัน · Interested / survey ใช้ in-app + `Add to calendar` ไม่ส่งอีเมล · ส่งคำเชิญจำนวนมากต้องทยอยส่งหรือใช้แผนเสียเงิน (Pro $20/เดือน 50,000 ฉบับ)
 
 **สิ่งที่ nginx ต้องตั้งเอง**
 - **cert**: certbot + ต่ออายุอัตโนมัติ

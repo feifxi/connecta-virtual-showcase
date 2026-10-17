@@ -3,9 +3,10 @@ import type { Room as ColyseusRoom } from '@colyseus/sdk';
 import type { HallState, PlayerState } from '@/game/hallSchema';
 
 const TILE = 32;
-// Hysteresis: start hearing someone inside 8 tiles, stop only beyond 12 — one threshold would flicker at the edge
-export const HEAR_ENTER_TILES = 8;
-export const HEAR_LEAVE_TILES = 12;
+// Same range as Gather: start hearing someone inside 5 tiles, full volume within 2 tiles
+// Hysteresis: stop only beyond 7 tiles — one threshold would flicker at the edge
+export const HEAR_ENTER_TILES = 5;
+export const HEAR_LEAVE_TILES = 7;
 const FULL_VOLUME_TILES = 2;
 const MIN_VOLUME = 0.15;
 const TICK_MS = 200;
@@ -94,7 +95,7 @@ export class ProximityMedia {
       else this.hearing.delete(p.identity);
       const see = presenterHere || !!this.opts.subscribeAll;
 
-      const volume = presenterHere ? 1 : Math.max(MIN_VOLUME, Math.min(1, 1 - (tiles - FULL_VOLUME_TILES) / (HEAR_LEAVE_TILES - FULL_VOLUME_TILES)));
+      const volume = presenterHere ? 1 : Math.max(MIN_VOLUME, Math.min(1, 1 - (tiles - FULL_VOLUME_TILES) / (HEAR_ENTER_TILES - FULL_VOLUME_TILES)));
 
       for (const pub of p.trackPublications.values()) {
         const want = pub.source === Track.Source.Microphone ? hear : see;

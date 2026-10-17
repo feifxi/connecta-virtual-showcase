@@ -46,30 +46,30 @@
 
 | Pain | Solution |
 |---|---|
-| ผู้นำเสนอนั่งรอคนเดียว · ผู้ชมไม่กล้าเข้า | เดินเข้าใกล้บูธแล้วได้ยินเลย ไม่ต้องกดเข้าห้อง · เห็นจากด้านนอกว่ามีคนคุยอยู่ |
-| บูธคนเกิน 4–5 คนคุยไม่รู้เรื่อง | โหมดนำเสนอในบูธ: ผู้นำเสนอพูดให้ทั้งบูธ ผู้ชมปิดเสียงอัตโนมัติ ยกมือ + Pass the Mic · คิวเมื่อบูธเต็ม |
-| ผลงานเยอะ ไม่รู้จะดูอะไร | ค้นหา/กรองตามหมวด แล้วไปบูธได้ทันที · minimap แสดงบูธที่กำลังนำเสนอ · ตารางนำเสนอ + ป้าย "กำลังนำเสนอ" |
+| ผู้นำเสนอนั่งรอคนเดียว · ผู้ชมไม่กล้าเข้า | เดินเข้าเขตบูธแล้วได้ยินเลย ไม่ต้องกดเข้าห้อง · เห็นจากด้านนอกว่ามีคนคุยอยู่ |
+| บูธคนเกิน 4–5 คนคุยไม่รู้เรื่อง | เสียงโซนบูธ: คนในบูธได้ยินกันชัดเท่ากัน ไม่ได้ยินเสียงนอกบูธ · Presenter mute คนในบูธได้ |
+| ผลงานเยอะ ไม่รู้จะดูอะไร | ค้นหา/กรองตามหมวด แล้วไปบูธได้ทันที · minimap + ป้าย "Live" + จำนวนคนในบูธ |
 | บูธมุมลับไม่มีคนแวะ | สร้างฮอลล์อัตโนมัติจาก CSV + template ผัง · แนะนำบูธที่มีคนแวะน้อย |
 | ให้คะแนนยาก | กรรมการให้คะแนนตาม rubric ในบูธ มีน้ำหนักเกณฑ์ รวมผลอัตโนมัติ |
 | feedback น้อย | ผู้ชมฝาก feedback + Popular Vote · ผู้นำเสนอได้สรุปหลังงาน |
 | ไม่รู้ว่างานได้ผลไหม | analytics: คนแวะ · เวลาในบูธ · คะแนน · feedback |
-| มางานไม่ได้ / งานจบแล้วหายไป | ออนไลน์ทั้งหมดหรือเป็นส่วน hybrid · บูธเปิดเป็นแกลเลอรีต่อหลังงาน |
+| มางานไม่ได้ / งานจบแล้วหายไป | ออนไลน์ทั้งหมดหรือเป็นส่วน hybrid · ฮอลล์เปิดแสดงต่อหลังงาน (Exhibition) |
 
-**Core ที่ต้องทำให้ดีที่สุดก่อน**: เดินชม + คุยในบูธ · โหมดนำเสนอ · rubric + feedback · analytics หลังงาน
+**Core ที่ต้องทำให้ดีที่สุดก่อน**: เดินชม + คุยในบูธ · เสียงโซนบูธ + แชร์จอ · rubric + feedback · analytics หลังงาน
 
 ### 1.5 ข้อจำกัดของ 2D แบบปัจจุบัน (Gather) และวิธีทำให้ดีกว่า
 
 | ข้อจำกัด | หลักฐาน | เราทำให้ดีกว่ายังไง |
 |---|---|---|
-| บูธคนเยอะคุยไม่รู้เรื่อง ต้องย้ายไป Zoom | NeurIPS | โหมดนำเสนอในบูธ + Pass the Mic + คิว |
+| บูธคนเยอะคุยไม่รู้เรื่อง ต้องย้ายไป Zoom | NeurIPS | เสียงโซนบูธ + mute โดย Presenter |
 | โปสเตอร์อ่านยาก ต้องเปิดแยก · NeurIPS ต้องอัปโหลดใหม่ ~10% | [NeurIPS Blog](https://blog.neurips.cc/2021/02/12/neurips-2020-online-experiments-gather-town-poster-sessions-and-mementor/) | Poster viewer sync กับผู้นำเสนอ (ซูม/ชี้ตาม) · ตรวจไฟล์ + preview ตอนอัปโหลด |
 | เข้าไม่ได้หรือหลุด ทั้งที่ยังไม่เต็ม | arXiv, NeurIPS | แบ่งห้องตามโซน · reconnect อัตโนมัติ · load test (มี loadtest จาก S3) |
-| ไม่มีโครงสร้าง · บางงานคนเข้าน้อยเพราะรู้สึกเหมือนเกม | NeurIPS Blog, [SNE ChemBio](https://sne-chembio.ch/blog/gather-town-virtual-poster-session-lessons-learned/) | ตารางนำเสนอ + ป้าย "กำลังนำเสนอ" · art style แบบงานวิชาการ |
+| ไม่มีโครงสร้าง · บางงานคนเข้าน้อยเพราะรู้สึกเหมือนเกม | NeurIPS Blog, [SNE ChemBio](https://sne-chembio.ch/blog/gather-town-virtual-poster-session-lessons-learned/) | ตารางเวลาของงาน + Announce จากผู้จัด + ป้าย "Live" · art style แบบงานวิชาการ |
 | หาบูธที่อยากดูไม่เจอ | ไม่มีค้นหาในตัว | ค้นหา/กรอง + ไปบูธทันที · minimap |
 | ผู้จัดเตรียมงานยาก ต้องวาดแผนที่เอง | SNE ChemBio | สร้างฮอลล์อัตโนมัติจาก CSV + template |
-| คนใหม่ใช้ยาก ต้องทำ tutorial · แนะนำ Chrome · ไม่แนะนำมือถือ | [UMich](https://internship.its.umich.edu/node/265) | คลิกเพื่อเดิน · มือถือใช้โหมดรายการบูธ |
+| คนใหม่ใช้ยาก ต้องทำ tutorial · แนะนำ Chrome · ไม่แนะนำมือถือ | [UMich](https://internship.its.umich.edu/node/265) | คลิกเพื่อเดิน · responsive บนมือถือ |
 | ไม่มีเครื่องมือของงานนำเสนอ | — | rubric · โหวต · feedback · analytics |
-| งานจบแล้วหายไป | NCBI | บูธเปิดเป็นแกลเลอรีต่อหลังงาน |
+| งานจบแล้วหายไป | NCBI | ฮอลล์เปิดแสดงต่อหลังงาน (Exhibition) |
 
 ### 1.6 3D
 
@@ -129,26 +129,22 @@
 | Visibility | สุ่มลำดับต่อคน | **สุ่ม/หมุนตำแหน่งบูธหรือลำดับในรายการ** + แนะนำบูธที่มีคนแวะน้อย |
 | Judging | ฟอร์มประเมินแยก ทำผ่านเว็บ | **มอบหมายกรรมการ → กรรมการเดินไปบูธ ให้คะแนนตาม rubric ในบูธ** (เห็นและคุยกับผู้นำเสนอสด) · ส่ง feedback ให้ผู้นำเสนอหลังงาน · ผู้จัดกลั่นกรองได้ |
 | Comment | comment ใต้ผลงาน | comment/feedback ในบูธ + Popular Vote · ใช้ได้ทั้งตอนงานสดและหลังงาน |
-| Live | ลิงก์ Zoom/Meet + โต๊ะ 2–8 คน | **ในตัว ไม่ต้องออกไปแอปอื่น**: proximity voice + โหมดนำเสนอในบูธ + Pass the Mic · โต๊ะคุยกลุ่มเล็กในแผนที่ |
+| Live | ลิงก์ Zoom/Meet + โต๊ะ 2–8 คน | **ในตัว ไม่ต้องออกไปแอปอื่น**: proximity voice + เสียงโซนบูธ + แชร์จอ · โต๊ะคุยกลุ่มเล็กในแผนที่ |
 | Analytics | interaction ระดับงาน | **ข้อมูลเชิงพื้นที่**: คนแวะบูธ · เวลาในบูธ · heatmap ฮอลล์ · บูธที่คนเดินผ่านแต่ไม่แวะ |
 | ใช้ซ้ำ | duplicate งานเก่า | duplicate งาน + template ฮอลล์ |
-| Access | public / private ตามอีเมล | public / private ตามอีเมล (เช่น เฉพาะ @kmutt.ac.th) |
-| หลังงาน | เก็บไว้ดูได้ | บูธเปิดเป็นแกลเลอรีต่อ + Abstract Booklet / สรุปผลงาน |
+| Access | public / private ตามอีเมล | ทุกงานแสดงใน Explore + ป้ายประเภท · จำกัดโดเมนได้ (เช่น @kmutt.ac.th) |
+| หลังงาน | เก็บไว้ดูได้ | ฮอลล์เปิดแสดงต่อ (Exhibition) |
 | ไม่เอา (ตอนนี้) | Donations · Abstract Management หลายรอบ | ไว้ Nice to have |
 
-**Business model ที่เสนอ (ปรับจาก Symposium)**
+**Business model: ตัวเลือกที่พิจารณา**
 
-| แพ็กเกจ | สำหรับ | สิ่งที่ได้ |
-|---|---|---|
-| **Free** | งานในรายวิชา / งานเล็ก (ให้นักศึกษาและอาจารย์ลองใช้) | 1 งาน · คนจำกัด · เดินชม + คุยในบูธ + comment |
-| **Per event** | งานเดี่ยว เช่น งานโปรเจคจบ hackathon | 1 งาน · + rubric/judging · feedback ถึงผู้นำเสนอ · analytics |
-| **Annual (คณะ)** | คณะที่จัดหลายงานต่อปี | หลายงาน · ทุกฟีเจอร์ · duplicate/template |
-| **Enterprise (มหาลัย / งานประชุมวิชาการ)** | ทั้งมหาลัย หรือผู้จัดงานประชุม | ไม่จำกัดงาน · SSO · admin กลาง · คนเยอะ |
+| ตัวเลือก | ผล |
+|---|---|
+| 4 tier (Free · Per event · Annual · Enterprise) ปรับจาก Symposium | ไม่เลือก — ยังไม่ปล่อยเวอร์ชันแรก · tier เยอะอธิบายยากเกินโปรเจคจบ |
+| ✅ Free + Pro (subscription) + Event add-on | เลือก — จำกัดด้วยคนพร้อมกัน (ต้นทุนจริง) · ขาย judging + analytics · ผลอยู่ใน `connecta-v3.md` |
 
-- เหมือน Symposium: **judging + analytics เป็นตัวแบ่ง tier** (เป็นสิ่งที่ผู้จัดยอมจ่าย และกรรมการสอบมองว่ามีค่าที่สุด)
-- ต่างจาก Symposium: **มี Free tier** ให้ใช้กับงานในรายวิชา → เป็นช่องทางให้อาจารย์และนักศึกษาได้ลองก่อนคณะซื้อ (Symposium ไม่มี free tier เท่าที่หาเจอ)
-- รายได้เสริมที่เป็นไปได้ (ยังเป็นไอเดีย ต้องถามก่อน): บริษัทเปิดบูธรับสมัครงานในงานโปรเจคจบ
-- ราคาเป็นเงินบาทยังไม่กำหนด ต้องคุยกับผู้จัดจริง (คณะ) ก่อน
+- ราคาอ้างอิง: Symposium $2,499–3,999/ปี · SpatialChat day pass $3/คน/วัน ([SpatialChat](https://spatial.chat/use-cases/onboarding-sessions)) → งาน 600 คน ≈ $1,800/วัน
+- Gather 1.0 คิดเงินตามคนพร้อมกัน — แนวเดียวกับที่เราใช้จำกัด plan
 
 ### 1.9 ความเสี่ยงที่ต้องตอบ
 
@@ -260,3 +256,34 @@
 | Hosted: Cloudflare Realtime · Agora · Daily · 100ms · Twilio | SFU บน cloud | ไม่ต้องดูแล server · ไม่ต้องเปิด UDP เอง | ค่าใช้จ่ายตามการใช้ · lock-in · Cloudflare ฟรี 1,000 GB/เดือน แล้ว $0.05/GB |
 
 หลักฐานในโดเมนเดียวกัน: WorkAdventure (virtual office 2D) เริ่มจาก mesh → Jitsi → ใช้ LiveKit เมื่อวงเกิน 4 คน · แหล่ง: [WorkAdventure 1.27](https://workadventu.re/release/workadventure-1-27-0-the-road-to-workadventure-2/) · [WorkAdventure communication](https://workadventu.re/article-en/improving-the-virtual-conversation-and-communication-experience-with-workadventure/) · [BlogGeek OSS media servers](https://bloggeek.me/webrtc-tools/media-servers-oss/) · [Fora Soft SFU comparison](https://www.forasoft.com/learn/video-streaming/articles-streaming/sfu-comparison-mediasoup-janus-livekit-jitsi-pion) (บริษัทรับทำ WebRTC) · [Cloudflare Realtime pricing](https://developers.cloudflare.com/realtime/sfu/pricing)
+
+## 9. Auth และการเชิญ (16 ต.ค.) — ผลสรุปอยู่ใน `technical.md` และ `features.md`
+
+**Library**
+
+| ตัวเลือก | ผล |
+|---|---|
+| ✅ **Better Auth** | TypeScript · ไม่ผูก framework · Microsoft/Google/magic link · rate limit · account linking · session ใน DB (ban แล้วตัดได้ทันที) · JWT plugin + JWKS ให้ service อื่นตรวจ · ⚠️ API เปลี่ยนระหว่าง minor version (docs แยก 1.6 / 1.7 / 1.8 beta) |
+| Auth.js (NextAuth) | อยู่ในการดูแลของทีม Better Auth ตั้งแต่ ก.ย. 2025 · แก้ security/ปัญหาด่วน · ทีมแนะนำโปรเจคใหม่ใช้ Better Auth · v5 ยัง beta (stable คือ v4) · ออกแบบรอบ Next.js ใช้กับ NestJS ต้องเชื่อมเอง |
+| Clerk · Supabase Auth · Firebase | ข้อมูลผู้ใช้อยู่นอกระบบ (PDPA) · ตาราง user แยกจาก DB ของเรา · ติด quota ของ vendor |
+
+แหล่ง: [Auth.js joins Better Auth](https://www.better-auth.com/blog/authjs-joins-better-auth) · [Better Auth Microsoft](https://www.better-auth.com/docs/authentication/microsoft) · [Magic link](https://better-auth.com/docs/plugins/magic-link) · [JWT plugin](https://better-auth.com/docs/plugins/jwt) · [Better Stack](https://betterstack.com/community/guides/scaling-nodejs/better-auth-vs-nextauth-authjs-vs-autho/)
+
+**Microsoft ของมหาวิทยาลัย** — มหาวิทยาลัยหลายแห่งปิดไม่ให้ผู้ใช้ยินยอมแอปภายนอกเอง → ผู้ใช้เจอ "Need admin approval" ต้องให้ IT ทำ admin consent · scope ที่ผู้ใช้ยินยอมเองได้ปกติคือ delegated scope พื้นฐาน · แหล่ง: [Oakland Univ.](https://support.oakland.edu/TDClient/33/Support-Center/KB/ArticleDet?ID=814) · [UT Austin](https://cloud.wikis.utexas.edu/wiki/spaces/entraid/pages/67129367) · [Microsoft Q&A](https://learn.microsoft.com/en-us/answers/a/1429365)
+
+**อีเมล** — Resend free 100 ฉบับ/วัน (~3,000/เดือน) · แผนเสียเงินไม่จำกัดรายวัน · แหล่ง: [Resend pricing](https://resend.com/docs/knowledge-base/what-is-resend-pricing.md)
+
+**การเชิญของ platform ใหญ่**
+
+| Platform | ผูกกับ | login ผิดบัญชี |
+|---|---|---|
+| GitHub org | อีเมล · รับได้เฉพาะบัญชีที่มีอีเมลนั้นยืนยันแล้ว · หมดอายุ 7 วัน | เพิ่มอีเมลนั้นเข้าบัญชีเดิมแล้วยืนยัน |
+| Figma | ส่งทางอีเมลแต่ไม่ผูกบัญชี · link invite เลือกบัญชีได้ | สลับบัญชี / incognito |
+| Google Docs | อีเมล | Switch account · Request access |
+| Slack · Zealous (judging) | อีเมล | admin ส่งคำเชิญใหม่ไปอีเมลที่ใช้จริง |
+
+- ผูกอีเมล = ปลอดภัยแต่ login ผิดบัญชีบ่อย · ผูกลิงก์ = สะดวกแต่ลิงก์หลุดใครก็รับได้
+- ที่เลือก: ลิงก์ token จากอีเมล (กดได้ = เข้าถึงกล่องอีเมลนั้น) + เตือนเมื่ออีเมลไม่ตรง + จำอีเมลไว้กับบัญชีแบบ GitHub · token ใช้ครั้งเดียว
+- แหล่ง: [GitHub](https://docs.github.com/en/organizations/managing-membership-in-your-organization/inviting-users-to-join-your-organization) · [Figma](https://help.figma.com/hc/en-us/articles/1500008023902-Accept-invitations) · [Google Docs](https://support.google.com/docs/answer/6211862?hl=en) · [Zealous](https://zealous.co/help/docs/judging/faqs/why-havent-i-received-my-invitation-to-judge-email) · [Treehouse (Slack)](https://static.teamtreehouse.com/community/invite-to-slack-channel-got-sent-to-bad-email-address)
+
+**NeurIPS 2020 บน Gather (รายละเอียดบูธ)** — รูปโปสเตอร์ (~10% อัปใหม่) · จุดยืนผู้นำเสนอ · พรมแบ่งเขตบูธ · Zoom สำรองต่อโปสเตอร์ · teleport จากเว็บ · ห้องละ ≤20 โปสเตอร์ตามหัวข้อ · ไม่พบ video/link/AI · แหล่ง: [NeurIPS Blog](https://blog.neurips.cc/2021/02/12/neurips-2020-online-experiments-gather-town-poster-sessions-and-mementor/)

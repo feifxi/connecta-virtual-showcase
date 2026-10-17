@@ -9,8 +9,8 @@
 | S1 Phaser 4 + Tiled + Next.js | ✅ ผ่าน | `s1-done` | Phaser 4.2.1 · Next 16.4 · WebGL 58 fps · เดิน 197 px/s (ทแยง 199 = normalize ถูก) · ชนกำแพง/โต๊ะบูธ · คลิกเพื่อเดิน · เข้า/ออกบูธส่ง event ถึง React · mount/unmount 100 รอบ heap คงที่ ~18 MB · ⚠️ ห้ามใช้ `Graphics.generateTexture()` (Phaser 4 ถือ scene + WebGL context ไว้ตลอดผ่าน `Graphics.TargetCamera`) ใช้ไฟล์รูปแทน |
 | S2 LiveKit: เสียง · กล้อง · แชร์จอ | ✅ ผ่าน | `s2-done` | LiveKit server 1.13.9 (Docker) · livekit-client 2.22.4 · ทดสอบ 2 client บนเครื่องเดียว (กล้อง/ไมค์ปลอมของ Chrome): เสียงไป-กลับ ~76 kbps · กล้อง 640×360 · จอ 960×540 · join 0.2–1.6 วิ (เจอ 10.7 วิ 1 ครั้ง ทำซ้ำไม่ได้) · ภาพแรกของกล้อง 0.26–0.41 วิ · จอ 0.48–0.55 วิ · simulcast 3 layer · หยุดแชร์/ออก ฝั่งอื่นเห็นใน 28 ms · ออกห้องหรือเปลี่ยนหน้าแล้วไมค์หยุดและหลุดจาก server · ยังไม่ได้ทดสอบข้ามเครื่อง/ข้ามเน็ต (S7) |
 | S3 Movement sync + loadtest | ✅ ผ่าน | `s3-done` | Colyseus 0.18 · tick 15 Hz · client prediction + server ตรวจโควตาระยะทาง/กำแพง/รูปแบบ · ตำแหน่งตรงกัน 0 px · กด → อีกแท็บเห็น 122–189 ms (รวม interpolation 120 ms) · **150 คน**: 11.6 KB/s ต่อคน · CPU server ≤ 7% · RTT p99 ≤ 7 ms · แท็บจริง 60 fps · ฮอลล์เดียวถึง 1,000 คน server ไม่ตัน (CPU 23%) แต่ bandwidth 0.7 Mbps/คน → เพดาน 300 · 1 process รับ 8 งาน × 150 สบาย · ทดสอบบนเครื่องเดียว |
-| S4 Proximity media | ✅ ผ่าน | `s4-done` | subscribe ตามระยะ (hysteresis 8/12 ช่อง) + จอ/กล้องผู้นำเสนอเฉพาะในโซนบูธ · test อัตโนมัติ 12/12 ผ่าน 3 รอบติด · สลับจอ: ตัดสิน → ภาพแรก 100–141 ms · เสียงเข้า ~50 ms · ถอด track ~250 ms · ไม่กะพริบที่ขอบรัศมี · browser รับเสียง 40 track ได้ (CPU +15%) · ภาระหลักคือวิดีโอ · **ยังไม่ได้ทดสอบกับคนจริง 8–10 คน** |
-| S5 โหมดนำเสนอในบูธ + Pass the Mic | ยังไม่เริ่ม | — | |
+| S4 Proximity media | ✅ ผ่าน | `s4-done` | subscribe ตามระยะ (5 ช่อง ตามแบบ Gather · hysteresis 5/7) + จอ/กล้องผู้นำเสนอเฉพาะในโซนบูธ · test อัตโนมัติ 12/12 ผ่าน 3 รอบติด · สลับจอ: ตัดสิน → ภาพแรก 100–141 ms · เสียงเข้า ~50 ms · ถอด track ~250 ms · ไม่กะพริบที่ขอบรัศมี · browser รับเสียง 40 track ได้ (CPU +15%) · ภาระหลักคือวิดีโอ · **ยังไม่ได้ทดสอบกับคนจริง 8–10 คน** |
+| S5 เสียงโซนบูธ + mute | ยังไม่เริ่ม | — | |
 | S6 Poster / 3D viewer sync | ยังไม่เริ่ม | — | |
 | S7 NAT + TURN (แยก) | ยังไม่เริ่ม | — | |
 
@@ -27,14 +27,14 @@
 | **Media** | **S2** LiveKit hello | LiveKit + token API route (หน้าแยก `/s2`) | 2 client ได้ยินเสียง · เห็นกล้อง · เห็นจอแชร์ของกัน | Exam 2 |
 | **2D** | **S3** Movement sync | S1 + Colyseus | 150 client ต่อฮอลล์ลื่นไหม (loadtest) · tick rate เท่าไร | Exam 2 |
 | **Media** | **S4** Proximity media 🔴 | S2 + S3 · ตำแหน่งจาก Colyseus ตัดสินว่าจะ subscribe ใคร | เข้าใกล้ได้ยินเสียง · เข้าโซนบูธเห็นจอ/กล้องผู้นำเสนอ · ออกแล้วหาย · ทดสอบกับ**คนจริง 8–10 คน** · เปลี่ยนเร็วแค่ไหน · browser รับได้กี่ track | Exam 2 |
-| **Media** | **S5** โหมดนำเสนอในบูธ 🔴 | S4 + LiveKit server API (เปลี่ยนสิทธิ์ publish) | ปิด/เปิดสิทธิ์ publish จาก server เร็วแค่ไหน · Pass the Mic ไม่ต้อง reconnect | core |
+| **Media** | **S5** เสียงโซนบูธ 🔴 | S4 + LiveKit server API (mute) | คนในบูธได้ยินกันเท่ากัน · เสียงไม่ทะลุเข้า/ออกโซนบูธ · Presenter mute คนในบูธจาก server เร็วแค่ไหน · ขอบโซนไม่กะพริบ · บูธ 50 คนยังไหว | core |
 | **Viewer** | **S6** Poster / 3D viewer sync | S3 + PDF→รูป + `<model-viewer>` | sync ซูม/มุมกล้องผ่าน Colyseus ลื่นไหม · ไฟล์ใหญ่แค่ไหนยังโหลดทัน | ความเสี่ยงต่ำ |
 | **Network** | **S7** Deploy + NAT/TURN (แยกจาก POC app) | VM คณะผ่าน reverse proxy (web · Colyseus) + LiveKit นอก VM (Cloud หรือ VM ที่มี public IP) | WebSocket ผ่าน proxy ได้ไหม · `basePath` ใช้ได้ · เสียง/ภาพเข้าได้จากบ้าน · wifi มหาลัย · 4G · เน็ตบริษัท · VPN | core (ก่อน Exam 3) |
 
 ค่าตั้งต้น (ยืนยันจาก spike):
 - tick rate **15 Hz** (S3)
-- proximity **hysteresis**: subscribe < 8 ช่อง · unsubscribe > 12 ช่อง — ⚠️ ห้ามใช้ค่าเดียวกัน (S4 ยืนยันว่าไม่กะพริบ) · ตัดสินทุก 200 ms
-- ความดังตามระยะ: 100% ที่ ≤ 2 ช่อง → ลดเป็นเส้นตรงถึง 15% ที่ 12 ช่อง · ผู้นำเสนอของบูธที่ยืนอยู่ = 100% เสมอ
+- proximity **ระยะเท่า Gather** (เริ่มได้ยิน 5 ช่อง · เต็มภายใน 2 ช่อง) · **hysteresis**: subscribe < 5 ช่อง · unsubscribe > 7 ช่อง — ⚠️ ห้ามใช้ค่าเดียวกัน (S4 ยืนยันว่าไม่กะพริบ) · ตัดสินทุก 200 ms
+- ความดังตามระยะ: 100% ที่ ≤ 2 ช่อง → ลดเป็นเส้นตรงถึง 15% ที่ 5 ช่อง (คงที่ 15% จนถูกตัดที่ 7) · ผู้นำเสนอของบูธที่ยืนอยู่ = 100% เสมอ
 - bitrate เสียง ~40 kbps/คน · วิดีโอ/จอ ~1.5 Mbps
 
 ## โครงสร้าง
@@ -46,6 +46,10 @@
 | `demo-app/realtime/` | Colyseus game server (S3+) · `loadtest/run.sh` (ฮอลล์ × คน) |
 | `demo-app/loadtest-media/` | load test LiveKit ด้วย `lk perf load-test` |
 | `demo-app/tests/` | script ทดสอบอัตโนมัติ (Playwright + Chrome) ของแต่ละ spike |
+| `demo-app/web` หน้า `/hall` | Hall art (ไม่ใช่ spike): ตัวละคร chibi + แมปจำลองงาน · offline ไม่ต้องรัน server · รายละเอียดในหัวข้อ Hall art |
+| `demo-app/web` หน้า `/presets` | Hall presets (ไม่ใช่ spike): Room / Hall · บูธวางตามจำนวนผลงาน มี/ไม่มีหมวด · offline · รายละเอียดในหัวข้อ Hall presets |
+| `ui-mockup-v1/` | UI mockup หน้าเว็บ (Next.js + Tailwind + shadcn/ui) · 9 หน้าตาม flow · ข้อมูลตัวอย่าง ไม่มี backend · `npm install && npm run dev` แล้วเปิด http://localhost:3000 |
+| `ui-mockup-v2/` | UI mockup จาก Claude Design ([Connecta Flow](https://claude.ai/design/p/526ec3a8-d5f8-4aaa-b753-d57037f31ff8?file=Connecta+Flow.dc.html)) · Next.js + Tailwind · 6 หน้า: Landing `/` · Sign up `/signup` · Event `/e/senior-design-2026` · Hall `/hall` · Judge `/judge` · Report `/manage/senior-design-2026/report` · Hall เป็น HTML/CSS เดินได้ (ไม่ใช่ Phaser) · ข้อมูลตัวอย่าง ไม่มี backend · `npm install && npm run dev` |
 
 โฟลเดอร์อื่นใน `poc/` ใช้เก็บของทดลองที่ไม่ใช่ spike เช่น UI mockup · แมป 2D · S7 (NAT + TURN) ทดสอบบน VM แยก
 
@@ -71,6 +75,8 @@ cd poc/demo-app/web           # terminal 2
 npm install
 cp .env.example .env.local    # ครั้งแรกครั้งเดียว
 npm run gen:map               # สร้างแมป + tileset + sprite (เปิดแก้ hall.json ใน Tiled ได้)
+npm run gen:hall              # art + แมปของหน้า /hall (สร้างไว้แล้วใน public/assets/hall · รันใหม่เมื่อแก้ script)
+npm run gen:presets           # แมป preset ของหน้า /presets (สร้างไว้แล้วใน public/assets/presets)
 npm run dev                   # http://localhost:3000
 ```
 
@@ -84,7 +90,7 @@ npm run dev                   # http://localhost:3000
 cd poc/demo-app && docker compose up -d                 # LiveKit (S2)
 cd realtime && npm install && npm start                 # Colyseus :2567 (S3) · STATS=1 พิมพ์ CPU/RAM ทุก 5 วิ
 cd ../web && npm install && npm run dev                  # :3000
-cd ../tests && npm install && npm run s1 | s3 | s2       # BASE=http://localhost:3000 (default)
+cd ../tests && npm install && npm run s1 | s3 | s2 | hall | presets   # BASE=http://localhost:3000 (default)
 cd ../realtime && loadtest/run.sh 150 4 40               # capacity: 4 งาน × 150 คน 40 วิ (เปิด/ปิด server เอง · พิมพ์สรุป)
 cd ../loadtest-media && LAYOUT=speaker ./run.sh 15 1 3 10 40   # media: ต้องมี LiveKit + CLI `lk`
 ```
@@ -240,7 +246,7 @@ cd ../loadtest-media && LAYOUT=speaker ./run.sh 15 1 3 10 40   # media: ต้�
 - 1 ฮอลล์ = 1 Colyseus room + 1 LiveKit room (`hall-<eventId>`) · join Colyseus ก่อน แล้วใช้ **sessionId เป็น identity ของ LiveKit** → จับคู่ตำแหน่งกับ media ได้
 - token แยกสิทธิ์: ผู้ชม publish ได้แค่ไมค์ (`canPublishSources`) · ผู้นำเสนอได้ไมค์ · กล้อง · แชร์จอ · ผู้นำเสนอของบูธไหนเก็บใน Colyseus (`presenterOf` · server รับเฉพาะชื่อบูธที่มีจริง)
 - LiveKit `autoSubscribe: false` · ทุก 200 ms client คำนวณจากตำแหน่งใน Colyseus แล้ว `setSubscribed()`:
-  - ไมค์: เริ่มได้ยิน < 8 ช่อง · หยุด > 12 ช่อง · ความดังลดตามระยะ · ผู้นำเสนอของบูธที่ยืนอยู่ได้ยินเต็มเสมอ
+  - ไมค์: เริ่มได้ยิน < 5 ช่อง · หยุด > 7 ช่อง · ความดังลดตามระยะ · ผู้นำเสนอของบูธที่ยืนอยู่ได้ยินเต็มเสมอ
   - จอ/กล้อง: subscribe เฉพาะของผู้นำเสนอบูธที่ตัวเองยืนอยู่ · ออกจากบูธ = unsubscribe (server หยุดส่ง ไม่ใช่แค่ซ่อน)
 - คนที่อยู่ใน LiveKit แต่ไม่มีใน Colyseus → ไม่ subscribe
 
@@ -249,7 +255,7 @@ cd ../loadtest-media && LAYOUT=speaker ./run.sh 15 1 3 10 40   # media: ต้�
 2. A และ B (ผู้ชม) เกิดที่จุด spawn ห่าง P ~20 ช่อง
 3. A เดินเข้า booth-2 → วัดเวลาตั้งแต่ตัดสินใจจน subscribe และจนภาพแรกขึ้น · เช็คว่า B ถูกถอดที่ระยะเท่าไร
 4. A เดินออกไปทางเดิน → จอต้องหาย · ยังได้ยิน P ตามระยะ
-5. B เดินมาใกล้ A → ต้องได้ยินกันอีกครั้งเมื่อ < 8 ช่อง
+5. B เดินมาใกล้ A → ต้องได้ยินกันอีกครั้งเมื่อ < 5 ช่อง
 6. ผู้ชมลองแชร์จอเอง → token ต้องไม่อนุญาต
 
 **ผล** (รัน 3 รอบ · 12/12 ผ่านทุกรอบ · ไม่มี error)
@@ -259,12 +265,12 @@ cd ../loadtest-media && LAYOUT=speaker ./run.sh 15 1 3 10 40   # media: ต้�
 | ผู้ชมใกล้กันได้ยินกัน · เสียงไหลจริง | ✅ ~9.6 KB/s ต่อ track |
 | ไกลและอยู่นอกบูธ ไม่ได้ยิน/ไม่เห็น P | ✅ |
 | ผู้ชมแชร์จอเอง | ✅ ถูกปฏิเสธ (token grant) |
-| เข้าบูธ → เห็นจอ + ได้ยิน P | ✅ ตัดสิน → subscribe 49–57 ms · ตัดสิน → ภาพแรก 100–141 ms |
-| B ถูกถอดเมื่อห่าง | ✅ ที่ 12.2–13.2 ช่อง (ไม่ใช่ที่ 8) · ถอดเสร็จ 255–264 ms · ไม่กะพริบ (1 เปิด + 1 ปิด) |
-| ความดังของผู้นำเสนอในบูธ | ✅ 100% · จากทางเดินห่าง ~4 ช่อง = 72% |
+| เข้าบูธ → เห็นจอ + ได้ยิน P | ✅ ตัดสิน → subscribe 46–55 ms · ตัดสิน → ภาพแรก 99–109 ms |
+| B ถูกถอดเมื่อห่าง | ✅ ที่ 7.2–7.9 ช่อง (ไม่ใช่ที่ 5) · ถอดเสร็จ 251–252 ms · ไม่กะพริบ (1 เปิด + 1 ปิด) |
+| ความดังของผู้นำเสนอในบูธ | ✅ 100% · จากทางเดินเบาลงตามระยะ |
 | B (นอกบูธ) ไม่เคย subscribe จอของ P | ✅ |
-| ออกจากบูธ → จอหาย | ✅ server ถอด track ใน 249–257 ms |
-| B กลับมาใกล้ → ได้ยิน A | ✅ ที่ 6.5–7.8 ช่อง · subscribe 50–56 ms |
+| ออกจากบูธ → จอหาย | ✅ server ถอด track ใน 248–249 ms |
+| B กลับมาใกล้ → ได้ยิน A | ✅ ที่ 4.1–4.7 ช่อง · subscribe 46–54 ms |
 
 **เวลาสลับทั้งหมด** (เดินข้ามเส้น → เห็น/ได้ยิน) ≈ รอ patch ตำแหน่ง ≤ 67 ms + รอรอบตัดสิน ≤ 200 ms + subscribe ~50 ms (เสียง) หรือภาพแรก ~120 ms (จอ) → **ไม่เกิน ~0.4 วิ**
 
@@ -289,7 +295,7 @@ cd ../loadtest-media && LAYOUT=speaker ./run.sh 15 1 3 10 40   # media: ต้�
 
 **ข้อจำกัดของ POC** (ต้องแก้ตอน implement)
 - identity และ role ส่งมาจาก client (query string) → ของจริงต้องออก token จาก session และ role ใน DB · และต้องตรวจว่า sessionId เป็นของคนนั้นจริง
-- ทุกคนในฮอลล์ publish ไมค์ตลอด (ปิดได้เอง) · การบังคับปิดไมค์ผู้ชมในบูธเป็นงานของ S5
+- ทุกคนในฮอลล์ publish ไมค์ตลอด (ปิดได้เอง) · เสียงโซนบูธ + mute โดย Presenter เป็นงานของ S5
 
 **สิ่งที่ยังไม่ได้ทดสอบ**
 - ⚠️ **คนจริง 8–10 คน** (เสียงจริง · เสียงสะท้อน · ความรู้สึกเรื่องความดังตามระยะ) → ทำตามขั้นตอนด้านล่าง
@@ -307,9 +313,32 @@ cd poc/demo-app/web && npm run dev                        # terminal 2
 1. เปิด `chrome://flags/#unsafely-treat-insecure-origin-as-secure` → ใส่ `http://<IP>:3000` → Enabled → Relaunch
 2. เปิด `http://<IP>:3000/s4` · คนที่ 1 เลือก "ผู้นำเสนอ booth-2" เดินเข้า booth-2 แล้วกดแชร์จอ · คนอื่นเลือก "ผู้ชม" · อนุญาตไมค์
 3. ลอง: ยืนใกล้กันแล้วคุย · เดินห่างทีละนิด (ดูตัวเลขช่องในแผงขวา) · เข้า/ออก booth-2 · 8–10 คนพร้อมกันในบูธเดียว
-4. จด: ได้ยินชัดไหม · ระยะ 8/12 ช่องพอดีไหม · เสียงเบาตามระยะเป็นธรรมชาติไหม · มีเสียงสะท้อนไหม · เครื่องไหนกระตุก
+4. จด: ได้ยินชัดไหม · ระยะ 5/7 ช่องพอดีไหม · เสียงเบาตามระยะเป็นธรรมชาติไหม · มีเสียงสะท้อนไหม · เครื่องไหนกระตุก
 
 ---
+
+## Hall art (ไม่ใช่ spike)
+
+หน้า `/hall` ใน `demo-app/web` · ลองหน้าตาโลก 2D แบบ Gather: ตัวละคร 2D chibi เป็นนักศึกษา + แมปจำลองงานแสดงโปรเจคจบ · ไม่มี server/เสียง (ใช้ระบบเดินแบบ S1)
+
+- **Art วาดด้วย code ทั้งหมด** (`web/scripts/gen-hall.mjs` + `scripts/lib/`) → ลิขสิทธิ์ของทีม ไม่ใช้ asset ภายนอก · ได้ `public/assets/hall/` (tileset 32 px · ตัวละคร 32×48 px 20 แบบ × 4 ทิศ × 4 เฟรม · props atlas · `hall.json` เปิดใน Tiled ได้)
+- ตัวละคร: ชุดนักศึกษา (เชิ้ตขาว + เนคไท / กระโปรง) · Staff (เสื้อน้ำเงิน) · Judge (สูท) · ผู้ชม (ชุดไปรเวท) · สายคล้องคอสีตาม role
+- แมป 60×40 ช่อง: 24 บูธใน 4 โซนตามหมวด (AI & Data · Web & Mobile · IoT & Robotics · Games & XR) · ป้ายชื่อบูธ + สถานะ LIVE · เวที + ที่นั่ง · Workshop · Lounge · โต๊ะกรรมการ · Popular Vote · จุดลงทะเบียน + ทางเข้า
+- NPC ~120 คน: ผู้นำเสนอยืนหลังโต๊ะ · ผู้ชมเดินไปบูธอื่นเอง (A* บน grid 16 px) · มีบับเบิลพูด
+- ใช้งาน: เดินด้วยลูกศร/WASD/คลิก (หาทางหลบโต๊ะเอง) · scroll ซูม · คลิก minimap เพื่อเดินไป · เข้าบูธแล้วมีการ์ดข้อมูล · แถบล่างแสดงคนในรัศมี 5 ช่อง (ค่าเดียวกับ S4)
+- ทดสอบ `npm run hall` (headless Chrome): NPC 120 · คลิกเดินถึงบูธ · การ์ดบูธขึ้น · ชนโต๊ะบูธ · ไม่มี error · fps 49–57 (swiftshader ไม่มี GPU)
+- ⚠️ แมปนี้ทำก่อนตกลง spec · โต๊ะกรรมการ · จุด Popular Vote · จุดลงทะเบียน ไม่มีใน spec แล้ว (เป็นฟังก์ชันใน UI) · แมปที่ตรง spec อยู่ในหัวข้อ Hall presets
+
+## Hall presets (ไม่ใช่ spike)
+
+หน้า `/presets` ใน `demo-app/web` · ทดลองกติกาฮอลล์ใน `docs/features.md`: แมปเดียวใช้ได้ทุกจำนวนผลงาน มี/ไม่มีหมวด · ใช้ art ชุดเดียวกับ Hall art · offline
+
+- `web/scripts/gen-presets.mjs` → `public/assets/presets/` (`room.json` · `hall.json` เปิดใน Tiled ได้ · tileset · props · `boxes.json` กล่องชนของ prop) · แมปมีแค่พื้น ผนัง ของตกแต่ง + object layer `blocks` และ `slots` (ช่องบูธ 4×5 ช่อง เว้น 1 ช่องระหว่างบูธ · ลำดับเติมเริ่มจาก block ที่ใกล้ทางเข้า)
+- **Room** 34×26 ช่อง: 2 block × 6 บูธ (แถวบน + แถวล่าง) · กลางห้องโล่งเป็นที่ยืนคุย
+- **Hall** 70×42 ช่อง: 5 block × 6 บูธ · ทางเดินหิน · เวที + ที่นั่ง · workshop · lounge ข้างทางเข้า · ป้ายแผนผังที่ทางเข้า (เวที/workshop/lounge เป็นฉาก ใช้ proximity ปกติ)
+- บูธวางตอนรัน (`src/game/PresetScene.ts`): ปูพรมสีตามหมวดด้วย `putTileAt` · ฉากหลัง + โต๊ะ + ป้ายชื่อ + ผู้นำเสนอ · ช่องว่างเป็นต้นไม้ + เก้าอี้ · block ที่ว่างทั้งกลุ่มเป็น lounge (พรม + ชุดโซฟา) · ป้าย block บอกหมวดในนั้น · คำนวณทางเดินใหม่ทุกครั้งที่จัด
+- ใช้งาน: เลือก Room/Hall · By category / No categories · slider จำนวนผลงานก่อนงาน (จัดใหม่ทั้งหมด) · `+ Add booth during the event` (ลงช่องว่าง บูธอื่นไม่ขยับ · เต็มแล้วขึ้นข้อความให้เปิดฮอลล์เพิ่ม) · เดินเข้าบูธแล้วมีการ์ด · **ระยะได้ยินนอกบูธ** 5 ช่อง (ค่าที่ใช้ · เท่า Gather) / 8 ช่อง (ไว้เทียบ) แสดงเป็นวงรอบตัว + วงในเสียงเต็ม 2 ช่อง + จำนวนคนที่ได้ยิน (ในโซนบูธนับเฉพาะคนในบูธเดียวกัน)
+- ทดสอบ `npm run presets` (headless Chrome): Hall 18/30 · หมวดเรียงต่อกัน · ไม่มีหมวดเรียงตามลำดับ · เพิ่มบูธแล้วบูธเดิมขยับ 0 · เต็มแล้วขึ้นข้อความ · คลิกเดินถึงบูธ · block ว่างเป็น lounge · ยืนกลาง lounge ได้ยิน 1 คน (5 ช่อง) vs 3 คน (8 ช่อง) · Room 12/12 และ 7 · ไม่มี error · fps 58 · ภาพอยู่ `tests/out/presets-*.png`
 
 ## Capacity: ตัวเลขดิบ
 
@@ -497,7 +526,7 @@ LiveKit ระบุว่า 1 room ต้องอยู่ใน node เด�
 11. ถ้าได้: **VM ที่ 2 ขนาดเล็ก** (2 vCPU / 4 GB) สำหรับ staging และรันตัวทดสอบ load (ตัวทดสอบต้องอยู่คนละเครื่องกับ server)
 
 **บัญชีและอีเมล**
-12. login ด้วยบัญชี @kmutt.ac.th: เป็น Microsoft 365 หรือ Google Workspace · ต้องขอ IT ลงทะเบียน OAuth app ใน tenant ไหม
+12. บัญชี @kmutt.ac.th เป็น Microsoft: ผู้ใช้กดยินยอมแอปภายนอกเองได้ไหม หรือต้องขอ IT ทำ admin consent ให้แอปของเรา
 13. โดเมนสำหรับส่ง magic link (SPF/DKIM) หรือใช้บริการส่งอีเมลภายนอก
 
 **ขอให้เร็ว**: S7 (NAT + TURN) และ Exam 3 ต้องใช้ VM · ทดสอบเร็วสุดคือรัน LiveKit บน VM แล้วเข้าจากมือถือ 4G (ห้ามใช้ wifi มหาวิทยาลัย) ถ้าได้ยินเสียง = เครือข่ายผ่าน

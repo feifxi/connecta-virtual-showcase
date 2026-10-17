@@ -74,7 +74,7 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 
 - stack · architecture อยู่ใน `docs/technical.md` · spike และผลทดสอบอยู่ใน `poc/README.md`
 - ใช้ **nginx** (ทีมมีประสบการณ์) · ต้องตั้งเอง: certbot · header WebSocket (`Upgrade`/`Connection`) · TURN over TLS บน 443 ด้วย `stream` + `ssl_preread`
-- spike **S1–S7** (S1 Phaser 4+Tiled · S2 LiveKit hello · S3 Movement sync · S4 Proximity media · S5 โหมดนำเสนอในบูธ · S6 Poster/3D viewer sync · S7 NAT+TURN) · S1–S6 = POC app เดียว · S7 ทดสอบบน VM แยก · **Exam 2 ทำถึง S4** (เดโม S1–S4) · สถานะอยู่ใน `poc/README.md`
+- spike **S1–S7** (S1 Phaser 4+Tiled · S2 LiveKit hello · S3 Movement sync · S4 Proximity media · S5 เสียงโซนบูธ · S6 Poster/3D viewer sync · S7 NAT+TURN) · S1–S6 = POC app เดียว · S7 ทดสอบบน VM แยก · **Exam 2 ทำถึง S4** (เดโม S1–S4) · สถานะอยู่ใน `poc/README.md`
 - ไม่ต้องเข้าไปดู repo `poc-connecta`
 
 ## กติกาเขียนโค้ด
@@ -93,8 +93,8 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 
 ## งานถัดไป
 
-1. Exam 2 (ส่ง 18 ต.ค.): spike/POC · mockup · architecture · component design · API design · ER diagram · roadmap
+1. Exam 2 (ส่ง 18 ต.ค.): spike/POC · mockup (ภาพจาก `poc/ui-mockup-v1/` ที่ทีมเลือก · v2 เก็บไว้เทียบ) · architecture · component design · API design · ER diagram · roadmap
 2. ทีมเขียน one-liner · pain · problem statement เอง แทนร่างใน `docs/connecta-v3.md`
 3. ทำ survey (`docs/research.md` ส่วน 4) + นัดคุยผู้จัด D-Day / อาจารย์ · ความเป็นไปได้ทางธุรกิจต้องใช้ข้อมูลจากผู้ใช้เป้าหมายจริง (ไม่ใช่ทีม)
-4. mock-up
+4. ปรับ UI mockup `poc/ui-mockup-v1/` ให้ตรงกับ `docs/features.md` (เช่น onboarding · ฟอร์มเข้างาน · คำเชิญ · Staff panel ในฮอลล์)
 5. เช็ค SpatialChat ว่ามี judging หรือไม่

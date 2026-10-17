@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+/* Design tokens from the Claude Design handoff (Connecta Flow) */
+@theme {
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #0f1a3a;
+  --color-ink-2: #3d4766;
+  --color-muted: #5b6584;
+  --color-faint: #8a93ad;
+  --color-primary: #1d5cf5;
+  --color-primary-hover: #1446c4;
+  --color-primary-tint: #e8efff;
+  --color-primary-light: #7fa3ff;
+  --color-accent: #ff6a1a;
+  --color-live: #b2430a;
+  --color-live-bg: #ffe6d8;
+  --color-success: #1f7a52;
+  --color-speak: #33c27f;
+  --color-app: #f6f7fb;
+  --color-subtle: #eef1f8;
+  --color-line: #e3e7f2;
+  --color-input: #d6dcea;
+  --color-lav: #e6dcfb;
+  --color-lav-2: #d8cbf6;
+  --color-bar: #0f1a3a;
+  --color-bar-btn: #26314f;
+  --color-leave: #3a1f22;
+  --color-leave-fg: #ffb4a8;
+  --color-bar-meta: #aab6d6;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-float: 0 10px 30px rgba(15, 26, 58, 0.18);
+  --shadow-seg: 0 1px 2px rgba(15, 26, 58, 0.1);
+}
+
+html, body { background: var(--color-app); color: var(--color-ink); }
+a { text-decoration: none; }
+.pixel { image-rendering: pixelated; }
+
+/* avatar idle breathing + walk bounce */
+@keyframes idle { 0%, 100% { translate: 0 0; } 50% { translate: 0 1px; } }
+@keyframes walk { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
+.idle { animation: idle 2.4s ease-in-out infinite; }
+.walk { animation: walk 0.32s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .idle, .walk { animation: none; } }
