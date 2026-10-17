@@ -5,14 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/brand";
 import { bigButton } from "@/components/shells";
-import { toneClass, visitorTypeOptions, type Tone } from "@/lib/mock";
+import { CharacterPicker } from "@/components/character-picker";
+import { visitorTypeOptions } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 
 const field = "h-11 rounded-xl px-4 text-[15px]";
-const avatars: { id: string; tone: Tone; face: string }[] = [
-  { id: "a1", tone: "peach", face: "🦊" }, { id: "a2", tone: "mint", face: "🐢" }, { id: "a3", tone: "butter", face: "🐥" },
-  { id: "a4", tone: "lilac", face: "🦄" }, { id: "a5", tone: "sky", face: "🐳" }, { id: "a6", tone: "peach", face: "🐼" },
-];
 const provinces = ["Bangkok", "Chiang Mai", "Khon Kaen", "Nonthaburi", "Phuket", "Other"];
 
 // One-time setup after the first login · then back to the page the user was going to
@@ -33,20 +30,10 @@ export default function Onboarding() {
           <div className="flex flex-col gap-2">
             <Label htmlFor="name" className="font-semibold">Display name</Label>
             <Input id="name" defaultValue="Ploy Srisuk" className={field} />
-            <p className="text-sm text-muted-foreground">From your Microsoft account. Shown above your avatar in the hall.</p>
+            <p className="text-sm text-muted-foreground">From your Microsoft account. Shown above your character in the hall.</p>
           </div>
 
-          <fieldset className="flex flex-col gap-3">
-            <legend className="mb-2 text-sm font-semibold">Avatar</legend>
-            <div className="flex flex-wrap gap-3">
-              {avatars.map((a, i) => (
-                <label key={a.id} className={cn("flex size-16 cursor-pointer items-center justify-center rounded-2xl text-3xl ring-2 ring-transparent has-checked:ring-primary", toneClass[a.tone])}>
-                  <input type="radio" name="avatar" defaultChecked={i === 3} className="sr-only" aria-label={`Avatar ${i + 1}`} />
-                  <span aria-hidden="true">{a.face}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <CharacterPicker />
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="flex flex-col gap-2">

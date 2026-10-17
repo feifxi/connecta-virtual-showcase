@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Users } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toneClass, type BoothStatus, type Role, type Tone } from "@/lib/mock";
+import { avatarFor, characters, toneClass, type BoothStatus, type Role, type Tone } from "@/lib/mock";
 
 export function Logo({ className, href = "/" }: { className?: string; href?: string }) {
   return (
@@ -48,13 +48,17 @@ export function RoleChip({ role, className }: { role: Role; className?: string }
 
 const avatarTones: Tone[] = ["peach", "mint", "butter", "lilac", "sky"];
 
-export function Initials({ name, size = "md", className }: { name: string; size?: "sm" | "md" | "lg"; className?: string }) {
+// Avatar = the person's 2D character (head and shoulders) on a pastel circle
+export function Initials({ name, size = "md", avatar, className }: { name: string; size?: "sm" | "md" | "lg" | "xl"; avatar?: number; className?: string }) {
   const tone = avatarTones[name.charCodeAt(0) % avatarTones.length];
-  const sz = { sm: "size-7 text-[11px]", md: "size-9 text-xs", lg: "size-12 text-sm" }[size];
+  const sz = { sm: "size-7", md: "size-9", lg: "size-12", xl: "size-20" }[size];
+  const c = characters[(avatar ?? avatarFor(name)) % characters.length];
   return (
-    <span className={cn("inline-flex shrink-0 items-center justify-center rounded-full font-bold ring-2 ring-card", toneClass[tone], sz, className)} aria-hidden="true">
-      {name.slice(0, 2).toUpperCase()}
-    </span>
+    <span
+      className={cn("inline-block shrink-0 rounded-full bg-no-repeat ring-2 ring-card [image-rendering:pixelated]", toneClass[tone], sz, className)}
+      style={{ backgroundImage: `url(${c.portrait})`, backgroundSize: "170%", backgroundPosition: "50% 12%" }}
+      aria-hidden="true"
+    />
   );
 }
 

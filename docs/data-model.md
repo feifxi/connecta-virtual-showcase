@@ -25,8 +25,9 @@
 
 - เส้นทึบ = เป็นของ (งานมีฮอลล์ · ผลงานมีไฟล์) · เส้นประ = อ้างถึง (ผลงานวางอยู่ที่ช่องบูธ · ใบคะแนนเป็นของผลงาน)
 - **ผู้ใช้ (บัญชี)** ไม่ได้วาดเพื่อไม่ให้เส้นรก — ผู้ใช้เชื่อมกับ: role ในงาน · ผู้เข้างาน · ทีมผู้นำเสนอ · ใบคะแนน (ในฐานะกรรมการ) · feedback / vote / ขอให้ติดต่อกลับ (ในฐานะผู้ชม)
-- แก้ภาพ: แก้ `images/data-model-concept.mmd` แล้ว render ใหม่ด้วย `npx @mermaid-js/mermaid-cli -i images/data-model-concept.mmd -o images/data-model-concept.png -w 1600 -b white`
-- ER diagram แบบละเอียด (ทุกช่อง) generate จาก Prisma schema ตอนเริ่ม implement (เช่น `prisma-erd-generator`) จะได้ตรงกับของจริงเสมอ
+- แก้ภาพ: แก้ `images/data-model-concept.mmd` แล้ว render ใหม่ด้วย `npx @mermaid-js/mermaid-cli -i images/data-model-concept.mmd -o images/data-model-concept.png -s 2 -b white`
+- **ER diagram แบบละเอียด** (ทุกช่อง + ชนิด) แยกตามหมวด · ตารางจากหมวดอื่นแสดงแค่ `id` · source `db/connecta.dbml` (วางใน dbdiagram.io เพื่อจัดวาง/export ได้) · render ใหม่: `node docs/db/render.mjs` · แก้ตารางในไฟล์นี้แล้วต้องแก้ `.dbml` ให้ตรงกัน · ตอน implement ให้ generate จาก Prisma schema แทน
+    - [บัญชี](images/db-account.svg) · [งานและคน](images/db-event_people.svg) · [ฮอลล์ · ผลงาน · ไฟล์](images/db-hall_project.svg) · [เข้างาน · ในงาน](images/db-in_event.svg) · [Judging](images/db-judging.svg) · [Analytics · log](images/db-analytics.svg)
 
 | กล่องในภาพ | ตารางจริง |
 |---|---|

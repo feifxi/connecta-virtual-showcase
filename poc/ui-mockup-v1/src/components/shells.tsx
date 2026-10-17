@@ -40,10 +40,10 @@ export function AppHeader() {
           <button type="button" aria-label="Notifications" className="inline-flex size-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-muted">
             <Bell className="size-5" />
           </button>
-          <span className="flex items-center gap-2 rounded-xl py-1 pl-1 pr-3 hover:bg-muted">
+          <Link href="/profile" className="flex items-center gap-2 rounded-xl py-1 pl-1 pr-3 hover:bg-muted">
             <Initials name="Ploy" />
             <span className="text-sm font-semibold">Ploy S.</span>
-          </span>
+          </Link>
         </div>
       </div>
     </header>

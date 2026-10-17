@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CalendarDays, Clock, Globe, Lock, Search, Trophy } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { HallMap } from "@/components/hall-map";
+import { Actor } from "@/components/actor";
 import { AvatarStack, Chip, StatusBadge } from "@/components/brand";
 import { PublicHeader } from "@/components/shells";
 import { booths, categories, event, toneClass, toneOf } from "@/lib/mock";
@@ -140,6 +141,9 @@ export default async function EventPage({ params, searchParams }: PageProps<"/e/
       </section>
 
       <section className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 py-16 text-center">
+        <div className="flex items-end" aria-hidden="true">
+          {[[4, 3, true], [1, 0, false], [9, 0, false], [12, 2, false], [8, 2, true]].map(([i, d, w], k) => <Actor key={k} index={i as number} direction={d as number} walk={w as boolean} className="-mx-1.5 size-20" />)}
+        </div>
         <h2 className="text-3xl font-bold tracking-tight">See you in the hall</h2>
         <p className="max-w-lg text-muted-foreground">Bring headphones. Step into a booth and everyone inside hears each other; your mic starts muted.</p>
         <EventCta slug={slug} state={state} />

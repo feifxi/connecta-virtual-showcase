@@ -1,10 +1,11 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Bot, Camera, Check, DoorClosed, FileImage, Heart, LogOut, Megaphone, MessageCircle, Mic, MicOff, MonitorPlay, MonitorUp, Pencil,
-  Search, Send, ShieldCheck, UserRoundPlus, Users, Video, X,
+  Minus, Plus, Search, Send, ShieldCheck, UserRoundPlus, Users, Video, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,24 +13,36 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { HallMap } from "@/components/hall-map";
+import type { HallControl } from "@/components/hall-game";
+import type { BoothInfo, Hearing } from "@/game/HallScene";
 import { AvatarStack, Chip, Initials, Logo, RoleChip, StatusBadge } from "@/components/brand";
-import { booths, categories, event, rubric, toneClass, toneOf, type Booth, type Role } from "@/lib/mock";
+import { ME, booths, categories, event, hallProjects, rubric, toneClass, toneOf, type Booth, type Role } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 
+// Phaser hall (map + booth placement from poc/demo-app · 2D characters from poc/TestUI) · ?as=Presenter|Judge|Admin starts in that role
+const HallGame = dynamic(() => import("@/components/hall-game"), { ssr: false });
+const zones = categories.map((c) => ({ category: c.name, tone: c.tone }));
+// every booth in the hall as a Booth (the 6 sample booths keep their full details)
+const hallBooths: Booth[] = hallProjects.map((h) => booths.find((b) => b.no === h.no) ?? {
+  id: `booth-${h.no}`, no: h.no, title: h.title, team: `Team ${h.no}`, members: [h.presenter], category: h.category, status: h.live ? "live" : "idle", people: 0,
+  summary: "A capstone project from this year's cohort. Step in and ask the team how it works.", tags: [], visits: 0, passedBy: 0, avgMinutes: 0, feedback: 0, votes: 0, contacts: 0, scored: 0, score: 0, ready: true,
+});
+const ROLES: Role[] = ["Visitor", "Presenter", "Judge", "Admin"];
 type Tab = "booth" | "feedback" | "score" | "people";
-const inBooth = [
-  { n: "Mint", role: "Presenter" as Role, talking: true }, { n: "Book", role: "Presenter" as Role }, { n: "Judge One", role: "Judge" as Role },
-  { n: "Jay", role: "Visitor" as Role }, { n: "Fah", role: "Visitor" as Role }, { n: "Oat", role: "Visitor" as Role },
-];
+const roleOf = (label: string): Role => (ROLES.find((r) => label.endsWith(r)) ?? "Visitor");
 const chat = {
   nearby: [{ who: "Beam", text: "Is booth 05 doing a live demo?" }, { who: "Fah", text: "Yes! Come in, we're running it now" }],
   everyone: [{ who: "Admin · Nat", text: "Judging closes at 3:30 PM. The event ends at 4:00 PM.", admin: true }, { who: "Oat", text: "Booth 04 is amazing, go see it" }],
 };
 
 export default function Hall() {
-  const [as, setAs] = useState<Role>("Judge");
-  const [booth, setBooth] = useState<Booth | null>(booths[0]);
+  const [as, setAs] = useState<Role>("Visitor");
+  const [booth, setBooth] = useState<Booth | null>(null);
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [avatar, setAvatar] = useState<number | null>(null);
+  const [hearing, setHearing] = useState<Hearing>({ people: [], inBooth: null });
+  const [zoom, setZoom] = useState(1.3);
+  const control = useRef<HallControl | null>(null);
   const [tab, setTab] = useState<Tab>("booth");
   const [mic, setMic] = useState(false); // muted on entry
   const [chatOpen, setChatOpen] = useState<"nearby" | "everyone" | null>(null);
@@ -44,7 +57,22 @@ export default function Hall() {
   const canMute = isPresenterHere || as === "Admin";
   const tabs: Tab[] = ["booth", ...(as === "Visitor" || as === "Admin" ? (["feedback"] as Tab[]) : []), ...(as === "Judge" ? (["score"] as Tab[]) : []), "people"];
 
-  const pick = (b: Booth) => { setBooth(b); setTab("booth"); setContact("closed"); };
+  useEffect(() => {
+    const r = new URLSearchParams(window.location.search).get("as");
+    if (ROLES.includes(r as Role)) setAs(r as Role);
+    let a = ME.avatar;
+    try { const v = localStorage.getItem("connecta-avatar"); if (v !== null) a = Number(v) || 0; } catch {}
+    setAvatar(a);
+  }, []);
+  const enter = (info: BoothInfo) => {
+    setBooth(hallBooths.find((b) => b.no === info.no) ?? null);
+    setPanelOpen(true); setTab("booth"); setContact("closed"); setVoted(false);
+  };
+  const walkTo = (b: Booth) => control.current?.goTo(b.no);
+  const zoomBy = (d: number) => { const z = Math.min(2, Math.max(0.7, Math.round((zoom + d) * 10) / 10)); setZoom(z); control.current?.zoom(z); };
+  // the presenter stands in the booth; the rest comes from who you can hear in the hall
+  const inBooth = booth ? [{ n: booth.members[0], role: "Presenter" as Role, talking: booth.status === "live" }, ...hearing.people.filter((h) => !h.startsWith(booth.members[0])).map((h) => ({ n: h.split(" · ")[0], role: roleOf(h), talking: false }))] : [];
+  const showPanel = booth && panelOpen;
 
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -61,7 +89,7 @@ export default function Hall() {
           <div className="flex items-center gap-1 rounded-xl bg-muted p-1 text-xs" role="group" aria-label="Mockup: preview as role">
             <span className="px-1.5 font-semibold text-muted-foreground">Preview as</span>
             {(["Visitor", "Presenter", "Judge", "Admin"] as Role[]).map((r) => (
-              <button key={r} type="button" aria-pressed={as === r} onClick={() => { setAs(r); setTab("booth"); setAdminOpen(false); }} className={cn("h-7 rounded-lg px-2.5 font-semibold", as === r ? "bg-card shadow-sm" : "text-muted-foreground")}>{r}</button>
+              <button key={r} type="button" aria-pressed={as === r} onClick={() => { setAs(r); setTab("booth"); setAdminOpen(false); if (booth) setPanelOpen(true); }} className={cn("h-7 rounded-lg px-2.5 font-semibold", as === r ? "bg-card shadow-sm" : "text-muted-foreground")}>{r}</button>
             ))}
           </div>
           <span className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-sm font-semibold"><Users className="size-4" aria-hidden="true" />137 in the hall</span>
@@ -72,7 +100,7 @@ export default function Hall() {
 
       <div className="flex min-h-0 flex-1">
         {/* booth list: the overview people get when they enter */}
-        {!booth && (
+        {!showPanel && !adminOpen && (
           <aside className="flex w-[320px] max-w-full shrink-0 flex-col gap-3 border-r border-border bg-card p-4" aria-label="All booths">
             <h2 className="text-lg font-bold">Booths in this hall</h2>
             <div className="relative">
@@ -83,9 +111,9 @@ export default function Hall() {
               {categories.map((c) => <span key={c.name} className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", toneClass[c.tone])}>{c.name}</span>)}
             </div>
             <ul className="-mx-1 flex min-h-0 flex-1 flex-col overflow-y-auto">
-              {booths.map((b) => (
+              {hallBooths.map((b) => (
                 <li key={b.id}>
-                  <button type="button" onClick={() => pick(b)} className="flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left hover:bg-muted">
+                  <button type="button" onClick={() => walkTo(b)} className="flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left hover:bg-muted">
                     <span className={cn("inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold", toneClass[toneOf(b.category)])}>{b.no}</span>
                     <span className="min-w-0 flex-1"><span className="line-clamp-1 text-sm font-semibold">{b.title}</span><span className="text-xs text-muted-foreground">{b.category}</span></span>
                     <StatusBadge status={b.status} people={b.people} />
@@ -97,8 +125,17 @@ export default function Hall() {
           </aside>
         )}
 
-        <main className="relative min-w-0 flex-1 overflow-auto p-5">
-          <HallMap interactive showMe selectedId={booth?.id} onSelect={pick} className="mx-auto max-w-5xl" />
+        <main className="relative min-w-0 flex-1 overflow-hidden bg-[#EEF0FA]">
+          {avatar !== null && (
+            <HallGame projects={hallProjects} zones={zones} title={event.name} avatar={avatar} name="Ploy (you)" control={control}
+              onEnter={enter} onLeave={() => { setBooth(null); setPanelOpen(false); }} onHearing={setHearing} />
+          )}
+          <p className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-full bg-card/90 px-3 py-1.5 text-xs text-muted-foreground shadow-sm">Move with <b>W A S D</b> or click · step onto a booth carpet to join it</p>
+          <div className="absolute bottom-6 right-5 flex items-center gap-1 rounded-xl bg-card p-1 shadow-md ring-1 ring-border">
+            <button type="button" aria-label="Zoom out" onClick={() => zoomBy(-0.1)} className="inline-flex size-8 items-center justify-center rounded-lg hover:bg-muted"><Minus className="size-4" /></button>
+            <span className="w-11 text-center text-xs font-semibold">{Math.round((zoom / 1.3) * 100)}%</span>
+            <button type="button" aria-label="Zoom in" onClick={() => zoomBy(0.1)} className="inline-flex size-8 items-center justify-center rounded-lg hover:bg-muted"><Plus className="size-4" /></button>
+          </div>
 
           {chatOpen && (
             <section className="absolute bottom-24 left-5 flex w-80 max-w-[calc(100%-2.5rem)] flex-col gap-3 rounded-2xl bg-card p-4 shadow-xl ring-1 ring-border" aria-label="Chat">
@@ -133,8 +170,8 @@ export default function Hall() {
                 </>
               )}
               <span className="flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2">
-                <AvatarStack names={inBooth.slice(0, 3).map((p) => p.n)} />
-                <span className="pl-1 text-xs text-background/80">{booth ? `In booth ${booth.no} · ${booth.people} hear each other` : "3 people nearby can hear you"}</span>
+                {(booth ? inBooth.length : hearing.people.length) > 0 && <AvatarStack names={(booth ? inBooth.map((p) => p.n) : hearing.people.map((h) => h.split(" · ")[0])).slice(0, 3)} />}
+                <span className="pl-1 text-xs text-background/80">{booth ? `In booth ${booth.no} · ${inBooth.length + 1} hear each other` : hearing.people.length ? `${hearing.people.length} ${hearing.people.length === 1 ? "person" : "people"} nearby can hear you` : "Nobody nearby · walk up to someone"}</span>
               </span>
               <button type="button" onClick={() => setChatOpen(chatOpen ? null : "nearby")} aria-label="Chat" className="inline-flex size-11 items-center justify-center rounded-xl bg-white/10 hover:bg-white/20"><MessageCircle className="size-5" /></button>
               {as === "Admin" && (
@@ -174,14 +211,14 @@ export default function Hall() {
           </aside>
         )}
 
-        {booth && !adminOpen && (
+        {showPanel && !adminOpen && (
           <aside className="flex w-[400px] max-w-full shrink-0 flex-col border-l border-border bg-card" aria-label="Booth panel">
             <div className="flex items-start justify-between gap-3 px-5 pt-5">
               <div className="min-w-0">
                 <div className="flex items-center gap-2"><span className="text-sm font-bold text-muted-foreground">Booth {booth.no}</span><StatusBadge status={booth.status} people={booth.people} /></div>
                 <h2 className="mt-1 text-lg font-bold leading-snug">{booth.title}</h2>
               </div>
-              <button type="button" onClick={() => setBooth(null)} aria-label="Close panel and show all booths" className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl text-muted-foreground hover:bg-muted"><X className="size-5" /></button>
+              <button type="button" onClick={() => setPanelOpen(false)} aria-label="Close panel and show all booths" className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl text-muted-foreground hover:bg-muted"><X className="size-5" /></button>
             </div>
             <div className="mx-5 mt-4 flex gap-1 rounded-xl bg-muted p-1" role="tablist">
               {tabs.map((t) => (
@@ -197,7 +234,7 @@ export default function Hall() {
                       <div className="relative flex aspect-video flex-col justify-between bg-[#2A3290] p-4">
                         <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-black/30 px-2 py-0.5 text-[11px] font-bold"><MonitorPlay className="size-3.5" aria-hidden="true" />{booth.members[0]} is sharing</span>
                         <div><div className="text-[11px] font-semibold uppercase tracking-wider opacity-70">Slide 4 of 12</div><div className="text-base font-bold">How it works</div></div>
-                        <span className="absolute bottom-3 right-3 flex size-14 items-center justify-center rounded-xl bg-mint text-lg font-bold text-mint-ink ring-2 ring-white">{booth.members[0].slice(0, 2)}</span>
+                        <Initials name={booth.members[0]} size="xl" className="absolute bottom-3 right-3 size-14 rounded-xl ring-white" />
                       </div>
                       <figcaption className="px-4 py-2 text-xs text-background/80">Only people inside the booth see the screen and the presenter&rsquo;s camera.</figcaption>
                     </figure>
@@ -220,7 +257,7 @@ export default function Hall() {
                   </div>
                   <p className="-mt-2 text-xs text-muted-foreground">When a presenter opens the poster, it zooms and scrolls along with them for everyone in the booth.</p>
                   {isPresenterHere && <Link href="/e/sit-capstone-2027/my-booth" className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-secondary text-sm font-semibold text-secondary-foreground"><Pencil className="size-4" aria-hidden="true" />Edit booth</Link>}
-                  {as === "Presenter" && !isPresenterHere && <p className="rounded-xl bg-muted px-3 py-2 text-xs text-muted-foreground">You present at booth 01. Here you&rsquo;re a visitor.</p>}
+                  {as === "Presenter" && !isPresenterHere && <p className="rounded-xl bg-muted px-3 py-2 text-xs text-muted-foreground">You present at booth 01. Here you&rsquo;re a visitor. <button type="button" className="font-semibold underline" onClick={() => control.current?.goTo("01")}>Walk to booth 01</button></p>}
                 </div>
               )}
 

@@ -2,17 +2,19 @@
 
 import { Sprout } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { booths, toneClass, toneOf, type Booth } from "@/lib/mock";
+import { Actor } from "@/components/actor";
+import { ME, avatarFor, booths, toneClass, toneOf, type Booth } from "@/lib/mock";
 
 // Stylised top-down hall: a stand-in for the Phaser world in this mockup.
 // Booths are placed from the project list; slots without a project become decoration, never empty tables.
 type Slot = Booth | { no: string; deco: true };
 const slots: Slot[] = [...booths.slice(0, 4), { no: "07", deco: true }, booths[4], { no: "08", deco: true }, booths[5], { no: "09", deco: true }, { no: "10", deco: true }, { no: "11", deco: true }, { no: "12", deco: true }];
 
+// x, y = feet position in % · they stand in the aisles between booth rows · d = sheet row (0 down · 1 up · 2 left · 3 right) · w = walking
 const crowd = [
-  { x: 14, y: 28, n: "Mint" }, { x: 19, y: 34, n: "Book" }, { x: 37, y: 26, n: "Ploy" }, { x: 41, y: 33, n: "Nat" },
-  { x: 33, y: 36, n: "Jay" }, { x: 63, y: 30, n: "Fah" }, { x: 86, y: 31, n: "Beam" }, { x: 60, y: 62, n: "Kla" },
-  { x: 47, y: 52, n: "Ice" }, { x: 22, y: 64, n: "Oat" }, { x: 75, y: 80, n: "Tong" }, { x: 40, y: 82, n: "Pim" },
+  { x: 9, y: 41, n: "Mint", d: 1 }, { x: 16, y: 42, n: "Book", d: 1 }, { x: 37, y: 41, n: "Nadia", d: 1 }, { x: 44, y: 42, n: "Nat", d: 2 },
+  { x: 55, y: 41, n: "Jay", d: 3, w: true }, { x: 81, y: 41, n: "Fah", d: 1 }, { x: 89, y: 42, n: "Beam", d: 1 },
+  { x: 22, y: 82, n: "Kla", d: 3, w: true }, { x: 48, y: 81, n: "Ice", d: 2, w: true }, { x: 64, y: 82, n: "Oat", d: 0 }, { x: 72, y: 82, n: "Tong", d: 2 }, { x: 91, y: 81, n: "Pim", d: 0, w: true },
 ];
 
 type Props = {
@@ -43,8 +45,8 @@ export function HallMap({ interactive = false, selectedId, onSelect, showMe = fa
               <span className="mt-auto flex w-full items-end justify-between gap-1">
                 <span className="text-[11px] font-bold text-muted-foreground">{b.no}</span>
                 <span className="flex items-center gap-1">
-                  {b.status === "live" && <span className="rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">● Live</span>}
-                  {b.people > 0 && <span className="text-[10px] font-semibold text-muted-foreground">👥 {b.people}</span>}
+                  {b.status === "live" && <span className="whitespace-nowrap rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">● Live</span>}
+                  {b.people > 0 && <span className="hidden whitespace-nowrap text-[10px] font-semibold text-muted-foreground xl:inline">👥 {b.people}</span>}
                 </span>
               </span>
             </>
@@ -65,17 +67,17 @@ export function HallMap({ interactive = false, selectedId, onSelect, showMe = fa
       </div>
 
       {crowd.map((p) => (
-        <span key={p.n} className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${p.x}%`, top: `${p.y}%` }} aria-hidden="true">
-          <span className="block size-5 rounded-full border-2 border-white bg-[#9AA4F5] shadow-sm" />
+        <span key={p.n} className="pointer-events-none absolute -translate-x-1/2 -translate-y-full" style={{ left: `${p.x}%`, top: `${p.y}%` }} aria-hidden="true">
+          <Actor index={avatarFor(p.n)} direction={p.d} walk={p.w} className="block size-[clamp(24px,2.8vw,38px)]" />
         </span>
       ))}
 
       {showMe && (
-        <span className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2" style={{ left: "26%", top: "35%" }} aria-hidden="true">
+        <span className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2" style={{ left: "27%", top: "38%" }} aria-hidden="true">
           <span className="absolute left-1/2 top-1/2 size-28 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed border-primary/40 bg-primary/5" />
           <span className="relative flex flex-col items-center">
-            <span className="mb-1 rounded-full bg-foreground px-2 py-0.5 text-[10px] font-bold text-background">You</span>
-            <span className="block size-6 rounded-full border-[3px] border-white bg-primary shadow-md" />
+            <span className="mb-0.5 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">You</span>
+            <Actor index={ME.avatar} direction={3} walk className="size-[clamp(26px,3vw,42px)]" />
           </span>
         </span>
       )}

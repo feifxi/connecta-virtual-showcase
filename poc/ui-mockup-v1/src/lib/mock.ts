@@ -119,3 +119,31 @@ export const visitorTypes = [
 ];
 
 export const visitorTypeOptions = ["University student", "High school student", "Company", "Alumni", "Parent", "Teacher"];
+
+// 2D characters from poc/TestUI (80px frames · 4 columns × 4 rows · rows: down, up, left, right)
+export const characters = [
+  "Nat", "Mint", "Ice", "Jay", "Oat", "Praew", "Earth", "Book", "Beam", "Pang", "Dr. Somchai", "Pim", "Fah", "Nadia",
+].map((name, i) => {
+  const id = `character-${String(i + 1).padStart(2, "0")}`;
+  return { id, name, walk: `/assets/characters/${id}-walk.png`, portrait: `/assets/characters/${id}-portrait.png` };
+});
+// who is who in the sample data
+export const avatarOf: Record<string, number> = {
+  Mint: 1, Book: 7, Beam: 8, Jay: 3, Oat: 4, Praew: 5, Ploy: 9, Nat: 0, Earth: 6, Fah: 12, Tong: 3, Pim: 11, Kla: 8, Ice: 2,
+  "Judge One": 10, "Dr.": 10, Nadia: 13, Tee: 4, Mali: 6, Kittikan: 1, Natchanon: 7, Suchai: 8,
+};
+export const ME = { name: "Ploy Srisuk", short: "Ploy S.", avatar: 9 }; // the signed-in sample user
+export const avatarFor = (name: string) => avatarOf[name.split(" ")[0]] ?? (name.charCodeAt(0) % 14);
+
+// 28 booths for the Phaser hall (= event.works): the 6 sample booths + 22 more · AI 6 · IoT 6 · Web 6 · Games 5 · EdTech 5 · one zone per block
+const extra: [string, string, boolean][] = [
+  ["Thai Receipt OCR", "AI & Data", true], ["Lecture Summariser", "AI & Data", false], ["Fake News Checker", "AI & Data", true], ["Campus Crowd Forecast", "AI & Data", false], ["Plant Disease Scanner", "AI & Data", true],
+  ["Smart Farm Kit", "IoT", true], ["Elderly Fall Alert", "IoT", false], ["Energy Meter", "IoT", true], ["Parcel Locker", "IoT", false],
+  ["Club Event Hub", "Web & Mobile", true], ["Lost & Found Map", "Web & Mobile", false], ["Canteen Pre-order", "Web & Mobile", true], ["Carpool for Students", "Web & Mobile", false], ["Dorm Repair Tickets", "Web & Mobile", true],
+  ["Thai History RPG", "Games", true], ["AR Campus Tour", "Games", false], ["Rhythm Typing", "Games", true], ["Escape the Lab", "Games", false],
+  ["VR Chemistry Lab", "EdTech", true], ["Quiz Battle", "EdTech", false], ["Study Buddy", "EdTech", true], ["Code Review Coach", "EdTech", false],
+];
+export const hallProjects = [
+  ...booths.map((b) => ({ no: b.no, title: b.title, short: b.title, category: b.category, live: b.status === "live", presenter: b.members[0], avatar: avatarFor(b.members[0]) })),
+  ...extra.map(([title, category, live], i) => ({ no: String(i + 7).padStart(2, "0"), title, short: title, category, live, presenter: characters[(i * 3 + 2) % 14].name, avatar: (i * 3 + 2) % 14 })),
+];

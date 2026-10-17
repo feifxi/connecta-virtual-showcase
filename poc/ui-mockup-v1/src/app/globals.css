@@ -116,3 +116,6 @@
     @apply font-sans;
     }
 }
+/* 2D character breathing (from poc/TestUI) */
+@keyframes breathe { 0%, 100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(-1px) scaleY(1.015); } }
+@media (prefers-reduced-motion: reduce) { [class*="animate-[breathe"] { animation: none !important; } }

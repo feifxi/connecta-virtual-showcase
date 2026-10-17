@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Mail, Plus, Users } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { Actor } from "@/components/actor";
 import { RoleChip } from "@/components/brand";
 import { AppHeader, bigButton } from "@/components/shells";
-import { invites, myEvents, toneClass, type MyEvent } from "@/lib/mock";
+import { ME, invites, myEvents, toneClass, type MyEvent } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 
 const stateStyle: Record<MyEvent["state"], string> = {
@@ -28,9 +29,12 @@ export default function Home() {
       <AppHeader />
       <main className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Hi Ploy, here are your events</h1>
-            <p className="mt-1 text-muted-foreground">Everything you organize, present at, judge or attend.</p>
+          <div className="flex items-end gap-3">
+            <Actor index={ME.avatar} className="size-20" />
+            <div className="pb-2">
+              <h1 className="text-3xl font-bold tracking-tight">Hi Ploy, here are your events</h1>
+              <p className="mt-1 text-muted-foreground">Everything you organize, present at, judge or attend.</p>
+            </div>
           </div>
           <Link href="/manage/new" className={cn(buttonVariants(), bigButton)}>
             <Plus className="size-4" aria-hidden="true" /> Create event
@@ -60,6 +64,9 @@ export default function Home() {
               </span>
               <h2 className="mt-3 text-2xl font-bold">{live.name}</h2>
               <p className="mt-1 text-primary-foreground/85">137 people are in the hall · 21 booths are Live · ends 4:00 PM</p>
+            </div>
+            <div className="hidden items-end md:flex" aria-hidden="true">
+              {[[1, 3, true], [7, 0, false], [12, 2, false], [3, 3, true]].map(([i, d, w], k) => <Actor key={k} index={i as number} direction={d as number} walk={w as boolean} className="-mx-2 size-16" />)}
             </div>
             <div className="flex flex-wrap gap-3">
               <Link href={`/e/${live.slug}/hall`} className={cn(buttonVariants({ variant: "secondary" }), bigButton)}>Enter the hall</Link>

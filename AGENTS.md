@@ -11,6 +11,9 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 | `docs/connecta-v3.md` | ⭐ Product & Business: direction · pain · solution · target · value & competition · business model · SDG · ความเสี่ยง |
 | `docs/features.md` | ⭐ spec ฟีเจอร์: กฎร่วม · ลำดับ core/cut · role · spec รายฟีเจอร์ตามแม่แบบ (ทำไม · ใครทำอะไร · เปิด/ปิด · ใครเห็น · Plan · กติกา · ไม่ทำ · ข้อมูล · Test) |
 | `docs/data-model.md` | ⭐ database design: ER diagram · ตาราง · constraint · index · enum · สถานะงาน · ข้อมูลที่ไม่เก็บ · state ใน memory · ไฟล์ · lifecycle/PDPA |
+| `docs/api.md` | ⭐ REST API ทั้งหมด · error · status code · message ของ Colyseus · สิทธิ์ใน LiveKit |
+| `docs/db/connecta.dbml` | schema แบบละเอียด (PostgreSQL) → ภาพ `docs/images/db-*.svg` |
+| `docs/exam2-technical-design.md` | ⭐ การออกแบบทางเทคนิคสำหรับ Exam 2 เฉพาะ Release 1 + ขอบเขต R1–R3 |
 | `docs/technical.md` | ⭐ stack · architecture · deployment · reference ด้านเทคนิค |
 | `poc/README.md` | ⭐ POC ทั้งหมด: แผน spike · สถานะ · วิธีทดสอบ · ผล · capacity · สเปก VM · สิ่งที่ต้องขอจาก IT · fallback |
 | `docs/research.md` | research ดิบ + แหล่งอ้างอิง: poster/booth · คู่แข่ง · business model · ชื่อแบรนด์ · survey · research เพิ่มเติม |
@@ -94,7 +97,7 @@ Repo หลักของโปรเจคจบ · Connecta — แพลต�
 
 ## งานถัดไป
 
-1. Exam 2 (ส่ง 18 ต.ค.): spike/POC · mockup (ภาพจาก `poc/ui-mockup-v1/` ที่ทีมเลือก · v2 เก็บไว้เทียบ) · architecture · component design · API design · ER diagram · roadmap
+1. Exam 2 (ส่ง 18 ต.ค.): spike/POC · mockup (ภาพจาก `poc/ui-mockup-v2/` ที่ทีมเลือกเป็น theme หลัก · v1 เก็บไว้เทียบ) · architecture · component design · API design · ER diagram · roadmap
 2. ทีมเขียน one-liner · pain · problem statement เอง แทนร่างใน `docs/connecta-v3.md`
 3. ทำ survey (`docs/research.md` ส่วน 4) + นัดคุยผู้จัด D-Day / อาจารย์ · ความเป็นไปได้ทางธุรกิจต้องใช้ข้อมูลจากผู้ใช้เป้าหมายจริง (ไม่ใช่ทีม)
 4. UI mockup v1 + v2 ตรงกับ `docs/features.md` แล้ว (14 หน้า · รายการหน้าอยู่ใน `poc/README.md`) · หน้าที่ยังไม่ทำ: Profile · Billing · Platform Console · สรุปของผู้นำเสนอ · ฟอร์มส่งผลงาน
