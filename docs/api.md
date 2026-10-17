@@ -135,7 +135,7 @@
 | PUT | `/events/{eventId}/hall/participants/{userId}/microphone` | Presenter* (ในบูธตัวเอง) · Admin | `{muted:true}` → LiveKit `mutePublishedTrack` · `{muted:false}` `422 CANNOT_UNMUTE_OTHERS` · คนนอกบูธตัวเอง `403` |
 | DELETE | `/events/{eventId}/hall/participants/{userId}` | Admin | kick (กลับเข้าได้) |
 | PATCH | `/events/{eventId}/hall/settings` | Admin | สวิตช์ฉุกเฉิน `{entryPaused, muteAll}` |
-| POST | `/events/{eventId}/announcements` | Admin | ประกาศทั้งฮอลล์ (ผ่าน realtime · ไม่เก็บ) · `202` |
+| POST | `/events/{eventId}/announcements` | Admin | ประกาศทั้งฮอลล์ผ่าน realtime: แถบบนจอทุกคน + อยู่ในประวัติแชท Everyone ช่วงงาน (memory · ไม่เก็บ DB) · `202` |
 | POST | `/events/{eventId}/reports` | Attendee | `{targetUserId, targetKind, targetRef?, snapshot?, reason}` · `429` |
 | GET · PATCH | `/events/{eventId}/reports` · `/reports/{reportId}` | Admin | queue · `{status}` |
 | POST | `/projects/{projectId}/feedbacks` | Attendee | `{text, isAnonymous}` · Live/Exhibition เท่านั้น `409` · module ปิด `403 MODULE_DISABLED` |

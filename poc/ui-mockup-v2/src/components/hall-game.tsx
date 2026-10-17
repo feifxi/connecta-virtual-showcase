@@ -4,7 +4,7 @@ import { useEffect, useRef, type RefObject } from "react";
 import * as Phaser from "phaser";
 import { HallEvents, HallScene, type BoothInfo, type Hearing, type HallProject } from "@/game/HallScene";
 
-export type HallControl = { zoom: (z: number) => void; goTo: (no: string) => void };
+export type HallControl = { zoom: (z: number) => void; goTo: (no: string) => void; say: (text: string, kind: "reaction" | "chat") => void };
 
 // Mounts the Phaser hall (client only) · the page passes callbacks and gets a small control object back
 export default function HallGame({ projects, avatar, name, control, onEnter, onLeave, onHearing }: {
@@ -27,7 +27,7 @@ export default function HallGame({ projects, avatar, name, control, onEnter, onL
     });
     game.scene.add("hall", HallScene, true, { projects, avatar, name });
     const scene = () => game.scene.getScene("hall") as HallScene | undefined;
-    control.current = { zoom: (z) => scene()?.setZoom(z), goTo: (no) => scene()?.goToBooth(no) };
+    control.current = { zoom: (z) => scene()?.setZoom(z), goTo: (no) => scene()?.goToBooth(no), say: (t, k) => scene()?.say(t, k) };
     (window as unknown as { __phaserGame?: Phaser.Game }).__phaserGame = game;
     const enter = (b: BoothInfo) => handlers.current.onEnter(b);
     const leave = () => handlers.current.onLeave();

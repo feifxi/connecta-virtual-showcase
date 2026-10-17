@@ -62,6 +62,19 @@ export const EXPLORE = [
   { slug: "capstone-demo", name: "Capstone Demo Day", host: "School of Information Technology", date: "30 Oct · 09:00–16:00", state: "Published" as const, booths: 28, access: "Open to everyone", art: "orange" as const },
 ];
 
+// people list in the hall (mock: a slice of the 211) · role badges come from the server
+const VISITORS = ["Bank", "Ploy", "Tan", "Mew", "Jay", "Kao", "Ice", "Pond", "Nami", "Sora", "Mali", "Haru"];
+export const HALL_PEOPLE: { name: string; avatar: number; role: Role; where: string }[] = [
+  { name: "Yuki", avatar: 5, role: "Admin", where: "Lounge" },
+  { name: "Dr. Arun", avatar: 10, role: "Judge", where: "Booth 03" },
+  { name: "Dr. May", avatar: 13, role: "Judge", where: "Walking the hall" },
+  ...PROJECTS.map((p) => ({ name: p.presenter, avatar: p.avatar, role: "Presenter" as Role, where: `Booth ${p.code}` })),
+  ...VISITORS.map((name, i) => ({ name, avatar: [1, 2, 3, 4, 6, 7, 0, 8, 2, 4, 6, 1][i], role: "Visitor" as Role, where: i % 3 === 0 ? "Lounge" : i % 3 === 1 ? `Booth 0${(i % 6) + 1}` : "Walking the hall" })),
+];
+
+// hall camera zoom when you enter = "100%" in the zoom control
+export const START_ZOOM = 1.7;
+
 export const AGENDA = [
   { time: "10:00", label: "Hall opens, with a short tour of how to get around" },
   { time: "10:15", label: "Booths open — walk in any time" },

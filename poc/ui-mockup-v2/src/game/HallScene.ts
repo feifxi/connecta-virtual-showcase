@@ -1,4 +1,5 @@
 import * as Phaser from "phaser";
+import { START_ZOOM } from "@/lib/data";
 import { NavGrid, tiledProps, type Dir } from "./nav";
 
 // Phaser hall for mockup v2 · map + runtime booth placement from poc/demo-app (/presets, Hall preset)
@@ -32,6 +33,7 @@ export class HallScene extends Phaser.Scene {
   private playerName = "Nont (you)";
   private player!: Phaser.Physics.Arcade.Sprite;
   private playerLabel!: Phaser.GameObjects.Text;
+  private bubble: { text: Phaser.GameObjects.Text; lift: number } | null = null;
   private playerDir: Dir = "down";
   private ring!: Phaser.GameObjects.Graphics;
   private nav!: NavGrid;
@@ -114,7 +116,7 @@ export class HallScene extends Phaser.Scene {
     this.spawnCrowd();
 
     const cam = this.cameras.main;
-    cam.setBounds(0, 0, map.widthInPixels, map.heightInPixels).setZoom(1.3).startFollow(this.player, true, 0.12, 0.12);
+    cam.setBounds(0, 0, map.widthInPixels, map.heightInPixels).setZoom(START_ZOOM).startFollow(this.player, true, 0.12, 0.12);
     cam.setBackgroundColor("#d6d8df");
 
     const kb = this.input.keyboard!;
@@ -134,6 +136,21 @@ export class HallScene extends Phaser.Scene {
     if (s) this.path = this.nav.find(this.player.x, this.player.y - 4, s.rect.centerX, s.rect.bottom - 18) ?? [];
   }
   setPlayerName(name: string) { this.playerLabel.setText(name); }
+
+  // above your head: a reaction pops up and floats away (~2 s) · a nearby chat message stays ~5 s then fades
+  say(text: string, kind: "reaction" | "chat") {
+    this.bubble?.text.destroy();
+    const emoji = kind === "reaction";
+    const t = this.add.text(this.player.x, this.player.y - 56, text, {
+      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", fontSize: emoji ? "22px" : "10px", color: "#0f1a3a", resolution: 4,
+      ...(emoji ? {} : { backgroundColor: "#ffffff", padding: { left: 6, right: 6, top: 4, bottom: 4 }, wordWrap: { width: 150 } }),
+    }).setOrigin(0.5, 1).setDepth(100003);
+    t.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+    const b = { text: t, lift: 0 };
+    this.bubble = b;
+    if (emoji) this.tweens.add({ targets: b, lift: 18, duration: 1800, ease: "Sine.easeOut" });
+    this.tweens.add({ targets: t, alpha: 0, delay: emoji ? 1300 : 4500, duration: 500, onComplete: () => { t.destroy(); if (this.bubble === b) this.bubble = null; } });
+  }
 
   // ---------- booths: one category per block, empty slots become plants ----------
   private placeBooths() {
@@ -208,6 +225,7 @@ export class HallScene extends Phaser.Scene {
     this.animate(this.player, this.avatar, this.playerDir, moving);
     this.player.setDepth(this.player.y);
     this.playerLabel.setPosition(this.player.x, this.player.y - 50).setDepth(100002);
+    this.bubble?.text.setPosition(this.player.x, this.player.y - 64 - this.bubble.lift);
     this.ring.setPosition(this.player.x, this.player.y - 8);
 
     for (const n of this.npcs) this.updateNpc(n, delta);

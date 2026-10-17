@@ -4,15 +4,22 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { HallControl } from "@/components/hall-game";
-import { Icon, Pill, Portrait, Poster, Status } from "@/components/ui";
+import { Actor } from "@/components/actor";
+import { Icon, Pill, Portrait, Poster, RoleChip, Status } from "@/components/ui";
 import type { BoothInfo, Hearing } from "@/game/HallScene";
-import { AGENDA, CHARACTERS, EVENT, HALL_PROJECTS, PROJECTS, RUBRIC, type Role } from "@/lib/data";
+import { AGENDA, CHARACTERS, EVENT, HALL_PEOPLE, HALL_PROJECTS, PROJECTS, RUBRIC, START_ZOOM, type Role } from "@/lib/data";
 
 const HallGame = dynamic(() => import("@/components/hall-game"), { ssr: false });
 const MY_BOOTH = "02"; // the booth this mock presenter belongs to
 type Panel = "booth" | "people" | "booths" | "agenda" | "chat" | "admin" | null;
+export type Net = "ok" | "server" | "audio" | "reconnecting";
+const NETS: [Net, string][] = [["ok", "Normal"], ["server", "Server down"], ["audio", "No audio"], ["reconnecting", "Reconnecting"]];
+const LOAD_STEPS = ["Loading the hall", "Joining the event", "Connecting audio"];
+const REACTIONS = ["👏", "❤️", "😂", "❓", "🔥"];
+const ZONE_DOT: Record<string, string> = { Engineering: "#3fae7f", Computing: "#8a6ee0", Health: "#f08a5d", Design: "#4b95e0" }; // same as the carpets
+type Announcement = { text: string; time: string };
 
-export function HallView({ initialRole }: { initialRole: Role }) {
+export function HallView({ initialRole, initialNet }: { initialRole: Role; initialNet: Net }) {
   const [role, setRole] = useState<Role>(initialRole);
   const [avatar, setAvatar] = useState<number | null>(null);
   const [booth, setBooth] = useState<BoothInfo | null>(null);
@@ -21,9 +28,32 @@ export function HallView({ initialRole }: { initialRole: Role }) {
   const [mic, setMic] = useState(false); // everyone enters muted
   const [cam, setCam] = useState(false);
   const [sharing, setSharing] = useState(false);
-  const [zoom, setZoom] = useState(1.3);
+  const [zoom, setZoom] = useState(START_ZOOM);
   const [leaving, setLeaving] = useState(false);
   const [menu, setMenu] = useState(false);
+  // entering: 0–2 = step in progress, 3 = in the hall · failed = the game server never answered (mock timings)
+  const [net, setNet] = useState<Net>(initialNet);
+  const [step, setStep] = useState(0);
+  const [failed, setFailed] = useState(false);
+  const [run, setRun] = useState(0);
+  const [netOpen, setNetOpen] = useState(false);
+  // movement hint: shown once you're in, gone after your first move or 8 s
+  const [hint, setHint] = useState(true);
+  useEffect(() => {
+    if (step < 3 || !hint) return;
+    const hide = (e: Event) => { if (!(e instanceof KeyboardEvent) || /^(w|a|s|d|arrow)/i.test(e.key)) setHint(false); };
+    const t = setTimeout(() => setHint(false), 8000);
+    window.addEventListener("keydown", hide);
+    document.querySelector(".hall-page canvas")?.addEventListener("pointerdown", hide);
+    return () => { clearTimeout(t); window.removeEventListener("keydown", hide); document.querySelector(".hall-page canvas")?.removeEventListener("pointerdown", hide); };
+  }, [step, hint]);
+  useEffect(() => {
+    const t = [setTimeout(() => setStep(1), 700), setTimeout(() => (net === "server" ? setFailed(true) : setStep(2)), 1400)];
+    if (net !== "server") t.push(setTimeout(() => setStep(3), net === "audio" ? 3000 : 2000));
+    return () => t.forEach(clearTimeout);
+  }, [net, run]);
+  const audio = net !== "audio";
+  const restart = (n: Net) => { setNet(n); setStep(0); setFailed(false); setRun((r) => r + 1); };
   const menuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!menu) return;
@@ -32,7 +62,11 @@ export function HallView({ initialRole }: { initialRole: Role }) {
     return () => { document.removeEventListener("pointerdown", close); document.removeEventListener("keydown", close); };
   }, [menu]);
   const control = useRef<HallControl | null>(null);
-  const mapDialog = useRef<HTMLDialogElement>(null);
+  const [reacting, setReacting] = useState(false);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([{ text: "Judging closes at 16:00 with the event. Results go up on the event page afterwards.", time: "13:05" }]);
+  const [banner, setBanner] = useState<Announcement | null>(null);
+  const announce = (text: string) => { const a = { text, time: new Date().toTimeString().slice(0, 5) }; setAnnouncements((l) => [...l, a]); setBanner(a); };
+  const react = (e: string) => { control.current?.say(e, "reaction"); setReacting(false); };
 
   useEffect(() => {
     let a = 7;
@@ -42,8 +76,8 @@ export function HallView({ initialRole }: { initialRole: Role }) {
 
   const mine = role === "Presenter" && booth?.no === MY_BOOTH;
   const open = (p: Panel) => setPanel(panel === p ? null : p);
-  const zoomBy = (d: number) => { const z = Math.min(2, Math.max(0.7, Math.round((zoom + d) * 10) / 10)); setZoom(z); control.current?.zoom(z); };
-  const goTo = (no: string) => { control.current?.goTo(no); mapDialog.current?.close(); };
+  const zoomBy = (d: number) => { const z = Math.min(2.6, Math.max(0.9, Math.round((zoom + d) * 10) / 10)); setZoom(z); control.current?.zoom(z); };
+  const goTo = (no: string) => control.current?.goTo(no);
 
   return (
     <main id="main" className="page hall-page" aria-label="Exhibition hall">
@@ -74,13 +108,27 @@ export function HallView({ initialRole }: { initialRole: Role }) {
           <span>Preview as</span>
           {(["Visitor", "Presenter", "Judge", "Admin"] as Role[]).map((r) => <button key={r} type="button" className={role === r ? "active" : ""} aria-pressed={role === r} onClick={() => { setRole(r); if (panel === "admin") setPanel(null); }}>{r}</button>)}
         </div>
-        <Pill cls="green"><span className="dot" />Connected</Pill>
+        {net === "reconnecting" ? <Pill cls="live"><span className="spinner" aria-hidden="true" />Reconnecting</Pill> : net === "audio" ? <Pill cls="live"><Icon name="headphones" className="xs" />No audio</Pill> : <Pill cls="green"><span className="dot" />Connected</Pill>}
       </div>
 
-      {role === "Judge" && <div className="judge-banner"><Icon name="trophy" /><strong>7 of 12 scored</strong><span>Closes at {EVENT.ends}</span></div>}
+      <div className="mock-net">
+        {netOpen ? (
+          <div className="role-switch" role="group" aria-label="Mockup: connection">
+            {NETS.map(([n, l]) => <button key={n} type="button" className={net === n ? "active" : ""} aria-pressed={net === n} onClick={() => { restart(n); setNetOpen(false); }}>{l}</button>)}
+          </div>
+        ) : <button type="button" className="mock-net-btn" onClick={() => setNetOpen(true)}>Network: {NETS.find(([n]) => n === net)?.[1]}</button>}
+      </div>
+
+      <div className="hall-top-center">
+        {role === "Judge" && <div className="judge-banner"><Icon name="trophy" /><strong>7 of 12 scored</strong><span>Closes at {EVENT.ends}</span></div>}
+        {banner && <div className="announce-banner" role="alert"><Icon name="megaphone" /><span><strong>Announcement from the organizers</strong>{banner.text}</span><button type="button" className="icon-btn" aria-label="Dismiss announcement" onClick={() => setBanner(null)}><Icon name="close" /></button></div>}
+        {step === 3 && net === "reconnecting" && <div className="hall-notice"><span className="spinner" aria-hidden="true" /><span><strong>Connection lost. Reconnecting…</strong> Your spot in the hall is kept.</span></div>}
+        {step === 3 && net === "audio" && <div className="hall-notice"><Icon name="headphones" /><span><strong>Audio isn&rsquo;t connected.</strong> You can still walk around and chat.</span><button type="button" className="btn small secondary" onClick={() => setNet("ok")}>Try again</button></div>}
+        {step === 3 && hint && <div className="hall-hint">Move with <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> or click · Step onto a booth carpet to join it</div>}
+      </div>
 
       <nav className="hall-left-tools" aria-label="Hall tools">
-        {([["booths", "grid", "All booths"], ["people", "users", "People nearby"], ["agenda", "calendar", "Agenda"]] as const).map(([p, i, l]) => (
+        {([["booths", "grid", "All booths"], ["people", "users", "People in the hall"], ["agenda", "calendar", "Agenda"]] as const).map(([p, i, l]) => (
           <button key={p} type="button" className={`icon-btn ${panel === p ? "active" : ""}`} aria-label={l} title={l} onClick={() => open(p)}><Icon name={i} /></button>
         ))}
       </nav>
@@ -93,24 +141,25 @@ export function HallView({ initialRole }: { initialRole: Role }) {
       )}
 
       {panel === "booth" && booth && (role === "Judge" ? <RubricPanel booth={booth} onClose={() => setPanel(null)} /> : <BoothPanel booth={booth} role={role} mine={mine} people={hearing.people} onClose={() => setPanel(null)} />)}
-      {panel === "admin" && <AdminPanel onClose={() => setPanel(null)} />}
-      {panel === "chat" && <ChatPanel onClose={() => setPanel(null)} />}
-      {panel === "people" && (
-        <Frame title={hearing.inBooth ? `In booth ${hearing.inBooth}` : "People nearby"} onClose={() => setPanel(null)}>
-          <p className="field-note" style={{ marginBottom: 12 }}>{hearing.inBooth ? "Everyone in this booth hears each other. Nobody outside can hear in." : "Outside booths you hear people inside the dashed circle."}</p>
-          <div className="people-list">
-            {hearing.people.length ? hearing.people.map((n) => { const i = Math.max(0, CHARACTERS.findIndex((c) => n.startsWith(c.name))); return <div key={n} className="person"><Portrait index={i} /><div><strong>{n.split(" · ")[0]}</strong><small>{n.split(" · ")[1] ?? "Visitor"}</small></div><span className="dot" /></div>; }) : <p className="body-text">Nobody close by. Walk up to someone or step into a booth.</p>}
-          </div>
-        </Frame>
-      )}
+      {panel === "admin" && <AdminPanel onAnnounce={announce} onClose={() => setPanel(null)} />}
+      {panel === "chat" && <ChatPanel announcements={announcements} say={(t) => control.current?.say(t, "chat")} onClose={() => setPanel(null)} />}
+      {panel === "people" && <PeoplePanel onClose={() => setPanel(null)} />}
       {panel === "booths" && (
         <Frame title="All booths" onClose={() => setPanel(null)}>
-          <p className="field-note" style={{ marginBottom: 10 }}>{HALL_PROJECTS.length} booths in 4 zones. Pick one to walk straight there.</p>
-          {HALL_PROJECTS.map((p) => (
-            <button key={p.no} type="button" className="person" style={{ width: "100%", background: "none", textAlign: "left" }} onClick={() => goTo(p.no)}>
-              <span className="booth-code">{p.no}</span><div><strong>{p.short}</strong><small>{p.category}</small></div>{p.live && <span style={{ marginLeft: "auto" }}><Status text="Live" /></span>}
-            </button>
-          ))}
+          <p className="field-note" style={{ marginBottom: 6 }}>{HALL_PROJECTS.length} booths in 4 zones. Pick one to walk straight there.</p>
+          {Object.keys(ZONE_DOT).map((zone) => {
+            const list = HALL_PROJECTS.filter((p) => p.category === zone);
+            return (
+              <section key={zone} className="zone-group">
+                <h3><span className="zone-dot" style={{ background: ZONE_DOT[zone] }} />{zone}<small>{list.length} booths</small></h3>
+                {list.map((p) => (
+                  <button key={p.no} type="button" className="person" style={{ width: "100%", background: "none", textAlign: "left" }} onClick={() => goTo(p.no)}>
+                    <span className="booth-code">{p.no}</span><div><strong>{p.short}</strong>{p.title !== p.short && <small>{p.title}</small>}</div>{p.live && <span style={{ marginLeft: "auto" }}><Status text="Live" /></span>}
+                  </button>
+                ))}
+              </section>
+            );
+          })}
         </Frame>
       )}
       {panel === "agenda" && (
@@ -121,43 +170,29 @@ export function HallView({ initialRole }: { initialRole: Role }) {
         </Frame>
       )}
 
-      <div className="hall-hint">Move with <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> or click · Step onto a booth carpet to join it</div>
-
       <div className="hall-toolbar" aria-label="Hall controls">
-        <Tool label={mic ? "Mic on" : "Mic off"} icon={mic ? "mic" : "micOff"} active={mic} cls={mic ? "" : "mic-off"} onClick={() => setMic(!mic)} />
+        {audio ? <Tool label={mic ? "Mic on" : "Mic off"} icon={mic ? "mic" : "micOff"} active={mic} cls={mic ? "" : "mic-off"} onClick={() => setMic(!mic)} /> : <Tool label="No audio" icon="micOff" cls="disabled" />}
         {mine && <Tool label={cam ? "Camera on" : "Camera off"} icon={cam ? "video" : "videoOff"} active={cam} onClick={() => setCam(!cam)} />}
         {mine && <Tool label={sharing ? "Stop share" : "Share screen"} icon="share" active={sharing} onClick={() => setSharing(!sharing)} />}
         <Tool label="Chat" icon="chat" active={panel === "chat"} onClick={() => open("chat")} />
         <span className="toolbar-separator" />
         <div className="toolbar-presence">
           <strong><span className="dot" />{hearing.inBooth ? `Booth ${hearing.inBooth} · ${hearing.people.length + 1} hear each other` : `${hearing.people.length} ${hearing.people.length === 1 ? "person" : "people"} near you`}</strong>
-          <span>{EVENT.inHall} people in the hall</span>
         </div>
         <span className="toolbar-separator" />
-        <Tool label="Map" icon="map" onClick={() => mapDialog.current?.showModal()} />
+        <div className="react-wrap">
+          <Tool label="React" icon="smile" active={reacting} onClick={() => setReacting(!reacting)} />
+          {reacting && <div className="react-picker" role="menu" aria-label="Reactions">{REACTIONS.map((e) => <button key={e} type="button" role="menuitem" aria-label={`React ${e}`} onClick={() => react(e)}>{e}</button>)}</div>}
+        </div>
         {role === "Admin" && <Tool label="Admin" icon="shield" active={panel === "admin"} cls="lav" onClick={() => open("admin")} />}
       </div>
 
       <div className="hall-zoom">
         <button type="button" className="icon-btn" aria-label="Zoom out" onClick={() => zoomBy(-0.1)}><Icon name="minus" /></button>
-        <span>{Math.round((zoom / 1.3) * 100)}%</span>
+        <span>{Math.round((zoom / START_ZOOM) * 100)}%</span>
         <button type="button" className="icon-btn" aria-label="Zoom in" onClick={() => zoomBy(0.1)}><Icon name="plus" /></button>
       </div>
 
-      <dialog ref={mapDialog} className="modal" aria-labelledby="map-title" onClick={(e) => { if (e.target === mapDialog.current) mapDialog.current.close(); }}>
-        <button type="button" className="icon-btn modal-close" aria-label="Close dialog" onClick={() => mapDialog.current?.close()}><Icon name="close" /></button>
-        <h2 id="map-title">Find your way.</h2>
-        <p>Pick a booth and your character walks there.</p>
-        <div className="zone-grid">
-          {["Engineering", "Computing", "Health", "Design"].map((cat) => (
-            <div key={cat} className="zone-block">
-              <Pill cls="light">{cat}</Pill>
-              <div className="chips">{HALL_PROJECTS.filter((p) => p.category === cat).map((p) => <button key={p.no} type="button" className="chip" style={{ padding: "4px 9px" }} onClick={() => goTo(p.no)}>{p.no}{p.live ? " ●" : ""}</button>)}</div>
-            </div>
-          ))}
-          <div className="zone-block" style={{ background: "var(--orange-tint)" }}><Pill cls="light">Lounge & stage</Pill><p className="small-text">Places to meet. Voices fade with distance.</p></div>
-        </div>
-      </dialog>
 
       {leaving && (
         <div className="modal-scrim" role="dialog" aria-modal="true" aria-labelledby="survey-title" style={{ position: "fixed", inset: 0, zIndex: 50, display: "grid", placeItems: "center", background: "rgb(15 26 58 / .42)" }}>
@@ -168,6 +203,27 @@ export function HallView({ initialRole }: { initialRole: Role }) {
             <label className="field" style={{ marginTop: 16 }}>Anything to improve? <span className="field-note">optional</span><textarea style={{ minHeight: 70 }} /></label>
             <div className="modal-footer"><Link className="btn secondary" href="/home">Skip</Link><Link className="btn" href={`/e/${EVENT.slug}`}>Send & leave</Link></div>
           </form>
+        </div>
+      )}
+      {step < 3 && (
+        <div className="hall-loading" role="status" aria-live="polite">
+          <div className="hall-loading-card">
+            <div className="hall-loading-actor">{avatar !== null && <Actor index={avatar} walk={!failed} style={{ left: "50%", top: 0, marginLeft: -48, ["--sprite-size" as string]: "96px" }} />}</div>
+            <h2>{failed ? "Can’t reach the hall right now" : `Entering ${EVENT.name}`}</h2>
+            <p>{failed ? "The hall isn’t answering. Your internet looks fine, so try again in a moment." : "Your mic starts muted."}</p>
+            <ol className="load-steps">
+              {LOAD_STEPS.map((l, i) => {
+                const state = failed && i === 1 ? "failed" : i < step ? (i === 2 && !audio ? "warn" : "done") : i === step && !failed ? (i === 2 && !audio && step === 2 ? "warn" : "now") : "todo";
+                return (
+                  <li key={l} className={state}>
+                    {state === "done" ? <Icon name="check" /> : state === "now" ? <span className="spinner" aria-hidden="true" /> : state === "failed" || state === "warn" ? <Icon name="info" /> : <span className="todo-dot" aria-hidden="true" />}
+                    <span>{l}{state === "failed" && <small>No answer from the server</small>}{state === "warn" && <small>Audio unavailable, entering without it</small>}</span>
+                  </li>
+                );
+              })}
+            </ol>
+            {failed && <div className="flex" style={{ justifyContent: "center", marginTop: 20 }}><button type="button" className="btn" onClick={() => restart("ok")}>Try again</button><Link className="btn secondary" href={`/e/${EVENT.slug}`}>Browse the projects</Link></div>}
+          </div>
         </div>
       )}
     </main>
@@ -272,12 +328,14 @@ function RubricPanel({ booth, onClose }: { booth: BoothInfo; onClose: () => void
   );
 }
 
-function AdminPanel({ onClose }: { onClose: () => void }) {
+function AdminPanel({ onAnnounce, onClose }: { onAnnounce: (text: string) => void; onClose: () => void }) {
+  const [text, setText] = useState("Judging closes in 30 minutes. Judges, please submit your drafts.");
   return (
     <Frame title="Admin panel" onClose={onClose}>
       <div className="flex between" style={{ marginBottom: 14 }}>{[["211", "in hall"], ["13", "Live"], ["2", "reports"]].map(([v, k]) => <div key={k} className="surface" style={{ padding: "8px 14px", textAlign: "center" }}><strong style={{ fontSize: "1.1rem" }}>{v}</strong><div className="field-note">{k}</div></div>)}</div>
-      <label className="field">Announce to everyone<textarea placeholder="e.g. Judging closes in 30 minutes" style={{ minHeight: 60 }} /></label>
-      <button type="button" className="btn small" style={{ marginTop: 8 }}><Icon name="megaphone" />Send</button>
+      <label className="field">Announce to everyone<textarea placeholder="e.g. Judging closes in 30 minutes" style={{ minHeight: 60 }} value={text} onChange={(e) => setText(e.target.value)} /></label>
+      <p className="field-note">Shows on everyone&rsquo;s screen and stays in the Everyone chat.</p>
+      <button type="button" className="btn small" style={{ marginTop: 8 }} disabled={!text.trim()} onClick={() => { onAnnounce(text.trim()); setText(""); }}><Icon name="megaphone" />Send</button>
       <div className="panel-section-title">Reports</div>
       {["Rude messages in nearby chat · Ren", "Shouting in booth 04 · Sora"].map((t) => (
         <div key={t} className="notice" style={{ marginBottom: 8, flexDirection: "column" }}><strong>{t}</strong><div className="flex"><button type="button" className="btn secondary small">Mute</button><button type="button" className="btn secondary small">Kick</button><button type="button" className="btn dark small">Ban</button></div></div>
@@ -290,15 +348,64 @@ function AdminPanel({ onClose }: { onClose: () => void }) {
   );
 }
 
-function ChatPanel({ onClose }: { onClose: () => void }) {
+const PEOPLE_FILTERS: [string, Role | null][] = [["Everyone", null], ["Presenters", "Presenter"], ["Judges", "Judge"], ["Organizers", "Admin"]];
+
+function PeoplePanel({ onClose }: { onClose: () => void }) {
+  const [filter, setFilter] = useState<Role | null>(null);
+  const [q, setQ] = useState("");
+  const shown = HALL_PEOPLE.filter((p) => (!filter || p.role === filter) && p.name.toLowerCase().includes(q.toLowerCase()));
+  return (
+    <Frame title={`People in the hall · ${EVENT.inHall}`} onClose={onClose}>
+      <div className="search" style={{ marginBottom: 10 }}><Icon name="search" /><input className="search-input" type="search" aria-label="Search people" placeholder="Search by name" value={q} onChange={(e) => setQ(e.target.value)} /></div>
+      <div className="chips" style={{ marginBottom: 6 }}>{PEOPLE_FILTERS.map(([l, r]) => <button key={l} type="button" className={`chip ${filter === r ? "active" : ""}`} style={{ padding: "5px 11px" }} aria-pressed={filter === r} onClick={() => setFilter(r)}>{l}</button>)}</div>
+      <div className="people-list">
+        {shown.length ? shown.map((p) => (
+          <div key={p.name} className="person">
+            <Portrait index={p.avatar} />
+            <div><strong>{p.name}</strong><small>{p.where}</small></div>
+            {p.role !== "Visitor" && <span className="person-tags"><RoleChip role={p.role} /></span>}
+          </div>
+        )) : <p className="body-text" style={{ paddingTop: 12 }}>Nobody by that name is in the hall right now.</p>}
+      </div>
+      <p className="field-note" style={{ marginTop: 12 }}>Showing {shown.length} of {EVENT.inHall}. Search to find someone.</p>
+    </Frame>
+  );
+}
+
+// Nearby: no history — messages show up, float above heads and fade (~5 s) · Everyone: history for the event, announcements included
+function ChatPanel({ announcements, say, onClose }: { announcements: Announcement[]; say: (text: string) => void; onClose: () => void }) {
   const [tab, setTab] = useState<"Nearby" | "Everyone">("Nearby");
-  const msgs = tab === "Nearby" ? [["Prae", "Hi! Want to see how our sign-language model works?"], ["Phum", "Yes — does it run offline?"]] : [["Admin · Fah", "Judging closes at 16:00 with the event."], ["Mika", "Booth 02 is amazing, go see it"]];
+  const [draft, setDraft] = useState("");
+  const [nearby, setNearby] = useState<{ id: number; who: string; text: string }[]>([{ id: 0, who: "Prae", text: "Hi! Want to see how our sign-language model works?" }]);
+  const [mine, setMine] = useState<{ who: string; text: string }[]>([]);
+  useEffect(() => {
+    const t = nearby.map((m) => setTimeout(() => setNearby((l) => l.filter((x) => x.id !== m.id)), 5000));
+    return () => t.forEach(clearTimeout);
+  }, [nearby]);
+  const everyone: { who: string; text: string; time?: string; announce?: boolean }[] = [
+    { who: "Mika", text: "Booth 02 is amazing, go see it", time: "12:48" },
+    ...announcements.map((a) => ({ who: "Organizers", text: a.text, time: a.time, announce: true })),
+    ...mine,
+  ];
+  const send = (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = draft.trim();
+    if (!text) return;
+    if (tab === "Nearby") { setNearby((l) => [...l, { id: Date.now(), who: "You", text }]); say(text); } else setMine((l) => [...l, { who: "You", text }]);
+    setDraft("");
+  };
   return (
     <Frame title="Chat" onClose={onClose}>
       <div className="role-segment">{(["Nearby", "Everyone"] as const).map((t) => <button key={t} type="button" className={tab === t ? "active" : ""} onClick={() => setTab(t)}>{t}</button>)}</div>
-      <p className="field-note" style={{ marginBottom: 16 }}>{tab === "Nearby" ? "Only people close to you. Messages float above heads and fade — not saved." : "The whole hall. Not saved after the event."}</p>
-      <div className="chat-messages">{msgs.map(([w, m]) => <div key={m}><div className="chat-name">{w}</div><div className="chat-bubble">{m}</div></div>)}</div>
-      <form className="chat-input" onSubmit={(e) => e.preventDefault()}><input aria-label="Your message" placeholder="Say something…" /><button className="btn small" aria-label="Send" type="submit"><Icon name="arrow" /></button></form>
+      <p className="field-note" style={{ marginBottom: 16 }}>{tab === "Nearby" ? "Only people close to you. Messages fade after a few seconds and aren’t kept." : "The whole hall, including announcements. Cleared when the event ends."}</p>
+      <div className="chat-messages" aria-live="polite">
+        {tab === "Nearby"
+          ? nearby.length ? nearby.map((m) => <div key={m.id} className="chat-fade"><div className="chat-name">{m.who}</div><div className={`chat-bubble ${m.who === "You" ? "you" : ""}`}>{m.text}</div></div>) : <p className="body-text muted">Nothing right now. Say hi to whoever is close by.</p>
+          : everyone.map((m, i) => m.announce
+            ? <div key={i} className="chat-announce"><div className="chat-name"><Icon name="megaphone" />Announcement<span>{m.time}</span></div><div>{m.text}</div></div>
+            : <div key={i}><div className="chat-name">{m.who}{m.time && <span>{m.time}</span>}</div><div className={`chat-bubble ${m.who === "You" ? "you" : ""}`}>{m.text}</div></div>)}
+      </div>
+      <form className="chat-input" onSubmit={send}><input aria-label="Your message" placeholder={tab === "Nearby" ? "Say something to people nearby…" : "Message everyone…"} value={draft} onChange={(e) => setDraft(e.target.value)} /><button className="btn small" aria-label="Send" type="submit"><Icon name="arrow" /></button></form>
       <button type="button" className="btn ghost small" style={{ marginTop: 10 }}>Report a message</button>
     </Frame>
   );
